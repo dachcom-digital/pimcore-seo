@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\EventListener\Maintenance\QueuedIndexDataTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: seo_check_queued_index_data }

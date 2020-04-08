@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    SeoBundle\Tool\Install:
+        arguments:
+            $bundle: "@=service('kernel').getBundle('SeoBundle')"

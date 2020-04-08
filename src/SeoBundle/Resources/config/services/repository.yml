@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\Repository\QueueEntryRepositoryInterface: '@SeoBundle\Repository\QueueEntryRepository'
+    SeoBundle\Repository\QueueEntryRepository: ~
+

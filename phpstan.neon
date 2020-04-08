@@ -1,0 +1,6 @@
+includes:
+	- ../../vendor/phpstan/phpstan-symfony/extension.neon
+parameters:
+    reportUnmatchedIgnoredErrors: false
+    symfony:
+        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml

@@ -1,0 +1,18 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\Manager\QueueManagerInterface: '@SeoBundle\Manager\QueueManager'
+    SeoBundle\Manager\QueueManager:
+        arguments:
+            $enabledWorker: '%seo.index.worker.enabled%'
+
+    SeoBundle\Registry\IndexWorkerRegistryInterface: '@SeoBundle\Registry\IndexWorkerRegistry'
+    SeoBundle\Registry\IndexWorkerRegistry: ~
+
+    SeoBundle\Worker\GoogleIndexWorker:
+        tags:
+            - {name: seo.index.worker, identifier: google_index}

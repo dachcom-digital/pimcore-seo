@@ -74,18 +74,22 @@ class QueueManager implements QueueManagerInterface
     {
         foreach ($this->enabledWorker as $workerIdentifier) {
 
-            $entry = new QueueEntry();
-            $entry->setType($processType);
-
             foreach ($this->resourceProcessorRegistry->getAll() as $resourceProcessorIdentifier => $resourceProcessor) {
 
                 if ($resourceProcessor->supportsWorker($workerIdentifier) === false) {
                     continue;
                 }
 
-                if (null !== $processedQueueEntry = $resourceProcessor->processQueueEntry($entry, $workerIdentifier, $resource)) {
-                    $this->createQueueEntry($processType, $workerIdentifier, $resourceProcessorIdentifier, $processedQueueEntry);
-                    break;  // only one process allowed!
+                if ($resourceProcessor->supportsResource($resource) === false) {
+                    continue;
+                }
+
+                foreach ($resourceProcessor->generateQueueContext($resource) as $context) {
+                    $entry = new QueueEntry();
+                    $entry->setType($processType);
+                    if (null !== $processedQueueEntryData = $resourceProcessor->processQueueEntry($entry, $workerIdentifier, $context, $resource)) {
+                        $this->createQueueEntry($processType, $workerIdentifier, $resourceProcessorIdentifier, $processedQueueEntryData);
+                    }
                 }
             }
         }
@@ -102,10 +106,8 @@ class QueueManager implements QueueManagerInterface
                 continue;
             }
 
-            // we cannot stream here
-            $queuedData = $this->getQueuedData($workerIdentifier);
-
             try {
+                $queuedData = $this->getQueuedData($workerIdentifier);
                 $worker = $this->indexWorkerRegistry->get($workerIdentifier);
                 $worker->process($queuedData, [$this, 'processResponse']);
             } catch (\Throwable $e) {
@@ -169,9 +171,10 @@ class QueueManager implements QueueManagerInterface
      */
     protected function getQueuedData(string $workerIdentifier)
     {
-        $queuedEntries = $this->queueEntryRepository->findAllForWorker($workerIdentifier, ['creationDate' => 'DESC']);
         $data = [];
         $removableEntries = [];
+        $queuedEntries = $this->queueEntryRepository->findAllForWorker($workerIdentifier, ['creationDate' => 'DESC']);
+
         foreach ($queuedEntries as $queuedEntry) {
 
             $key = $this->generateEntryKey($queuedEntry);
@@ -202,8 +205,17 @@ class QueueManager implements QueueManagerInterface
             return;
         }
 
+        if (empty($queueEntry->getDataUrl())) {
+            $this->logger->log('warning',
+                sprintf('Queue entry (type: %s, id: %s) has no valid data url. Skipping persistence...',
+                    $queueEntry->getDataType(),
+                    $queueEntry->getDataId())
+            );
+            return;
+        }
+
         try {
-            $queueEntry->setType($processType); // override it again to ensure type has no manipulated data during processing!
+            $queueEntry->setType($processType); // override it again to ensure type contains no manipulated data
             $queueEntry->setCreationDate(new \DateTime());
             $queueEntry->setResourceProcessor($resourceProcessorIdentifier);
             $queueEntry->setWorker($workerIdentifier);
@@ -220,9 +232,10 @@ class QueueManager implements QueueManagerInterface
      */
     protected function generateEntryKey(QueueEntryInterface $queueEntry)
     {
-        return md5(sprintf('%s_%s',
+        return md5(sprintf('%s_%s_%s',
             $queueEntry->getDataId(),
-            $queueEntry->getDataType()
+            $queueEntry->getDataType(),
+            $queueEntry->getDataUrl()
         ));
     }
 

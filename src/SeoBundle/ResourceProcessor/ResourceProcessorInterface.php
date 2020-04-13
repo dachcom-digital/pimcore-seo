@@ -15,13 +15,28 @@ interface ResourceProcessorInterface
     public function supportsWorker(string $workerIdentifier);
 
     /**
+     * @param object $resource
+     *
+     * @return boolean
+     */
+    public function supportsResource($resource);
+
+    /**
+     * @param object $resource
+     *
+     * @return mixed
+     */
+    public function generateQueueContext($resource);
+
+    /**
      * @param QueueEntryInterface $queueEntry
      * @param string              $workerIdentifier
+     * @param array               $context
      * @param mixed               $resource
      *
      * @return QueueEntryInterface|null
      */
-    public function processQueueEntry(QueueEntryInterface $queueEntry, string $workerIdentifier, $resource);
+    public function processQueueEntry(QueueEntryInterface $queueEntry, string $workerIdentifier, array $context, $resource);
 
     /**
      * @param WorkerResponseInterface $workerResponse

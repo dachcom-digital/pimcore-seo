@@ -1,0 +1,9 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\MetaData\MetaDataProviderInterface: '@SeoBundle\MetaData\MetaDataProvider'
+    SeoBundle\MetaData\MetaDataProvider: ~

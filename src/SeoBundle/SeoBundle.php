@@ -2,8 +2,10 @@
 
 namespace SeoBundle;
 
-use SeoBundle\DependencyInjection\Compiler\ResourceProcessorPass;
+use SeoBundle\DependencyInjection\Compiler\MetaDataExtractorPass;
+use SeoBundle\DependencyInjection\Compiler\MetaDataIntegratorPass;
 use SeoBundle\Tool\Install;
+use SeoBundle\DependencyInjection\Compiler\ResourceProcessorPass;
 use SeoBundle\DependencyInjection\Compiler\IndexWorkerPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
@@ -33,6 +35,8 @@ class SeoBundle extends AbstractPimcoreBundle
 
         $container->addCompilerPass(new IndexWorkerPass());
         $container->addCompilerPass(new ResourceProcessorPass());
+        $container->addCompilerPass(new MetaDataExtractorPass());
+        $container->addCompilerPass(new MetaDataIntegratorPass());
     }
 
     /**
@@ -55,6 +59,32 @@ class SeoBundle extends AbstractPimcoreBundle
                 'seo.persistence.doctrine.enabled'
             )
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getCssPaths()
+    {
+        return [
+            '/bundles/seo/css/admin.css',
+            '/bundles/seo/css/integrator/title-description.css'
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getJsPaths()
+    {
+        return [
+            '/bundles/seo/js/plugin.js',
+            '/bundles/seo/js/metaData/abstractMetaDataPanel.js',
+            '/bundles/seo/js/metaData/documentMetaDataPanel.js',
+            '/bundles/seo/js/metaData/objectMetaDataPanel.js',
+            '/bundles/seo/js/metaData/integrator/abstractIntegrator.js',
+            '/bundles/seo/js/metaData/integrator/titleDescriptionIntegrator.js',
+        ];
     }
 
     /**

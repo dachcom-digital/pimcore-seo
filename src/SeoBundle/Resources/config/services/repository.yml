@@ -8,3 +8,6 @@ services:
     SeoBundle\Repository\QueueEntryRepositoryInterface: '@SeoBundle\Repository\QueueEntryRepository'
     SeoBundle\Repository\QueueEntryRepository: ~
 
+    SeoBundle\Repository\ElementMetaDataRepositoryInterface: '@SeoBundle\Repository\ElementMetaDataRepository'
+    SeoBundle\Repository\ElementMetaDataRepository: ~
+

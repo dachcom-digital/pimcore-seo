@@ -1,0 +1,16 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\Registry\MetaDataIntegratorRegistryInterface: '@SeoBundle\Registry\MetaDataIntegratorRegistry'
+    SeoBundle\Registry\MetaDataIntegratorRegistry: ~
+
+    SeoBundle\Manager\ElementMetaDataManagerInterface: '@SeoBundle\Manager\ElementMetaDataManager'
+    SeoBundle\Manager\ElementMetaDataManager: ~
+
+    SeoBundle\MetaData\Integrator\TitleDescriptionIntegrator:
+        tags:
+            - {name: seo.meta_data.integrator, identifier: title_description }

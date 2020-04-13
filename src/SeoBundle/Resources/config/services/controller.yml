@@ -1,0 +1,12 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    SeoBundle\Controller\Admin\MetaDataController:
+        arguments:
+            $integratorConfiguration: '%seo.meta_data_integrator.configuration%'
+        calls:
+            - [setContainer, ['@service_container']]

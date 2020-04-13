@@ -1,0 +1,19 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\Registry\MetaDataExtractorRegistryInterface: '@SeoBundle\Registry\MetaDataExtractorRegistry'
+    SeoBundle\Registry\MetaDataExtractorRegistry: ~
+
+    SeoBundle\MetaData\Extractor\IntegratorExtractor:
+        arguments:
+            $integratorConfiguration: '%seo.meta_data_integrator.configuration%'
+        tags:
+            - {name: seo.meta_data.extractor, identifier: integrator, priority: 500 }
+
+    SeoBundle\MetaData\Extractor\DescriptionExtractor:
+        tags:
+            - {name: seo.meta_data.extractor, identifier: description }

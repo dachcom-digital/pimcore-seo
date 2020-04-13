@@ -1,0 +1,29 @@
+SeoBundle\Model\ElementMetaData:
+    type: entity
+    table: seo_element_meta_data
+    fields:
+        id:
+            column: id
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        elementType:
+            column: element_type
+            nullable: false
+            type: string
+        elementId:
+            column: element_id
+            type: integer
+            nullable: false
+        integrator:
+            column: integrator
+            nullable: false
+            type: string
+        data:
+            column: data
+            nullable: false
+            type: array
+    uniqueConstraints:
+        element_type_id_integrator:
+            columns: [element_type, element_id, integrator]

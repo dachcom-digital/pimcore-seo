@@ -26,19 +26,17 @@ class SeoExtension extends Extension
         $persistenceConfig = $config['persistence']['doctrine'];
         $entityManagerName = $persistenceConfig['entity_manager'];
 
-        $container->setParameter('seo.persistence.doctrine.enabled', true);
-        $container->setParameter('seo.persistence.doctrine.manager', $entityManagerName);
-
         $enabledWorkerNames = [];
-        $enabledWorkerConfig = [];
         foreach ($config['index_provider_configuration']['enabled_worker'] as $enabledWorker) {
             $enabledWorkerNames[] = $enabledWorker['worker_name'];
-            $enabledWorkerConfig[$enabledWorker['worker_name']] = $enabledWorker['worker_config'];
+            $container->setParameter(sprintf('seo.index.worker.config.%s', $enabledWorker['worker_name']), $enabledWorker['worker_config']);
         }
 
+        $container->setParameter('seo.persistence.doctrine.enabled', true);
+        $container->setParameter('seo.persistence.doctrine.manager', $entityManagerName);
         $container->setParameter('seo.index.worker.enabled', $enabledWorkerNames);
-        $container->setParameter('seo.index.worker.config', $enabledWorkerConfig);
+        $container->setParameter('seo.meta_data_provider.configuration', $config['meta_data_configuration']['meta_data_provider']);
+        $container->setParameter('seo.meta_data_integrator.configuration', $config['meta_data_configuration']['meta_data_integrator']);
         $container->setParameter('seo.index.pimcore_element_watcher.enabled', $config['index_provider_configuration']['pimcore_element_watcher']['enabled']);
-
     }
 }

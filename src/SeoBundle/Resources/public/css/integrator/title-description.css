@@ -1,0 +1,64 @@
+.seo-module-title-description {
+    position: absolute;
+    left: 715px;
+    top: 0;
+    width: 620px;
+    font-family: arial, sans-serif;
+}
+
+.seo-module-title-description .entry {
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    border-bottom: 1px hidden #fff;
+    margin: 0 0 10px 0;
+    padding: 10px 16px 10px 16px;
+}
+
+.seo-module-title-description .desktop {
+    width: 632px;
+}
+
+.seo-module-title-description .mobile {
+    width: 384px;
+}
+
+.seo-module-title-description .title {
+    color: #1a0dab;
+}
+
+.seo-module-title-description .url {
+    font-size: 14px;
+    color: #006621;
+}
+
+.seo-module-title-description .description {
+    color: #545454;
+}
+
+.seo-module-title-description .desktop .title {
+    font-size: 18px;
+    display: inline-block;
+    padding: 0 0 3px 0;
+}
+
+.seo-module-title-description .desktop .description {
+    font-size: 13px;
+    padding: 0 0 0 0;
+}
+
+.seo-module-title-description .mobile .title {
+    font-size: 16px;
+    padding: 0 0 2px 0;
+    line-height: 20px;
+}
+
+.seo-module-title-description .mobile .url {
+    padding: 0 0 12px 0;
+}
+
+.seo-module-title-description .mobile .description {
+    font-size: 14px;
+    padding: 11px 0 0 0;
+    border-top: 1px solid #EEEEEE;
+}

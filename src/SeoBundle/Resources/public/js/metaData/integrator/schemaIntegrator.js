@@ -1,7 +1,8 @@
-pimcore.registerNS('Seo.MetaData.Integrator.HtmlTagIntegrator');
-Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
+pimcore.registerNS('Seo.MetaData.Integrator.SchemaIntegrator');
+Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
-    fieldSetTitle: t('html_tags') + ' (&lt;meta .../&gt; &lt;link .../&gt; ...)',
+    fieldSetTitle: t('Schema Blocks'),
+    schemaPanel: null,
 
     isCollapsed: function () {
         return !this.hasData();
@@ -9,22 +10,16 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
 
     buildPanel: function () {
 
-        this.htmlTagPanel = new Ext.Panel({
+        this.schemaPanel = new Ext.Panel({
             title: false,
-            autoScroll: true,
+            autoScroll: false,
             border: false,
             items: [
                 {
                     xtype: 'label',
-                    text: t('Adding raw tags is not recommend. Please use the Element above!'),
-                    style: {
-                        padding: '10px',
-                        border: '1px solid #b32d2d',
-                        display: 'inline-block',
-                        background: '#e8acac',
-                        margin: '0 0 10px 0',
-                        color: 'black'
-                    }
+                    anchor: '100%',
+                    style: 'display:block; padding:5px; background:#f5f5f5; border:1px solid #eee; font-weight: 300;',
+                    html: 'HTML tags are not allowed and are removed when saving. Valid data starts with <pre style="display: inline;">"&lt;script type="application/ld+json"&gt;"</pre> and ends with <pre style="display: inline;">"&lt;/script&gt;"</pre>.'
                 },
                 this.getAddControl()
             ]
@@ -32,7 +27,7 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
 
         this.setupStoredData();
 
-        return [this.htmlTagPanel];
+        return [this.schemaPanel];
     },
 
     setupStoredData: function () {
@@ -41,28 +36,50 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
             return;
         }
 
-        Ext.Array.each(this.data, function (htmlTagValue) {
-            this.addHtmlTagField(htmlTagValue);
+        Ext.Array.each(this.data, function (SchemaValue) {
+            this.addSchemaField(SchemaValue);
         }.bind(this));
     },
 
     getAddControl: function () {
 
-        var items = [];
+        var items = [],
+            configuration = this.getConfiguration(),
+            disabled = false;
+
+        if (configuration.hasOwnProperty('hasDynamicallyAddedJsonLdData')) {
+            disabled = configuration.hasDynamicallyAddedJsonLdData;
+        }
 
         items.push({
             cls: 'pimcore_block_button_plus',
-            text: 'Add HTML Tag Field',
+            text: 'Add Schema Field',
             iconCls: 'pimcore_icon_plus',
-            handler: this.addHtmlTagField.bind(this, null, null)
+            disabled: disabled,
+            handler: this.addSchemaField.bind(this, null, null)
         });
+
+        if (disabled === true) {
+            items.push({
+                xtype: 'label',
+                text: t('Adding schema blocks manually has been disabled! This element is attached to a dynamic JSON-LD extractor.'),
+                style: {
+                    padding: '5px',
+                    border: '1px solid #b32d2d',
+                    display: 'inline-block',
+                    background: '#e8acac',
+                    margin: '0 0 10px 0',
+                    color: 'black'
+                }
+            })
+        }
 
         return new Ext.Toolbar({
             items: items
         });
     },
 
-    addHtmlTagField: function (fieldValue) {
+    addSchemaField: function (fieldValue) {
 
         var itemFieldContainer;
 
@@ -77,11 +94,13 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
             },
             items: [
                 {
-                    xtype: 'textfield',
-                    fieldLabel: t('Tag'),
+                    xtype: 'textarea',
+                    fieldLabel: t('Schema Data'),
                     style: 'margin: 0 10px 0 0',
-                    name: 'tags',
+                    name: 'schemas',
+                    height: 200,
                     value: fieldValue,
+                    inputAttrTpl: 'spellcheck="false"',
                     flex: 1,
                 },
                 {
@@ -89,39 +108,36 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
                     iconCls: 'pimcore_icon_delete',
                     width: 50,
                     listeners: {
-                        click: this.removeHtmlTagField.bind(this)
+                        click: this.removeSchemaField.bind(this)
                     }
                 }
             ]
         });
 
-        this.htmlTagPanel.add(itemFieldContainer);
+        this.schemaPanel.add(itemFieldContainer);
     },
 
-    removeHtmlTagField: function (btn) {
-
-        var panel = btn.up('fieldcontainer');
-
-        this.htmlTagPanel.remove(panel);
+    removeSchemaField: function (btn) {
+        this.schemaPanel.remove(btn.up('fieldcontainer'));
     },
 
     getValues: function () {
 
         var values = this.formPanel.getForm().getValues();
 
-        if (!values.hasOwnProperty('tags')) {
+        if (!values.hasOwnProperty('schemas')) {
             return [];
         }
 
-        if (Ext.isString(values.tags)) {
-            return [values.tags];
+        if (Ext.isString(values.schemas)) {
+            return [values.schemas];
         }
 
-        if (!Ext.isArray(values.tags)) {
+        if (!Ext.isArray(values.schemas)) {
             return [];
         }
 
-        return values.tags;
+        return values.schemas;
     },
 
     getValuesForPreview: function () {

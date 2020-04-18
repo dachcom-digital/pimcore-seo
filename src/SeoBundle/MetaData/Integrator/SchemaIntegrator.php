@@ -2,10 +2,11 @@
 
 namespace SeoBundle\MetaData\Integrator;
 
+use SeoBundle\MetaData\MetaDataProviderInterface;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class HtmlTagIntegrator implements IntegratorInterface
+class SchemaIntegrator implements IntegratorInterface
 {
     /**
      * @var array
@@ -13,14 +14,46 @@ class HtmlTagIntegrator implements IntegratorInterface
     protected $configuration;
 
     /**
+     * @var MetaDataProviderInterface
+     */
+    protected $metaDataProvider;
+
+    public function __construct(MetaDataProviderInterface $metaDataProvider)
+    {
+        $this->metaDataProvider = $metaDataProvider;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getBackendConfiguration($element)
     {
+        $hasDynamicallyAddedJsonLdData = false;
+
+        foreach (\Pimcore\Tool::getValidLanguages() as $locale) {
+
+            $seoMetaData = null;
+            if (method_exists($this->metaDataProvider, 'getSeoMetaDataForBackend')) {
+                /** @var SeoMetaDataInterface $seoMetaData */
+                $seoMetaData = $this->metaDataProvider->getSeoMetaDataForBackend($element, $locale, ['integrator']);
+            }
+
+            if (!$seoMetaData instanceof SeoMetaDataInterface) {
+                continue;
+            }
+
+            $schemaBlocks = $seoMetaData->getSchema();
+            if (is_array($schemaBlocks) && count($schemaBlocks) > 0) {
+                $hasDynamicallyAddedJsonLdData = true;
+                break;
+            }
+        }
+
         return [
-            'hasLivePreview'       => false,
-            'livePreviewTemplates' => [],
-            'useLocalizedFields'   => false
+            'hasDynamicallyAddedJsonLdData' => $hasDynamicallyAddedJsonLdData,
+            'hasLivePreview'                => false,
+            'livePreviewTemplates'          => [],
+            'useLocalizedFields'            => false
         ];
     }
 
@@ -37,7 +70,18 @@ class HtmlTagIntegrator implements IntegratorInterface
      */
     public function validateBeforeBackend(string $elementType, int $elementId, array $configuration)
     {
-        return $configuration;
+        if (!is_array($configuration) || count($configuration) === 0) {
+            return $configuration;
+        }
+
+        $schemaBlocksConfiguration = [];
+        foreach ($configuration as $schemaBlock) {
+            $rawData = json_decode($schemaBlock, true);
+            $cleanData = json_encode($rawData, JSON_PRETTY_PRINT);
+            $schemaBlocksConfiguration[] = sprintf('<script type="application/ld+json">%s</script>', $cleanData);
+        }
+
+        return $schemaBlocksConfiguration;
     }
 
     /**
@@ -49,18 +93,26 @@ class HtmlTagIntegrator implements IntegratorInterface
             return null;
         }
 
-        foreach ($configuration as $index => $htmlTag) {
+        foreach ($configuration as $index => $schemaBlock) {
 
-            if (!is_string($htmlTag)) {
+            if (!is_string($schemaBlock)) {
                 unset($configuration[$index]);
                 continue;
             }
 
-            // there must be some html tags in there.
-            if ($htmlTag === strip_tags($htmlTag)) {
+            try {
+                $validatedJsonData = $this->validateJsonLd($schemaBlock);
+            } catch (\Throwable $e) {
                 unset($configuration[$index]);
                 continue;
             }
+
+            if ($validatedJsonData === false) {
+                unset($configuration[$index]);
+                continue;
+            }
+
+            $configuration[$index] = $validatedJsonData;
         }
 
         $indexedConfiguration = array_values($configuration);
@@ -81,11 +133,35 @@ class HtmlTagIntegrator implements IntegratorInterface
             return;
         }
 
-        foreach ($data as $htmlTag) {
-            if (is_string($htmlTag)) {
-                $seoMetadata->addRaw($htmlTag);
+        foreach ($data as $schemaBlock) {
+            if (is_string($schemaBlock)) {
+                $seoMetadata->addSchema($schemaBlock);
             }
         }
+    }
+
+    /**
+     * @param string $jsonLdData
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    protected function validateJsonLd(string $jsonLdData)
+    {
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(1);
+        $dom->loadHTML($jsonLdData);
+        $xpath = new \DOMXpath($dom);
+        $jsonScripts = $xpath->query('//script[@type="application/ld+json"]');
+        $json = trim($jsonScripts->item(0)->nodeValue);
+
+        $data = json_decode($json);
+
+        if ($data === null) {
+            return false;
+        }
+
+        return json_encode($data);
     }
 
     /**
@@ -103,4 +179,5 @@ class HtmlTagIntegrator implements IntegratorInterface
     {
         // no options here.
     }
+
 }

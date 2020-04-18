@@ -2,6 +2,7 @@ pimcore.registerNS('Seo.MetaData.Integrator.HtmlTagIntegrator');
 Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
     fieldSetTitle: t('html_tags') + ' (&lt;meta .../&gt; &lt;link .../&gt; ...)',
+    htmlTagPanel: null,
 
     isCollapsed: function () {
         return !this.hasData();
@@ -11,12 +12,12 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
 
         this.htmlTagPanel = new Ext.Panel({
             title: false,
-            autoScroll: true,
+            autoScroll: false,
             border: false,
             items: [
                 {
                     xtype: 'label',
-                    text: t('Adding raw tags is not recommend. Please use the Element above!'),
+                    text: t('With great power comes great responsibility! Please do not add raw entities unless it is really necessary!'),
                     style: {
                         padding: '10px',
                         border: '1px solid #b32d2d',

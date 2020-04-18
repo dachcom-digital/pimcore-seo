@@ -19,6 +19,17 @@ seo:
                     - MyObjectClass
 ```
 
+This will add an additional `SEO` tab on your documents and objects of type `MyObjectClass`.
+
+If you want to render integrator as `fieldset` instead of `tab` (default), you need to change it like that:
+
+```yaml
+seo:
+    meta_data_configuration:
+        meta_data_integrator:
+            integrator_rendering_type: 'fieldset'
+```
+
 Read more about integrators and how to use them [here](./MetaData/10_Integrator.md).
 
 ## Extractors

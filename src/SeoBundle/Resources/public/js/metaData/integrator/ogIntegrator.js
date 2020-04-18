@@ -11,7 +11,7 @@ Seo.MetaData.Integrator.OpenGraphIntegrator = Class.create(Seo.MetaData.Integrat
 
         this.ogBlockPanel = new Ext.Panel({
             title: false,
-            autoScroll: true,
+            autoScroll: false,
             border: false,
             items: [
                 this.getAddControl()
@@ -21,7 +21,6 @@ Seo.MetaData.Integrator.OpenGraphIntegrator = Class.create(Seo.MetaData.Integrat
         this.setupStoredData();
 
         return [this.ogBlockPanel];
-
     },
 
     setupStoredData: function () {

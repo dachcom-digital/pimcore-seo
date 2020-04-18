@@ -40,6 +40,11 @@ class SeoMetaData implements SeoMetaDataInterface
     private $extraHttp = [];
 
     /**
+     * @var array
+     */
+    private $schema = [];
+
+    /**
      * @deprecated
      *
      * @var array
@@ -210,6 +215,22 @@ class SeoMetaData implements SeoMetaDataInterface
         if (array_key_exists($key, $this->extraHttp)) {
             unset($this->extraHttp[$key]);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchema()
+    {
+        return $this->schema;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addSchema(string $value)
+    {
+        $this->schema[] = $value;
     }
 
     /**

@@ -83,19 +83,30 @@ interface SeoMetaDataInterface
     public function addExtraHttp($key, $value);
 
     /**
-     * @deprecated
+     * @return array
+     */
+    public function getSchema();
+
+    /**
+     * @param string $value
+     */
+    public function addSchema(string $value);
+
+    /**
+     * @return array
      * @internal Do not use this method!
      *
-     * @return array
+     * @deprecated
      */
     public function getRaw();
 
     /**
+     * Do not use this method! It's required to allow a seamless migration from old pimcore installations.
+     *
      * @param string $value
      *
      * @deprecated
-     * @internal Do not use this method!
-     *           It's required to allow a seamless migration from old pimcore installations.
+     * @internal
      */
     public function addRaw(string $value);
 }

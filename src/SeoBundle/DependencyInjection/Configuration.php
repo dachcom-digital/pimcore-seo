@@ -66,6 +66,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('meta_data_integrator')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->enumNode('integrator_rendering_type')->values(['fieldset', 'tab'])->defaultValue('tab')->end()
                         ->arrayNode('enabled_integrator')
                             ->prototype('array')
                                 ->children()

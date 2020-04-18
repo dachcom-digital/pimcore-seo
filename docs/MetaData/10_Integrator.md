@@ -11,6 +11,17 @@ seo:
                     integrator_config:
                         facebook_image_thumbnail: 'socialThumb'
                 -   integrator_name: html_tag
+                -   integrator_name: schema
+```
+
+# Integration Rendering Types
+If you want to render integrator as `fieldset` instead of `tab` (default), you need to change it like that:
+
+```yaml
+seo:
+    meta_data_configuration:
+        meta_data_integrator:
+            integrator_rendering_type: 'fieldset'
 ```
 
 ## Available Integrators

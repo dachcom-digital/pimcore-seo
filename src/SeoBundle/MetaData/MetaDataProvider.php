@@ -41,37 +41,6 @@ class MetaDataProvider implements MetaDataProviderInterface
     }
 
     /**
-     * @param mixed       $element
-     * @param string|null $locale
-     *
-     * @return SeoMetaData
-     */
-    public function getSeoMetaData($element, ?string $locale)
-    {
-        // @todo: check if element has a given SeoMetaData Element?
-        $seoMetaData = new SeoMetaData();
-
-        $extractors = $this->getExtractorsForElement($element);
-        foreach ($extractors as $extractor) {
-            $extractor->updateMetadata($element, $locale, $seoMetaData);
-        }
-
-        return $seoMetaData;
-    }
-
-    /**
-     * @param object $element
-     *
-     * @return ExtractorInterface[]
-     */
-    private function getExtractorsForElement($element)
-    {
-        return array_filter($this->extractorRegistry->getAll(), function (ExtractorInterface $extractor) use ($element) {
-            return $extractor->supports($element);
-        });
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function updateSeoElement($element, ?string $locale)
@@ -96,6 +65,12 @@ class MetaDataProvider implements MetaDataProviderInterface
             }
         }
 
+        if ($schemaBlocks = $seoMetadata->getSchema()) {
+            foreach ($schemaBlocks as $schemaBlock) {
+                $this->headMeta->addRaw(sprintf('<script type="application/ld+json">%s</script>', $schemaBlock));
+            }
+        }
+
         if ($raw = $seoMetadata->getRaw()) {
             foreach ($raw as $rawValue) {
                 $this->headMeta->addRaw($rawValue);
@@ -109,5 +84,59 @@ class MetaDataProvider implements MetaDataProviderInterface
         if ($seoMetadata->getMetaDescription()) {
             $this->headMeta->setDescription($seoMetadata->getMetaDescription());
         }
+    }
+
+    /**
+     * @param mixed       $element
+     * @param string|null $locale
+     * @param array       $excludedExtractors
+     *
+     * @return SeoMetaData
+     * @internal
+     */
+    public function getSeoMetaDataForBackend($element, ?string $locale, array $excludedExtractors = [])
+    {
+        // @todo: check if element has a given SeoMetaData Element?
+        $seoMetaData = new SeoMetaData();
+        $extractors = $this->getExtractorsForElement($element);
+        foreach ($extractors as $extractorName => $extractor) {
+            if (in_array($extractorName, $excludedExtractors)) {
+                continue;
+            }
+
+            $extractor->updateMetadata($element, $locale, $seoMetaData);
+        }
+
+        return $seoMetaData;
+    }
+
+    /**
+     * @param mixed       $element
+     * @param string|null $locale
+     *
+     * @return SeoMetaData
+     */
+    protected function getSeoMetaData($element, ?string $locale)
+    {
+        // @todo: check if element has a given SeoMetaData Element?
+        $seoMetaData = new SeoMetaData();
+        $extractors = $this->getExtractorsForElement($element);
+        foreach ($extractors as $extractor) {
+            $extractor->updateMetadata($element, $locale, $seoMetaData);
+        }
+
+        return $seoMetaData;
+    }
+
+    /**
+     * @param object $element
+     *
+     * @return ExtractorInterface[]
+     */
+    protected function getExtractorsForElement($element)
+    {
+        return array_filter($this->extractorRegistry->getAll(), function (ExtractorInterface $extractor) use ($element) {
+            return $extractor->supports($element);
+        });
     }
 }

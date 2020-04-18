@@ -6,11 +6,17 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
     integrator: [],
 
     layout: null,
+    tabPanel: null,
+    renderAsTab: false,
 
     initialize: function (element, configuration) {
         this.configuration = configuration;
         this.element = element;
         this.integrator = [];
+
+        if (this.configuration.hasOwnProperty('integrator_rendering_type')) {
+            this.renderAsTab = this.configuration.integrator_rendering_type === 'tab';
+        }
     },
 
     getElement: function () {
@@ -24,8 +30,21 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
             iconCls: 'pimcore_material_icon seo_icon_meta_data',
             border: false,
             autoScroll: true,
-            bodyStyle: 'padding:0 10px 0 10px;'
+            bodyStyle: this.renderAsTab ? 'padding: 10px;' : 'padding: 0 10px 0 10px;'
         });
+
+        if (this.renderAsTab === true) {
+            this.tabPanel = new Ext.TabPanel({
+                activeTab: 0,
+                layout: 'anchor',
+                width: '100%',
+                defaults: {
+                    autoHeight: true,
+                },
+            });
+
+            this.layout.add(this.tabPanel);
+        }
 
         this.element.tabbar.add(this.layout);
 
@@ -50,7 +69,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
 
                 this.buildMetaDataIntegrator(resp.data, resp.configuration);
             }.bind(this),
-            failure: function (response) {
+            failure: function () {
                 Ext.Msg.alert(t('error'), t('Error while fetching seo meta data.'));
             }.bind(this)
         });
@@ -69,15 +88,18 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
 
             if (Seo.MetaData.Integrator.hasOwnProperty(integratorClassName)) {
 
-                integratorClass = new Seo.MetaData.Integrator[integratorClassName](this.getElementType(), this.getElementId(), integratorName, integratorConfiguration, integratorData);
+                integratorClass = new Seo.MetaData.Integrator[integratorClassName](this.getElementType(), this.getElementId(), integratorName, integratorConfiguration, integratorData, this.renderAsTab);
                 this.integrator.push(integratorClass);
-                this.layout.add(integratorClass.buildLayout());
-
+                this[this.renderAsTab === true ? 'tabPanel' : 'layout'].add(integratorClass.buildLayout());
             } else {
                 console.warn('Integrator class Seo.MetaData.Integrator.' + integratorClassName + ' not found!');
             }
 
         }.bind(this));
+
+        if (this.renderAsTab === true) {
+            this.tabPanel.setActiveTab(0);
+        }
     },
 
     save: function () {

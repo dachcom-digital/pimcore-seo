@@ -16,14 +16,15 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
     previewContainerItem: null,
     previewContainerTemplate: null,
     delayedRefreshTask: null,
+    renderAsTab: false,
 
-    initialize: function (elementType, elementId, type, configuration, data) {
+    initialize: function (elementType, elementId, type, configuration, data, renderAsTab) {
         this.elementType = elementType;
         this.elementId = elementId;
         this.type = type;
         this.configuration = configuration;
         this.data = data;
-
+        this.renderAsTab = renderAsTab;
         this.delayedRefreshTask = new Ext.util.DelayedTask(this.refreshLivePreview.bind(this));
     },
 
@@ -111,17 +112,19 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
         var panelItems;
 
         this.formPanel = new Ext.form.Panel({
-            title: false,
-            autoScroll: true,
+            title: this.renderAsTab ? this.fieldSetTitle : false,
+            style: {
+                padding: this.renderAsTab ? '20px' : 0
+            }
         });
 
-        this.fieldSet = new Ext.form.FieldSet({
-            title: this.fieldSetTitle,
+        this.fieldSet = new Ext.form[this.renderAsTab ? 'Panel' : 'FieldSet']({
+            title: this.renderAsTab ? false : this.fieldSetTitle,
             layout: {
                 type: 'hbox'
             },
-            collapsible: true,
-            collapsed: this.isCollapsed(),
+            collapsible: !this.renderAsTab,
+            collapsed: this.renderAsTab ? false : this.isCollapsed(),
             defaults: {
                 labelWidth: 200
             }
@@ -215,7 +218,6 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
                 {
                     xtype: 'component',
                     itemId: 'previewContainer',
-                    style: '',
                     autoEl: {
                         height: 380,
                         tag: 'iframe',

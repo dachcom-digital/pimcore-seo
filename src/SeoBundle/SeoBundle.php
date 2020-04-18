@@ -4,11 +4,13 @@ namespace SeoBundle;
 
 use SeoBundle\DependencyInjection\Compiler\MetaDataExtractorPass;
 use SeoBundle\DependencyInjection\Compiler\MetaDataIntegratorPass;
+use SeoBundle\DependencyInjection\Compiler\RemovePimcoreListenerPass;
 use SeoBundle\Tool\Install;
 use SeoBundle\DependencyInjection\Compiler\ResourceProcessorPass;
 use SeoBundle\DependencyInjection\Compiler\IndexWorkerPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 
@@ -37,6 +39,7 @@ class SeoBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new ResourceProcessorPass());
         $container->addCompilerPass(new MetaDataExtractorPass());
         $container->addCompilerPass(new MetaDataIntegratorPass());
+        $container->addCompilerPass(new RemovePimcoreListenerPass(), PassConfig::TYPE_BEFORE_REMOVING, 250);
     }
 
     /**
@@ -67,8 +70,7 @@ class SeoBundle extends AbstractPimcoreBundle
     public function getCssPaths()
     {
         return [
-            '/bundles/seo/css/admin.css',
-            '/bundles/seo/css/integrator/title-description.css'
+            '/bundles/seo/css/admin.css'
         ];
     }
 
@@ -79,11 +81,18 @@ class SeoBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/seo/js/plugin.js',
+            '/bundles/seo/js/metaData/extension/localizedFieldExtension.js',
+            '/bundles/seo/js/metaData/extension/integratorValueFetcher.js',
+            '/bundles/seo/js/metaData/extension/hrefFieldExtension.js',
+            '/bundles/seo/js/metaData/components/seoHrefTextField.js',
             '/bundles/seo/js/metaData/abstractMetaDataPanel.js',
             '/bundles/seo/js/metaData/documentMetaDataPanel.js',
             '/bundles/seo/js/metaData/objectMetaDataPanel.js',
             '/bundles/seo/js/metaData/integrator/abstractIntegrator.js',
             '/bundles/seo/js/metaData/integrator/titleDescriptionIntegrator.js',
+            '/bundles/seo/js/metaData/integrator/ogIntegrator.js',
+            '/bundles/seo/js/metaData/integrator/htmlTagIntegrator.js',
+            '/bundles/seo/js/metaData/integrator/ogIntegrator/item.js',
         ];
     }
 

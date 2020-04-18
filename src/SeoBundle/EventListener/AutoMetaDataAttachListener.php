@@ -105,6 +105,6 @@ class AutoMetaDataAttachListener implements EventSubscriberInterface
             return;
         }
 
-        $this->metaDataProvider->updateSeoElement($document);
+        $this->metaDataProvider->updateSeoElement($document, $request->getLocale());
     }
 }

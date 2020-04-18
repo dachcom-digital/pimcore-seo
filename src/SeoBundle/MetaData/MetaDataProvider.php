@@ -40,14 +40,20 @@ class MetaDataProvider implements MetaDataProviderInterface
         $this->extractorRegistry = $extractorRegistry;
     }
 
-    public function getSeoMetaData($element)
+    /**
+     * @param mixed       $element
+     * @param string|null $locale
+     *
+     * @return SeoMetaData
+     */
+    public function getSeoMetaData($element, ?string $locale)
     {
         // @todo: check if element has a given SeoMetaData Element?
         $seoMetaData = new SeoMetaData();
 
         $extractors = $this->getExtractorsForElement($element);
         foreach ($extractors as $extractor) {
-            $extractor->updateMetadata($element, $seoMetaData);
+            $extractor->updateMetadata($element, $locale, $seoMetaData);
         }
 
         return $seoMetaData;
@@ -68,9 +74,9 @@ class MetaDataProvider implements MetaDataProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function updateSeoElement($element)
+    public function updateSeoElement($element, ?string $locale)
     {
-        $seoMetadata = $this->getSeoMetaData($element);
+        $seoMetadata = $this->getSeoMetaData($element, $locale);
 
         if ($extraProperties = $seoMetadata->getExtraProperties()) {
             foreach ($extraProperties as $key => $value) {
@@ -87,6 +93,12 @@ class MetaDataProvider implements MetaDataProviderInterface
         if ($extraHttp = $seoMetadata->getExtraHttp()) {
             foreach ($extraHttp as $key => $value) {
                 $this->headMeta->appendHttpEquiv($key, $value);
+            }
+        }
+
+        if ($raw = $seoMetadata->getRaw()) {
+            foreach ($raw as $rawValue) {
+                $this->headMeta->addRaw($rawValue);
             }
         }
 

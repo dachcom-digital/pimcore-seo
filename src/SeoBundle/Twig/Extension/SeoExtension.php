@@ -32,11 +32,12 @@ class SeoExtension extends AbstractExtension
     }
 
     /**
-     * @param object $element
+     * @param object      $element
+     * @param string|null $locale
      */
-    public function updateMetadata($element)
+    public function updateMetadata($element, ?string $locale)
     {
-        $this->metaDataProvider->updateSeoElement($element);
+        $this->metaDataProvider->updateSeoElement($element, $locale);
     }
 
     /**

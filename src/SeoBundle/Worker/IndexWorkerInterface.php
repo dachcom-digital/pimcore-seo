@@ -3,6 +3,7 @@
 namespace SeoBundle\Worker;
 
 use SeoBundle\Model\QueueEntryInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface IndexWorkerInterface
 {
@@ -14,10 +15,13 @@ interface IndexWorkerInterface
 
     /**
      * @param array $configuration
-     *
-     * @throws \Exception
      */
     public function setConfiguration(array $configuration);
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public static function configureOptions(OptionsResolver $resolver);
 
     /**
      * @param QueueEntryInterface[] $queueEntries

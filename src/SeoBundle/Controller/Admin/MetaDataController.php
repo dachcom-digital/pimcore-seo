@@ -6,40 +6,23 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use SeoBundle\Manager\ElementMetaDataManagerInterface;
-use SeoBundle\Registry\MetaDataIntegratorRegistryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class MetaDataController extends AdminController
 {
-    /**
-     * @var array
-     */
-    protected $integratorConfiguration;
-
     /**
      * @var ElementMetaDataManagerInterface
      */
     protected $elementMetaDataManager;
 
     /**
-     * @var MetaDataIntegratorRegistryInterface
+     * @param ElementMetaDataManagerInterface $elementMetaDataManager
      */
-    protected $metaDataIntegratorRegistry;
-
-    /**
-     * @param array                               $integratorConfiguration
-     * @param ElementMetaDataManagerInterface     $elementMetaDataManager
-     * @param MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry
-     */
-    public function __construct(
-        array $integratorConfiguration,
-        ElementMetaDataManagerInterface $elementMetaDataManager,
-        MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry
-    ) {
-        $this->integratorConfiguration = $integratorConfiguration;
+    public function __construct(ElementMetaDataManagerInterface $elementMetaDataManager)
+    {
         $this->elementMetaDataManager = $elementMetaDataManager;
-        $this->metaDataIntegratorRegistry = $metaDataIntegratorRegistry;
     }
 
     /**
@@ -48,7 +31,7 @@ class MetaDataController extends AdminController
     public function getMetaDataDefinitionsAction()
     {
         return $this->json([
-            'configuration' => $this->integratorConfiguration
+            'configuration' => $this->elementMetaDataManager->getMetaDataIntegratorConfiguration()
         ]);
     }
 
@@ -61,8 +44,6 @@ class MetaDataController extends AdminController
      */
     public function getElementMetaDataConfigurationAction(Request $request)
     {
-        $data = [];
-        $configuration = [];
         $element = null;
 
         $elementId = (int) $request->query->get('elementId', 0);
@@ -74,15 +55,8 @@ class MetaDataController extends AdminController
             $element = Document::getById($elementId);
         }
 
-        foreach ($this->integratorConfiguration['enabled_integrator'] as $enabledIntegratorName) {
-            $metaDataIntegrator = $this->metaDataIntegratorRegistry->has($enabledIntegratorName) ? $this->metaDataIntegratorRegistry->get($enabledIntegratorName) : null;
-            $config = $metaDataIntegrator === null ? [] : $metaDataIntegrator->getBackendConfiguration($element);
-            $configuration[$enabledIntegratorName] = $config;
-        }
-
-        foreach ($this->elementMetaDataManager->getElementData($elementType, $elementId) as $element) {
-            $data[$element->getIntegrator()] = $element->getData();
-        }
+        $configuration = $this->elementMetaDataManager->getMetaDataIntegratorBackendConfiguration($element);
+        $data = $this->elementMetaDataManager->getElementDataForBackend($elementType, $elementId);
 
         return $this->adminJson([
             'success'       => true,
@@ -116,5 +90,28 @@ class MetaDataController extends AdminController
         return $this->adminJson([
             'success' => true
         ]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function generateMetaDataPreviewAction(Request $request)
+    {
+        $elementId = (int) $request->query->get('elementId', 0);
+        $elementType = $request->query->get('elementType', '');
+
+        $template = $request->query->get('template', 'none');
+        $integratorName = $request->query->get('integratorName');
+        $data = json_decode($request->query->get('data', ''), true);
+
+        if (empty($data)) {
+            $data = [];
+        }
+
+        $previewData = $this->elementMetaDataManager->generatePreviewDataForElement($elementType, $elementId, $integratorName, $template, $data);
+
+        return $this->render($previewData['path'], $previewData['params']);
     }
 }

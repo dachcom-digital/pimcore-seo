@@ -40,6 +40,13 @@ class SeoMetaData implements SeoMetaDataInterface
     private $extraHttp = [];
 
     /**
+     * @deprecated
+     *
+     * @var array
+     */
+    private $raw = [];
+
+    /**
      * @param int $id
      */
     public function setId($id)
@@ -203,6 +210,22 @@ class SeoMetaData implements SeoMetaDataInterface
         if (array_key_exists($key, $this->extraHttp)) {
             unset($this->extraHttp[$key]);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRaw()
+    {
+        return $this->raw;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addRaw(string $value)
+    {
+        $this->raw[] = $value;
     }
 
     /**

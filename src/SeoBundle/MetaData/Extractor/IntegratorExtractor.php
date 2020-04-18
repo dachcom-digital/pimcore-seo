@@ -65,7 +65,7 @@ class IntegratorExtractor implements ExtractorInterface
     /**
      * {@inheritdoc}
      */
-    public function updateMetaData($element, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
     {
         $elementId = null;
         $elementType = null;
@@ -93,7 +93,7 @@ class IntegratorExtractor implements ExtractorInterface
                 continue;
             }
 
-            $metaDataIntegrator->updateMetaData($element, $elementMeta->getData(), $seoMetadata);
+            $metaDataIntegrator->updateMetaData($element, $elementMeta->getData(), $locale, $seoMetadata);
         }
     }
 }

@@ -9,3 +9,7 @@ seo.controller.admin.meta_data.set_element_meta_data_configuration:
     methods: [POST]
     path: /admin/seo/meta-data/set-element-meta-data-configuration
     defaults: { _controller: SeoBundle\Controller\Admin\MetaDataController::setElementMetaDataConfigurationAction }
+seo.controller.admin.meta_data.generate_meta_data_preview:
+    methods: [GET]
+    path: /admin/seo/meta-data/generate-meta-data-preview
+    defaults: { _controller: SeoBundle\Controller\Admin\MetaDataController::generateMetaDataPreviewAction }

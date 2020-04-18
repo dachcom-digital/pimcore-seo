@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preview</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="{{ asset('bundles/seo/css/integrator/og-graph.css') }}">
+</head>
+<body>
+
+<div id="facebook" class="metadata-group__display is-active">
+    <div class="card-seo-facebook">
+        <div class="card-seo-facebook__image js-preview-image"
+             style="background-image: url({{ asset(imagePath) }})"></div>
+        <div class="card-seo-facebook__text">
+            <span class="card-seo-facebook__link js-preview-domain">{{ url }}</span>
+            <div class="card-seo-facebook__content">
+                <div style="margin-top:5px;">
+                    <div class="card-seo-facebook__title js-preview-title">{{ title }}</div>
+                </div>
+                <span class="card-seo-facebook__description js-preview-description">{{ description }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

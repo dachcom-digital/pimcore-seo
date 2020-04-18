@@ -15,7 +15,8 @@ interface ExtractorInterface
 
     /**
      * @param object               $element
+     * @param string|null          $locale
      * @param SeoMetaDataInterface $seoMetadata
      */
-    public function updateMetaData($element, SeoMetaDataInterface $seoMetadata);
+    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata);
 }

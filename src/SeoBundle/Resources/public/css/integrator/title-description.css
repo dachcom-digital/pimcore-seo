@@ -1,64 +1,66 @@
-.seo-module-title-description {
-    position: absolute;
-    left: 715px;
-    top: 0;
-    width: 620px;
+body {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    margin:20px;
+    background: #ebebeb;
+}
+
+#snippet-box {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 30px;
+    margin: 28px 0 60px 0;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+    background: white;
+}
+
+.snippet-title {
+    color: rgb(26, 13, 171);
+    cursor: pointer;
     font-family: arial, sans-serif;
-}
-
-.seo-module-title-description .entry {
-    background-color: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    border-radius: 2px;
-    border-bottom: 1px hidden #fff;
-    margin: 0 0 10px 0;
-    padding: 10px 16px 10px 16px;
-}
-
-.seo-module-title-description .desktop {
-    width: 632px;
-}
-
-.seo-module-title-description .mobile {
-    width: 384px;
-}
-
-.seo-module-title-description .title {
-    color: #1a0dab;
-}
-
-.seo-module-title-description .url {
-    font-size: 14px;
-    color: #006621;
-}
-
-.seo-module-title-description .description {
-    color: #545454;
-}
-
-.seo-module-title-description .desktop .title {
     font-size: 18px;
+    font-weight: 400;
+    line-height: 21.6px;
+    text-align: left;
+    text-decoration: none;
+    text-decoration-color: rgb(26, 13, 171);
+    text-decoration-line: none;
+    text-decoration-style: solid;
+    white-space: nowrap;
     display: inline-block;
-    padding: 0 0 3px 0;
 }
 
-.seo-module-title-description .desktop .description {
-    font-size: 13px;
-    padding: 0 0 0 0;
-}
-
-.seo-module-title-description .mobile .title {
-    font-size: 16px;
-    padding: 0 0 2px 0;
-    line-height: 20px;
-}
-
-.seo-module-title-description .mobile .url {
-    padding: 0 0 12px 0;
-}
-
-.seo-module-title-description .mobile .description {
+.snippet-url {
+    color: rgb(0, 102, 33);
+    font-family: arial, sans-serif;
     font-size: 14px;
-    padding: 11px 0 0 0;
-    border-top: 1px solid #EEEEEE;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+    text-align: left;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.snippet-text {
+    color: rgb(84, 84, 84);
+    font-family: arial, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18.2px;
+    overflow-wrap: break-word;
+    text-align: left;
+    display: inline-block;;
+}
+
+.snippet-rich {
+    box-sizing: border-box;
+    clear: left;
+    color: rgb(68, 68, 68);
+    font-family: Arial, Verdana, Tahoma;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 25px;
+    display: inline;
 }

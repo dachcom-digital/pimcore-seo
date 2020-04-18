@@ -61,14 +61,15 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
 
         Ext.Array.each(this.configuration.enabled_integrator, function (integrator) {
 
-            var integratorClassName = this.getIntegratorClassName(integrator),
+            var integratorName = integrator['integrator_name'],
+                integratorClassName = this.getIntegratorClassName(integratorName),
                 integratorClass,
-                integratorConfiguration = configuration !== null && configuration.hasOwnProperty(integrator) ? configuration[integrator] : null,
-                integratorData = data !== null && data.hasOwnProperty(integrator) ? data[integrator] : null;
+                integratorConfiguration = configuration !== null && configuration.hasOwnProperty(integratorName) ? configuration[integratorName] : null,
+                integratorData = data !== null && data.hasOwnProperty(integratorName) ? data[integratorName] : null;
 
             if (Seo.MetaData.Integrator.hasOwnProperty(integratorClassName)) {
 
-                integratorClass = new Seo.MetaData.Integrator[integratorClassName](integrator, integratorConfiguration, integratorData);
+                integratorClass = new Seo.MetaData.Integrator[integratorClassName](this.getElementType(), this.getElementId(), integratorName, integratorConfiguration, integratorData);
                 this.integrator.push(integratorClass);
                 this.layout.add(integratorClass.buildLayout());
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="{{ asset('bundles/seo/css/integrator/title-description.css') }}">
+</head>
+<body>
+
+<div id="snippet-box">
+    <div>
+        <div class="snippet-title">{{ title }}</div>
+    </div>
+    <div>
+        <div class="snippet-url">{{ url }}</div>
+    </div>
+    <div class="snippet-rich" style="clear: left; font-size: 13px; display: block;">
+        <img src="{{ asset('bundles/seo/img/integrator/star.svg') }}" alt="" style="width: 14px; height: 14px; position: relative; top: -2px;">
+        <img src="{{ asset('bundles/seo/img/integrator/star.svg') }}" alt="" style="width: 14px; height: 14px; position: relative; top: -2px;">
+        <img src="{{ asset('bundles/seo/img/integrator/star.svg') }}" alt="" style="width: 14px; height: 14px; position: relative; top: -2px;">
+        <img src="{{ asset('bundles/seo/img/integrator/star.svg') }}" alt="" style="width: 14px; height: 14px; position: relative; top: -2px;">
+        <img src="{{ asset('bundles/seo/img/integrator/star.svg') }}" alt="" style="width: 14px; height: 14px; position: relative; top: -2px;">
+        Bewertung: 4,1 - 1.488 Rezensionen
+    </div>
+    <div class="snippet-text">
+        <span id="app-snippet-author" style="display: inline-block;">{{ author }} -</span> <span id="app-snippet-date" style="display: inline-block;">{{ date }}</span>
+        <span id="app-snippet-text" class="snippet-text" style="display: block;">{{ description }}</span>
+    </div>
+</div>
+
+</body>
+</html>

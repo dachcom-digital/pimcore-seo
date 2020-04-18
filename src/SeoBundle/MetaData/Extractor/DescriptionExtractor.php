@@ -17,7 +17,7 @@ class DescriptionExtractor implements ExtractorInterface
     /**
      * {@inheritdoc}
      */
-    public function updateMetaData($element, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
     {
         //$seoMetadata->setMetaDescription(get_class($element));
         //$seoMetadata->setTitle("asdfdsafafsdasdf");

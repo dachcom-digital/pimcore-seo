@@ -15,30 +15,6 @@ class GoogleIndexWorker implements IndexWorkerInterface
 
     /**
      * {@inheritDoc}
-     */
-    public function setConfiguration(array $configuration)
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'push_requests_per_day'    => 200,
-            'push_requests_per_minute' => 600,
-            'auth_config'              => null,
-        ]);
-
-        $resolver->setAllowedTypes('push_requests_per_day', 'int');
-        $resolver->setAllowedTypes('push_requests_per_minute', 'int');
-        $resolver->setAllowedTypes('auth_config', 'string');
-        $resolver->setRequired(['push_requests_per_day', 'push_requests_per_minute', 'auth_config']);
-
-        try {
-            $this->configuration = $resolver->resolve($configuration);
-        } catch (\Throwable $e) {
-            throw new \Exception(sprintf('Invalid "%s" worker configuration. %s', 'google_index', $e->getMessage()));
-        }
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * @todo:   Handle Quotas? (@see https://developers.google.com/search/apis/indexing-api/v3/quota-pricing)
      * @todo:   We're using batched submission here (@see https://developers.google.com/search/apis/indexing-api/v3/using-api#batching)
@@ -205,5 +181,30 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $client->setUseBatch(true);
 
         return $client;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConfiguration(array $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function configureOptions(OptionsResolver $resolver)
+    {
+         $resolver->setDefaults([
+            'push_requests_per_day'    => 200,
+            'push_requests_per_minute' => 600,
+            'auth_config'              => null,
+        ]);
+
+        $resolver->setAllowedTypes('push_requests_per_day', 'int');
+        $resolver->setAllowedTypes('push_requests_per_minute', 'int');
+        $resolver->setAllowedTypes('auth_config', 'string');
+        $resolver->setRequired(['push_requests_per_day', 'push_requests_per_minute', 'auth_config']);
     }
 }

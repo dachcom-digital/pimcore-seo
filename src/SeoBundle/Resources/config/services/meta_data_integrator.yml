@@ -9,8 +9,18 @@ services:
     SeoBundle\Registry\MetaDataIntegratorRegistry: ~
 
     SeoBundle\Manager\ElementMetaDataManagerInterface: '@SeoBundle\Manager\ElementMetaDataManager'
-    SeoBundle\Manager\ElementMetaDataManager: ~
+    SeoBundle\Manager\ElementMetaDataManager:
+        arguments:
+            $integratorConfiguration: '%seo.meta_data_integrator.configuration%'
 
     SeoBundle\MetaData\Integrator\TitleDescriptionIntegrator:
         tags:
             - {name: seo.meta_data.integrator, identifier: title_description }
+
+    SeoBundle\MetaData\Integrator\OpenGraphIntegrator:
+        tags:
+            - {name: seo.meta_data.integrator, identifier: open_graph }
+
+    SeoBundle\MetaData\Integrator\HtmlTagIntegrator:
+        tags:
+            - {name: seo.meta_data.integrator, identifier: html_tag }

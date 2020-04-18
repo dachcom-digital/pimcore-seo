@@ -63,8 +63,8 @@ seo:
 ## Next Steps
 Learn more about metadata or the index notification.
 
-- [Meta Data](./docs/10_MetaData.md) [Set Title, Description, ...]
-- [Index Notification](docs/20_IndexNotification.md) [Push Data to Google Index]
+- [Meta Data](./10_MetaData.md) [Set Title, Description, ...]
+- [Index Notification](./20_IndexNotification.md) [Push Data to Google Index]
 
 
 ## Configuration

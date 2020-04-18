@@ -53,7 +53,7 @@ Does actually the same as the update command and preferred in CI-Workflow:
 This Bundle needs some preparation. Please checkout the [Setup && Overview](docs/00_Setup.md) guide first.
 
 ## Further Information
-- [Setup && Overview](docs/00_Setup.md)
+- [Setup & Overview](docs/00_Setup.md)
 - [Meta Data](./docs/10_MetaData.md) [Set Title, Description, ...]
   - [Integrators](./docs/MetaData/10_Integrator.md)
     - [Title & Description Integrator](./docs/MetaData/Integrator/10_TitleDescriptionIntegrator.md)

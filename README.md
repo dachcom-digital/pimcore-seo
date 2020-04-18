@@ -1,5 +1,5 @@
 # Pimcore SEO Bundle
-The last SEO Bundle for Pimcore you'll ever need!
+The last SEO Bundle for pimcore you'll ever need!
 
 - Create title, description and meta tags (OG-Tags, Twitter-Cards) for documents **and** objects!
 - Shipped with a save and user-friendly editor with multi locale support!
@@ -25,43 +25,45 @@ The last SEO Bundle for Pimcore you'll ever need!
 }
 ```
 
-## Include Routes
+### Installation via Extension Manager
+After you have installed the SEO Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
+- Click the green `+` Button in `Enable / Disable` row
+- Click the green `+` Button in `Install/Uninstall` row
 
-```yaml
-# app/config/routing.yml
-seo:
-    resource: '@SeoBundle/Resources/config/pimcore/routing.yml'
-```
+### Installation via CommandLine
+After you have installed the SEO Bundle via composer:
+- Execute: `$ bin/console pimcore:bundle:enable SeoBundle`
+- Execute: `$ bin/console pimcore:bundle:install SeoBundle`
 
-## Configuration
+## Upgrading
 
-```yaml
-seo:
-    meta_data_configuration:
-        meta_data_provider:
-            auto_detect_documents: true
-        meta_data_integrator:
-            documents:
-                enabled: true
-                hide_pimcore_default_seo_panel: true
-            objects:
-                enabled: true
-                data_classes:
-                    - Job
-            enabled_integrator:
-                -   integrator_name: title_description
-                -   integrator_name: open_graph
-                    integrator_config:
-                        facebook_image_thumbnail: 'socialThumb'
-                -   integrator_name: html_tag
-    index_provider_configuration:
-        enabled_worker:
-            -   worker_name: google_index
-                worker_config:
-                    auth_config: app/config/pimcore/google-api-private-key.json # default pimcore: app/config/pimcore/google-api-private-key.json
-        pimcore_element_watcher:
-            enabled: true
-```
+### Upgrading via Extension Manager
+After you have updated the SEO Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
+- Click the green `+` Button in `Update` row
+
+### Upgrading via CommandLine
+After you have updated the SEO Bundle via composer:
+- Execute: `$ bin/console pimcore:bundle:update SeoBundle`
+
+### Migrate via CommandLine
+Does actually the same as the update command and preferred in CI-Workflow:
+- Execute: `$ bin/console pimcore:migrations:migrate -b SeoBundle`
+
+## Usage
+This Bundle needs some preparation. Please checkout the [Setup && Overview](docs/00_Setup.md) guide first.
+
+## Further Information
+- [Setup && Overview](docs/00_Setup.md)
+- [Meta Data](./docs/10_MetaData.md) [Set Title, Description, ...]
+  - [Integrators](./docs/MetaData/10_Integrator.md)
+    - [Title & Description Integrator](./docs/MetaData/Integrator/10_TitleDescriptionIntegrator.md)
+    - [Open Graph Integrator](./docs/MetaData/Integrator/11_OpenGraphIntegrator.md)
+    - [HTML-Tag Integrator](./docs/MetaData/Integrator/12_HtmlTagIntegrator.md)
+    - [Schema Integrator](./docs/MetaData/Integrator/13_SchemaIntegrator.md)
+  - [Extractors](./docs/MetaData/20_Extractors.md)
+    - [Custom Extractor](./docs/MetaData/Extractor/10_CustomExtractor.md)
+- [Index Notification](docs/20_IndexNotification.md) [Push Data to Google Index]
+  - [Google Worker](docs/IndexNotification/Worker/01_GoogleWorker.md) [Push Data to Google Index]
 
 ## Supported 3rd Party Bundles
 Use [dachcom-digital/jobs](https://github.com/dachcom-digital/pimcore-jobs) to push job data via google index!

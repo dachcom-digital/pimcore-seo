@@ -12,8 +12,4 @@ services:
         arguments:
             $integratorConfiguration: '%seo.meta_data_integrator.configuration%'
         tags:
-            - {name: seo.meta_data.extractor, identifier: integrator, priority: 500 }
-
-    SeoBundle\MetaData\Extractor\DescriptionExtractor:
-        tags:
-            - {name: seo.meta_data.extractor, identifier: description }
+            - {name: seo.meta_data.extractor, identifier: integrator, priority: -255 }

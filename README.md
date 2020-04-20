@@ -72,6 +72,7 @@ This Bundle needs some preparation. Please checkout the [Setup && Overview](docs
 
 ## Supported 3rd Party Bundles
 Use [dachcom-digital/jobs](https://github.com/dachcom-digital/pimcore-jobs) to push job data via google index!
+Use [dachcom-digital/schema](https://github.com/dachcom-digital/pimcore-schema) to generate schema blocks via PHP API with ease!
 
 ## Copyright and license
 Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.ch)  

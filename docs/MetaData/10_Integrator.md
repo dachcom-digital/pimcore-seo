@@ -28,5 +28,6 @@ seo:
 
 - [Title & Description Integrator](./Integrator/10_TitleDescriptionIntegrator.md)
 - [Open Graph Integrator](./Integrator/11_OpenGraphIntegrator.md)
-- [HTML-Tag Integrator](./Integrator/12_HtmlTagIntegrator.md)
+- [Twitter Card Integrator](./Integrator/12_TwitterCardIntegrator.md)
 - [Schema Integrator](./Integrator/13_SchemaIntegrator.md)
+- [HTML Tag Integrator](./Integrator/14_HtmlTagIntegrator.md)

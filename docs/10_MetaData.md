@@ -40,10 +40,11 @@ Read more about integrators and how to use them [here](./MetaData/20_Extractors.
 - [Integrators](./MetaData/10_Integrator.md)
   - [Title & Description Integrator](./MetaData/Integrator/10_TitleDescriptionIntegrator.md)
   - [Open Graph Integrator](./MetaData/Integrator/11_OpenGraphIntegrator.md)
-  - [HTML-Tag Integrator](./etaData/Integrator/12_HtmlTagIntegrator.md)
+  - [Twitter Card Integrator](./MetaData/Integrator/12_TwitterCardIntegrator.md)
   - [Schema Integrator](./MetaData/Integrator/13_SchemaIntegrator.md)
+  - [HTML-Tag Integrator](./MetaData/Integrator/14_HtmlTagIntegrator.md)
 - [Extractors](./MetaData/20_Extractors.md)
-  - [Custom Extractor](./MetaData/Extractor/10_CustomExtractor/.md)
+  - [Custom Extractor](./MetaData/Extractor/10_CustomExtractor.md)
   
   
 ## Full Configuration Example

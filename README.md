@@ -58,8 +58,9 @@ This Bundle needs some preparation. Please checkout the [Setup && Overview](docs
   - [Integrators](./docs/MetaData/10_Integrator.md)
     - [Title & Description Integrator](./docs/MetaData/Integrator/10_TitleDescriptionIntegrator.md)
     - [Open Graph Integrator](./docs/MetaData/Integrator/11_OpenGraphIntegrator.md)
-    - [HTML-Tag Integrator](./docs/MetaData/Integrator/12_HtmlTagIntegrator.md)
+    - [Twitter Card Integrator](./docs/MetaData/Integrator/12_TwitterCardIntegrator.md)
     - [Schema Integrator](./docs/MetaData/Integrator/13_SchemaIntegrator.md)
+    - [HTML-Tag Integrator](./docs/MetaData/Integrator/14_HtmlTagIntegrator.md)
   - [Extractors](./docs/MetaData/20_Extractors.md)
     - [Custom Extractor](./docs/MetaData/Extractor/10_CustomExtractor.md)
 - [Index Notification](docs/20_IndexNotification.md) [Push Data to Google Index]

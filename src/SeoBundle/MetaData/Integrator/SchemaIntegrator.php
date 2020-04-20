@@ -2,6 +2,7 @@
 
 namespace SeoBundle\MetaData\Integrator;
 
+use Pimcore\Model\DataObject;
 use SeoBundle\MetaData\MetaDataProviderInterface;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,7 +29,9 @@ class SchemaIntegrator implements IntegratorInterface
      */
     public function getBackendConfiguration($element)
     {
+        $useLocalizedFields = $element instanceof DataObject;
         $hasDynamicallyAddedJsonLdData = false;
+        $addedJsonLdDataTypes = [];
 
         foreach (\Pimcore\Tool::getValidLanguages() as $locale) {
 
@@ -45,15 +48,23 @@ class SchemaIntegrator implements IntegratorInterface
             $schemaBlocks = $seoMetaData->getSchema();
             if (is_array($schemaBlocks) && count($schemaBlocks) > 0) {
                 $hasDynamicallyAddedJsonLdData = true;
-                break;
+                foreach ($schemaBlocks as $schemaBlock) {
+                    if (isset($schemaBlock['@type'])) {
+                        if (!isset($addedJsonLdDataTypes[$schemaBlock['@type']])) {
+                            $addedJsonLdDataTypes[$schemaBlock['@type']] = 0;
+                        }
+                        $addedJsonLdDataTypes[$schemaBlock['@type']]++;
+                    }
+                }
             }
         }
 
         return [
-            'hasDynamicallyAddedJsonLdData' => $hasDynamicallyAddedJsonLdData,
-            'hasLivePreview'                => false,
-            'livePreviewTemplates'          => [],
-            'useLocalizedFields'            => false
+            'hasDynamicallyAddedJsonLdData'   => $hasDynamicallyAddedJsonLdData,
+            'dynamicallyAddedJsonLdDataTypes' => $addedJsonLdDataTypes,
+            'useLocalizedFields'              => $useLocalizedFields,
+            'hasLivePreview'                  => false,
+            'livePreviewTemplates'            => [],
         ];
     }
 
@@ -75,10 +86,25 @@ class SchemaIntegrator implements IntegratorInterface
         }
 
         $schemaBlocksConfiguration = [];
+        $cleanData = function (array $schemaBlock) {
+            $cleanData = json_encode($schemaBlock, JSON_PRETTY_PRINT);
+            return sprintf('<script type="application/ld+json">%s</script>', $cleanData);
+        };
+
         foreach ($configuration as $schemaBlock) {
-            $rawData = json_decode($schemaBlock, true);
-            $cleanData = json_encode($rawData, JSON_PRETTY_PRINT);
-            $schemaBlocksConfiguration[] = sprintf('<script type="application/ld+json">%s</script>', $cleanData);
+            if ($schemaBlock['localized'] === false) {
+                $schemaBlocksConfiguration[] = ['localized' => false, 'data' => $cleanData($schemaBlock['data'])];
+            } elseif ($schemaBlock['localized'] === true) {
+                $localizedSchemaBlocksConfiguration = [];
+                foreach ($schemaBlock['data'] as $localizedSchemaBlockValue) {
+                    $localizedSchemaBlocksConfiguration[] = [
+                        'locale' => $localizedSchemaBlockValue['locale'],
+                        'value'  => $cleanData($localizedSchemaBlockValue['value'])
+                    ];
+                }
+
+                $schemaBlocksConfiguration[] = ['localized' => true, 'data' => $localizedSchemaBlocksConfiguration];
+            }
         }
 
         return $schemaBlocksConfiguration;
@@ -95,33 +121,70 @@ class SchemaIntegrator implements IntegratorInterface
 
         foreach ($configuration as $index => $schemaBlock) {
 
-            if (!is_string($schemaBlock)) {
+            $schemaBlockData = null;
+            $localized = false;
+
+            if ($schemaBlock['localized'] === false) {
+                $schemaBlockData = $this->validateSchemaBlock($schemaBlock['data']);
+            } elseif ($schemaBlock['localized'] === true) {
+                $localized = true;
+                $localizedSchemaBlockValues = [];
+                foreach ($schemaBlock['data'] as $localizedSchemaBlockValue) {
+                    if (null !== $localizedSchemaBlockData = $this->validateSchemaBlock($localizedSchemaBlockValue['value'])) {
+                        $localizedSchemaBlockValues[] = [
+                            'locale' => $localizedSchemaBlockValue['locale'],
+                            'value'  => $localizedSchemaBlockData
+                        ];
+                    }
+                }
+                if (count($localizedSchemaBlockValues) > 0) {
+                    $schemaBlockData = $localizedSchemaBlockValues;
+                }
+            }
+
+            if ($schemaBlockData === null) {
                 unset($configuration[$index]);
                 continue;
             }
 
-            try {
-                $validatedJsonData = $this->validateJsonLd($schemaBlock);
-            } catch (\Throwable $e) {
-                unset($configuration[$index]);
-                continue;
-            }
-
-            if ($validatedJsonData === false) {
-                unset($configuration[$index]);
-                continue;
-            }
-
-            $configuration[$index] = $validatedJsonData;
+            $configuration[$index] = [
+                'localized' => $localized,
+                'data'      => $schemaBlockData
+            ];
         }
 
         $indexedConfiguration = array_values($configuration);
-
         if (count($indexedConfiguration) === 0) {
             return null;
         }
 
         return $indexedConfiguration;
+    }
+
+    /**
+     * @param $data
+     *
+     * @return array|null
+     */
+    public function validateSchemaBlock($data)
+    {
+        $validatedJsonData = null;
+
+        if (!is_string($data)) {
+            return null;
+        }
+
+        try {
+            $validatedJsonData = $this->validateJsonLd($data);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        if ($validatedJsonData === false) {
+            return null;
+        }
+
+        return $validatedJsonData;
     }
 
     /**
@@ -134,34 +197,81 @@ class SchemaIntegrator implements IntegratorInterface
         }
 
         foreach ($data as $schemaBlock) {
-            if (is_string($schemaBlock)) {
-                $seoMetadata->addSchema($schemaBlock);
+            if (null !== $value = $this->findLocaleAwareData($schemaBlock, $locale)) {
+                $seoMetadata->addSchema($value);
             }
         }
     }
 
     /**
+     * @param array  $schemaBlock
+     * @param string $locale
+     *
+     * @return array|null
+     */
+    protected function findLocaleAwareData(array $schemaBlock, $locale)
+    {
+        if ($schemaBlock['localized'] === false) {
+            return $schemaBlock['data'];
+        }
+
+        if (empty($locale)) {
+            return null;
+        }
+
+        if (count($schemaBlock['data']) === 0) {
+            return null;
+        }
+
+        $index = array_search($locale, array_column($schemaBlock['data'], 'locale'));
+        if ($index === false) {
+            return null;
+        }
+
+        $value = $schemaBlock['data'][$index]['value'];
+        if (empty($value) || !is_array($value)) {
+            return null;
+        }
+
+        return $value;
+    }
+
+    /**
      * @param string $jsonLdData
      *
-     * @return bool
+     * @return bool|array
+     *
      * @throws \Exception
      */
     protected function validateJsonLd(string $jsonLdData)
     {
+        $jsonLdData = preg_replace('/[ \t\n]+/', ' ',
+            preg_replace('/\s*$^\s*/m', ' ', $jsonLdData)
+        );
+
         $dom = new \DOMDocument();
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = false;
+
         libxml_use_internal_errors(1);
         $dom->loadHTML($jsonLdData);
         $xpath = new \DOMXpath($dom);
         $jsonScripts = $xpath->query('//script[@type="application/ld+json"]');
-        $json = trim($jsonScripts->item(0)->nodeValue);
 
-        $data = json_decode($json);
+        // Handle CDATA stuff
+        if (isset($jsonScripts->item(1)->nodeValue)) {
+            $json = $jsonScripts->item(1)->nodeValue;
+        } else {
+            $json = $jsonScripts->item(0)->nodeValue;
+        }
+
+        $data = json_decode(trim($json), true);
 
         if ($data === null) {
             return false;
         }
 
-        return json_encode($data);
+        return $data;
     }
 
     /**

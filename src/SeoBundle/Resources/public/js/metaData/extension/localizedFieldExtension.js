@@ -1,13 +1,15 @@
 pimcore.registerNS('Seo.MetaData.Extension.LocalizedFieldExtension');
 Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
 
+    lfIdentifier: null,
     previewGridConfig: null,
     gridStore: null,
     localizedFieldPanels: {},
     editorWindow: null,
     params: null,
 
-    initialize: function () {
+    initialize: function (lfIdentifier) {
+        this.lfIdentifier = lfIdentifier;
         this.previewGridConfig = null;
         this.gridStore = null;
         this.localizedFieldPanels = {};
@@ -35,7 +37,7 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
         };
 
         if (typeof this.params.onGridStoreRequest === 'function') {
-            this.previewGridConfig = this.params.onGridStoreRequest.call(this, null);
+            this.previewGridConfig = this.params.onGridStoreRequest.call(this, this.lfIdentifier);
             if (Ext.isArray(this.previewGridConfig)) {
                 Ext.Array.each(this.previewGridConfig, function (fieldConfigRow) {
                     storeSelectionFields.push(fieldConfigRow.storeIdentifier);
@@ -49,6 +51,11 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
                         editor: new Ext.form.TextField({}),
                         renderer: function (v) {
                             var cleanValue = v;
+
+                            if (fieldConfigRow.hasOwnProperty('renderer') && typeof fieldConfigRow.renderer === 'function') {
+                                return fieldConfigRow.renderer(v);
+                            }
+
                             if (typeof cleanValue === 'string' || typeof cleanValue === 'number') {
                                 cleanValue = this.truncate(cleanValue.toString(), 30);
                             }
@@ -91,7 +98,7 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
             },
             listeners: {
                 edit: function () {
-                    if (typeof this.params.onLayoutRequest === 'function') {
+                    if (typeof this.params.onGridRefreshRequest === 'function') {
                         this.params.onGridRefreshRequest.call(this);
                     }
                 }.bind(this)
@@ -235,7 +242,7 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
 
             var layoutFields = [];
             if (typeof this.params.onLayoutRequest === 'function') {
-                layoutFields = this.params.onLayoutRequest.call(this, locale);
+                layoutFields = this.params.onLayoutRequest.call(this, this.lfIdentifier, locale);
             }
 
             Ext.Array.each(layoutFields, function (field, i) {
@@ -296,7 +303,7 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
             }
         }.bind(this));
 
-        if (typeof this.params.onLayoutRequest === 'function') {
+        if (typeof this.params.onGridRefreshRequest === 'function') {
             this.params.onGridRefreshRequest.call(this);
         }
 

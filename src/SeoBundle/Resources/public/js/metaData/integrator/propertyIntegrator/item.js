@@ -1,18 +1,32 @@
-pimcore.registerNS('Seo.MetaData.Integrator.OpenGraphIntegratorItem');
-Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
+pimcore.registerNS('Seo.MetaData.Integrator.PropertyIntegratorItem');
+Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
 
     id: null,
     data: null,
+    fieldType: null,
+    fieldTypeProperty: null,
+    imageAwareTypes: [],
     configuration: null,
     removeFieldCallback: null,
     refreshFieldCallback: null,
-
     form: null,
     integratorValueFetcher: null,
 
-    initialize: function (id, data, removeFieldCallback, refreshFieldCallback, configuration) {
+    initialize: function (
+        id,
+        data,
+        fieldType,
+        fieldTypeProperty,
+        imageAwareTypes,
+        removeFieldCallback,
+        refreshFieldCallback,
+        configuration
+    ) {
         this.id = id;
         this.data = data;
+        this.fieldType = fieldType;
+        this.fieldTypeProperty = fieldTypeProperty;
+        this.imageAwareTypes = imageAwareTypes;
         this.removeFieldCallback = removeFieldCallback;
         this.refreshFieldCallback = refreshFieldCallback;
         this.configuration = configuration;
@@ -32,22 +46,22 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
             }
         });
 
-        this.form.add(this.getOgFieldContainer());
+        this.form.add(this.getFieldContainer());
 
         return this.form;
     },
 
-    getOgFieldContainer: function () {
+    getFieldContainer: function () {
 
         var propertyTypeStore,
             configuration = this.configuration,
-            propertyTypeStoreValue = this.getStoredValue('property', null),
-            propertyTypeValue = propertyTypeStoreValue === null ? 'og:type' : propertyTypeStoreValue,
-            field = this.getOgContentFieldBasedOnType(propertyTypeValue, this.id);
+            typeStoreValue = this.getStoredValue(this.fieldType, null),
+            propertyTypeValue = typeStoreValue === null ? this.fieldTypeProperty : typeStoreValue,
+            field = this.getContentFieldBasedOnType(propertyTypeValue, this.id);
 
         propertyTypeStore = new Ext.data.ArrayStore({
             fields: ['label', 'key'],
-            data: configuration.hasOwnProperty('ogProperties') ? configuration.ogProperties : []
+            data: configuration.hasOwnProperty('properties') ? configuration.properties : []
         });
 
         return {
@@ -61,9 +75,9 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
             items: [
                 {
                     xtype: 'combo',
-                    name: 'property',
+                    name: this.fieldType,
                     value: propertyTypeValue,
-                    fieldLabel: t('Property'),
+                    fieldLabel: t(Ext.String.capitalize(this.fieldType)),
                     displayField: 'label',
                     valueField: 'key',
                     labelAlign: 'left',
@@ -78,7 +92,7 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
                             var fieldContainer = cb.up('fieldcontainer'),
                                 propertyType = fieldContainer.down('fieldcontainer');
                             propertyType.removeAll(true, true);
-                            propertyType.add(this.getOgContentFieldBasedOnType(value));
+                            propertyType.add(this.getContentFieldBasedOnType(value));
                         }.bind(this)
                     },
                     store: propertyTypeStore
@@ -100,7 +114,6 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
                     listeners: {
                         click: function (btn) {
                             this.removeFieldCallback.call(this, btn, this.id);
-                            this.refreshFieldCallback.call(this);
                         }.bind(this)
                     }
                 }
@@ -108,25 +121,23 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
         };
     },
 
-    getOgContentFieldBasedOnType: function (propertyTypeValue) {
+    getContentFieldBasedOnType: function (propertyTypeValue) {
 
         var lfExtension;
 
-        if (propertyTypeValue === 'og:type') {
-            return this.generateOgTypeField();
-        } else if (propertyTypeValue === 'og:image') {
-            return this.generateOgImageField();
+        if (propertyTypeValue === this.fieldTypeProperty) {
+            return this.generateTypeField();
+        } else if (this.imageAwareTypes.indexOf(propertyTypeValue) !== -1) {
+            return this.generateImageField();
         }
 
         if (this.configuration.useLocalizedFields === false) {
-            return this.generateOgContentField(propertyTypeValue, false, false, null);
+            return this.generateContentField(propertyTypeValue, false, false, null);
         }
-
-        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension();
 
         var params = {
             showFieldLabel: true,
-            fieldLabel: 'Content',
+            fieldLabel: t('Content'),
             gridWidth: 400,
             editorWindowWidth: 700,
             editorWindowHeight: 300,
@@ -134,24 +145,26 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
                 this.refreshFieldCallback.call(this)
             }.bind(this),
             onGridStoreRequest: this.onLocalizedGridStoreRequest.bind(this),
-            onLayoutRequest: this.generateOgContentField.bind(this, propertyTypeValue, true, true)
+            onLayoutRequest: this.generateContentField.bind(this, propertyTypeValue, true, true, null)
         };
+
+        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(this.id);
 
         return lfExtension.generateLocalizedField(params);
     },
 
-    generateOgTypeField: function () {
+    generateTypeField: function () {
 
         var typeStore = new Ext.data.ArrayStore({
             fields: ['label', 'key'],
-            data: this.configuration.hasOwnProperty('ogTypes') ? this.configuration.ogTypes : []
+            data: this.configuration.hasOwnProperty('types') ? this.configuration.types : []
         });
 
         return {
             xtype: 'combo',
             name: 'value',
             value: this.getStoredValue('value', null),
-            fieldLabel: t('OG Type'),
+            fieldLabel: t('Type'),
             displayField: 'label',
             valueField: 'key',
             labelAlign: 'left',
@@ -164,7 +177,7 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
         }
     },
 
-    generateOgImageField: function () {
+    generateImageField: function () {
 
         var fieldConfig,
             hrefField,
@@ -192,30 +205,30 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
         return storagePathHref;
     },
 
-    generateOgContentField: function (type, returnAsArray, isProxy, locale) {
+    generateContentField: function (type, returnAsArray, isProxy, lfIdentifier, locale) {
 
         var value = this.getStoredValue('value', locale),
             field = {
-            xtype: 'textfield',
-            fieldLabel: type,
-            width: 400,
-            name: 'value',
-            value: value,
-            enableKeyEvents: true,
-            listeners: isProxy ? {} : {
-                keyup: function () {
-                    this.refreshFieldCallback.call(this)
-                }.bind(this)
-            }
-        };
+                xtype: 'textfield',
+                fieldLabel: type,
+                width: 400,
+                name: 'value',
+                value: value,
+                enableKeyEvents: true,
+                listeners: isProxy ? {} : {
+                    keyup: function () {
+                        this.refreshFieldCallback.call(this)
+                    }.bind(this)
+                }
+            };
 
         return returnAsArray ? [field] : field;
     },
 
-    onLocalizedGridStoreRequest: function () {
+    onLocalizedGridStoreRequest: function (lfIdentifier) {
         return [
             {
-                title: 'Content',
+                title: t('Content'),
                 storeIdentifier: 'value',
                 onFetchStoredValue: function (locale) {
                     return this.getStoredValue('value', locale);
@@ -255,17 +268,17 @@ Seo.MetaData.Integrator.OpenGraphIntegratorItem = Class.create({
 
     getValuesForPreview: function () {
 
-        var locales;
+        var locales,
+            values = {};
 
         this.integratorValueFetcher.setStorageData(this.data);
         this.integratorValueFetcher.setEditData(this.getValues());
 
         locales = Ext.isArray(pimcore.settings.websiteLanguages) ? pimcore.settings.websiteLanguages : ['en'];
 
-        return {
-            property: this.integratorValueFetcher.fetchForPreview('property', null),
-            value: this.integratorValueFetcher.fetchForPreview('value', locales[0])
-        };
+        values[this.fieldType] = this.integratorValueFetcher.fetchForPreview(this.fieldType, null);
+        values['value'] = this.integratorValueFetcher.fetchForPreview('value', locales[0]);
 
+        return values;
     }
 });

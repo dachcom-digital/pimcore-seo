@@ -21,6 +21,10 @@ services:
         tags:
             - {name: seo.meta_data.integrator, identifier: open_graph }
 
+    SeoBundle\MetaData\Integrator\TwitterCardIntegrator:
+        tags:
+            - {name: seo.meta_data.integrator, identifier: twitter_card }
+
     SeoBundle\MetaData\Integrator\SchemaIntegrator:
         tags:
             - {name: seo.meta_data.integrator, identifier: schema }

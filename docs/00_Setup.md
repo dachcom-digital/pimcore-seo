@@ -66,7 +66,6 @@ Learn more about metadata or the index notification.
 - [Meta Data](./10_MetaData.md) [Set Title, Description, ...]
 - [Index Notification](./20_IndexNotification.md) [Push Data to Google Index]
 
-
 ## Configuration
 A full configuration layout could look like this:
 
@@ -88,6 +87,10 @@ seo:
                 -   integrator_name: open_graph
                     integrator_config:
                         facebook_image_thumbnail: 'socialThumb'
+                -   integrator_name: twitter_card
+                    integrator_config:
+                        twitter_image_thumbnail: 'socialThumb'
+                -   integrator_name: schema
                 -   integrator_name: html_tag
     index_provider_configuration:
         enabled_worker:

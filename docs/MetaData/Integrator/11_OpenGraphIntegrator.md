@@ -18,7 +18,7 @@ seo:
 ```
 
 ## Extended Configuration
-Add some more `og:types`, `properties` and `presetts` with this configuration:
+Add some more `types`, `properties` and `presetts` with this configuration:
 
 ```yaml
 seo:
@@ -28,9 +28,9 @@ seo:
                 -   integrator_name: open_graph
                     integrator_config:
                         facebook_image_thumbnail: 'socialThumb'
-                        og_types:
+                        types:
                             - ['my_type', 'my_type']
-                        og_properties:
+                        properties:
                             - ['og:test', 'og:test']
                         presets:
                             -   label: 'My Preset'

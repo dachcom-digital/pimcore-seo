@@ -67,7 +67,9 @@ class MetaDataProvider implements MetaDataProviderInterface
 
         if ($schemaBlocks = $seoMetadata->getSchema()) {
             foreach ($schemaBlocks as $schemaBlock) {
-                $this->headMeta->addRaw(sprintf('<script type="application/ld+json">%s</script>', $schemaBlock));
+                if (is_array($schemaBlock)) {
+                    $this->headMeta->addRaw(sprintf('<script type="application/ld+json">%s</script>', json_encode($schemaBlock)));
+                }
             }
         }
 

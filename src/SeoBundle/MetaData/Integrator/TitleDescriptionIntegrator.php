@@ -116,7 +116,6 @@ class TitleDescriptionIntegrator implements IntegratorInterface
         }
 
         $index = array_search($locale, array_column($value, 'locale'));
-
         if ($index === false) {
             return null;
         }

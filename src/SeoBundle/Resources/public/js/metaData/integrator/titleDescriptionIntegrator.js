@@ -22,7 +22,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
             }];
         }
 
-        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension();
+        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(null);
 
         var params = {
             showFieldLabel: false,
@@ -35,7 +35,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
 
     },
 
-    generateFields: function (isProxy, locale) {
+    generateFields: function (isProxy, lfIdentifier, locale) {
 
         var titleValue = this.getStoredValue('title', locale),
             descriptionValue = this.getStoredValue('description', locale);
@@ -80,7 +80,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
         ];
     },
 
-    onLocalizedGridStoreRequest: function () {
+    onLocalizedGridStoreRequest: function (lfIdentifier) {
 
         return [
             {

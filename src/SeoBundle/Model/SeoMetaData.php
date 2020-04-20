@@ -228,9 +228,9 @@ class SeoMetaData implements SeoMetaDataInterface
     /**
      * {@inheritdoc}
      */
-    public function addSchema(string $value)
+    public function addSchema(array $schemaJsonLd)
     {
-        $this->schema[] = $value;
+        $this->schema[] = $schemaJsonLd;
     }
 
     /**

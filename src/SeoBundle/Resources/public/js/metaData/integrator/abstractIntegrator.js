@@ -17,6 +17,7 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
     previewContainerTemplate: null,
     delayedRefreshTask: null,
     renderAsTab: false,
+    isInShutDownMode: false,
 
     initialize: function (elementType, elementId, type, configuration, data, renderAsTab) {
         this.elementType = elementType;
@@ -145,6 +146,9 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
         this.fieldSet.add(panelItems);
 
         this.formPanel.add(this.fieldSet);
+        this.formPanel.on('destroy', function () {
+            this.isInShutDownMode = true;
+        }.bind(this));
 
         return this.formPanel;
     },
@@ -219,7 +223,7 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
                     xtype: 'component',
                     itemId: 'previewContainer',
                     autoEl: {
-                        height: 380,
+                        height: 400,
                         tag: 'iframe',
                         src: this.getIframeUrl(),
                         frameborder: 0,
@@ -240,6 +244,11 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
         var iframeEl,
             previewContainerItems;
 
+        // prevent delayed tasks from other components coming in too late.
+        if (this.isInShutDownMode === true) {
+            return;
+        }
+
         if (this.previewContainerIsLoading === true) {
             return;
         }
@@ -257,6 +266,10 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
         }
 
         iframeEl = this.previewContainerItem.getEl();
+        if (iframeEl === null) {
+            return;
+        }
+
         this.previewContainerItem.setLoading(true);
 
         iframeEl.dom.src = this.getIframeUrl();

@@ -8,7 +8,7 @@ use Pimcore\Model\Document\Page;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OpenGraphIntegrator implements IntegratorInterface
+class TwitterCardIntegrator implements IntegratorInterface
 {
     /**
      * @var array
@@ -24,10 +24,7 @@ class OpenGraphIntegrator implements IntegratorInterface
 
         return [
             'hasLivePreview'       => true,
-            'livePreviewTemplates' => [
-                ['facebook', 'Facebook']
-            ],
-            'presets'              => $this->configuration['presets'],
+            'livePreviewTemplates' => [],
             'properties'           => $this->configuration['properties'],
             'types'                => $this->configuration['types'],
             'useLocalizedFields'   => $useLocalizedFields,
@@ -39,8 +36,6 @@ class OpenGraphIntegrator implements IntegratorInterface
      */
     public function getPreviewParameter($element, ?string $template, array $data)
     {
-        $template = in_array($template, ['facebook']) ? $template : 'default';
-
         $url = 'http://localhost';
         $title = isset($data['title']) ? $data['title'] : 'This is a title';
         $description = isset($data['description']) ? $data['description'] : 'This is a very long description which should be not too long.';
@@ -59,7 +54,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         }
 
         return [
-            'path'   => sprintf('@SeoBundle/Resources/views/preview/ogGraph/%s.html.twig', $template),
+            'path'   => '@SeoBundle/Resources/views/preview/twitterCard/preview.html.twig',
             'params' => [
                 'title'       => $title,
                 'description' => $description,
@@ -74,9 +69,9 @@ class OpenGraphIntegrator implements IntegratorInterface
      */
     public function validateBeforeBackend(string $elementType, int $elementId, array $configuration)
     {
-        foreach ($configuration as &$ogField) {
-            if ($ogField['property'] === 'og:image' && isset($ogField['value']['thumbPath'])) {
-                unset($ogField['value']['thumbPath']);
+        foreach ($configuration as &$twitterItem) {
+            if ($twitterItem['name'] === 'twitter:image' && isset($twitterItem['value']['thumbPath'])) {
+                unset($twitterItem['value']['thumbPath']);
             }
         }
 
@@ -92,10 +87,10 @@ class OpenGraphIntegrator implements IntegratorInterface
             return null;
         }
 
-        foreach ($configuration as &$ogField) {
-            if ($ogField['property'] === 'og:image') {
-                if (null !== $imagePath = $this->getImagePath($ogField['value'])) {
-                    $ogField['value']['thumbPath'] = $imagePath;
+        foreach ($configuration as &$twitterItem) {
+            if ($twitterItem['name'] === 'twitter:image') {
+                if (null !== $imagePath = $this->getImagePath($twitterItem['value'])) {
+                    $twitterItem['value']['thumbPath'] = $imagePath;
                 }
             }
         }
@@ -112,16 +107,15 @@ class OpenGraphIntegrator implements IntegratorInterface
             return;
         }
 
-        foreach ($data as $ogItem) {
+        foreach ($data as $twitterItem) {
 
-            if (!isset($ogItem['value']) || empty($ogItem['value']) || empty($ogItem['property'])) {
+            if (!isset($twitterItem['value']) || empty($twitterItem['value']) || empty($twitterItem['name'])) {
                 continue;
             }
 
-            if (null !== $value = $this->findLocaleAwareData($ogItem['property'], $ogItem['value'], $locale)) {
-                $seoMetadata->addExtraProperty($ogItem['property'], $value);
+            if (null !== $value = $this->findLocaleAwareData($twitterItem['name'], $twitterItem['value'], $locale)) {
+                $seoMetadata->addExtraName($twitterItem['name'], $value);
             }
-
         }
     }
 
@@ -134,7 +128,7 @@ class OpenGraphIntegrator implements IntegratorInterface
      */
     protected function findLocaleAwareData(string $property, $value, $locale)
     {
-        if ($property === 'og:image') {
+        if ($property === 'twitter:image') {
             return isset($value['thumbPath']) && !empty($value['thumbPath']) ? $value['thumbPath'] : null;
         }
 
@@ -170,39 +164,37 @@ class OpenGraphIntegrator implements IntegratorInterface
     public function setConfiguration(array $configuration)
     {
         $defaultTypes = [
-            ['article', 'article'],
-            ['restaurant', 'restaurant'],
+            ['summary', 'summary'],
+            ['summary_large_image', 'summary_large_image'],
+            ['app', 'app'],
+            ['player', 'player']
         ];
 
         $defaultProperties = [
-            ['og:type', 'og:type'],
-            ['og:title', 'og:title'],
-            ['og:description', 'og:description'],
-            ['og:image', 'og:image']
+            ['twitter:card', 'twitter:card'],
+            ['twitter:title', 'twitter:title'],
+            ['twitter:description', 'twitter:description'],
+            ['twitter:image', 'twitter:image'],
+            ['twitter:image:alt', 'twitter:image:alt'],
+            ['twitter:site', 'twitter:site'],
+            ['twitter:site:id', 'twitter:site:id'],
+            ['twitter:creator', 'twitter:creator'],
+            ['twitter:creator:id', 'twitter:creator:id'],
+            ['twitter:player', 'twitter:player'],
+            ['twitter:player:width', 'twitter:player:width'],
+            ['twitter:player:height', 'twitter:player:height'],
+            ['twitter:player:stream', 'twitter:player:stream'],
+            ['twitter:app:name:iphone', 'twitter:app:name:iphone'],
+            ['twitter:app:id:iphone', 'twitter:app:id:iphone'],
+            ['twitter:app:url:iphone', 'twitter:app:url:iphone'],
+            ['twitter:app:name:ipad', 'twitter:app:name:ipad'],
+            ['twitter:app:id:ipad', 'twitter:app:id:ipad'],
+            ['twitter:app:url:ipad', 'twitter:app:url:ipad'],
+            ['twitter:app:name:googleplay', 'twitter:app:name:googleplay'],
+            ['twitter:app:id:googleplay', 'twitter:app:id:googleplay'],
+            ['twitter:app:url:googleplay', 'twitter:app:url:googleplay']
         ];
 
-        $defaultPresets = [
-            [
-                'label'      => 'Facebook',
-                'icon_class' => 'pimcore_icon_user',
-                'fields'     => [
-                    [
-                        'property' => 'og:type',
-                        'content'  => 'og:article',
-                    ],
-                    [
-                        'property' => 'og:description',
-                        'content'  => null,
-                    ],
-                    [
-                        'property' => 'og:title',
-                        'content'  => null,
-                    ]
-                ]
-            ]
-        ];
-
-        $configuration['presets'] = array_merge($defaultPresets, $configuration['presets']);
         $configuration['types'] = array_merge($defaultTypes, $configuration['types']);
         $configuration['properties'] = array_merge($defaultProperties, $configuration['properties']);
 
@@ -215,16 +207,13 @@ class OpenGraphIntegrator implements IntegratorInterface
     public static function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'facebook_image_thumbnail' => null,
-            'presets'                  => [],
-            'types'                    => [],
-            'properties'               => []
+            'twitter_image_thumbnail' => null,
+            'types'                   => [],
+            'properties'              => []
         ]);
 
-        $resolver->setRequired(['facebook_image_thumbnail']);
-        $resolver->setAllowedTypes('facebook_image_thumbnail', ['string']);
-        $resolver->setAllowedTypes('presets', ['array']);
-        $resolver->setAllowedTypes('types', ['array']);
+        $resolver->setRequired(['twitter_image_thumbnail']);
+        $resolver->setAllowedTypes('twitter_image_thumbnail', ['string']);
         $resolver->setAllowedTypes('properties', ['array']);
     }
 
@@ -239,7 +228,7 @@ class OpenGraphIntegrator implements IntegratorInterface
 
         $asset = Asset::getById($data['id']);
         if ($asset instanceof Asset\Image) {
-            $thumbnail = $asset->getThumbnail($this->configuration['facebook_image_thumbnail']);
+            $thumbnail = $asset->getThumbnail($this->configuration['twitter_image_thumbnail']);
             if ($thumbnail instanceof Asset\Image\Thumbnail) {
                 $imagePath = $thumbnail->getPath(false);
             }

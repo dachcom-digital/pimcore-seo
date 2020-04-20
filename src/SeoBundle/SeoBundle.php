@@ -92,8 +92,10 @@ class SeoBundle extends AbstractPimcoreBundle
             '/bundles/seo/js/metaData/integrator/titleDescriptionIntegrator.js',
             '/bundles/seo/js/metaData/integrator/htmlTagIntegrator.js',
             '/bundles/seo/js/metaData/integrator/schemaIntegrator.js',
+            '/bundles/seo/js/metaData/integrator/abstractPropertyIntegrator.js',
+            '/bundles/seo/js/metaData/integrator/propertyIntegrator/item.js',
+            '/bundles/seo/js/metaData/integrator/twitterCardIntegrator.js',
             '/bundles/seo/js/metaData/integrator/ogIntegrator.js',
-            '/bundles/seo/js/metaData/integrator/ogIntegrator/item.js',
         ];
     }
 

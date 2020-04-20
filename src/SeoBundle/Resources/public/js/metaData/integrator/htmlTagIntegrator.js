@@ -14,21 +14,7 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
             title: false,
             autoScroll: false,
             border: false,
-            items: [
-                {
-                    xtype: 'label',
-                    text: t('With great power comes great responsibility! Please do not add raw entities unless it is really necessary!'),
-                    style: {
-                        padding: '10px',
-                        border: '1px solid #b32d2d',
-                        display: 'inline-block',
-                        background: '#e8acac',
-                        margin: '0 0 10px 0',
-                        color: 'black'
-                    }
-                },
-                this.getAddControl()
-            ]
+            items: [this.getAddControl()]
         });
 
         this.setupStoredData();
@@ -56,6 +42,19 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
             text: 'Add HTML Tag Field',
             iconCls: 'pimcore_icon_plus',
             handler: this.addHtmlTagField.bind(this, null, null)
+        });
+
+        items.push({
+            xtype: 'label',
+            text: t('With great power comes great responsibility! Please do not add raw entities unless it is really necessary!'),
+            style: {
+                padding: '5px',
+                border: '1px solid #b32d2d',
+                display: 'inline-block',
+                background: '#e8acac',
+                margin: '0 0 10px 0',
+                color: 'black'
+            }
         });
 
         return new Ext.Toolbar({

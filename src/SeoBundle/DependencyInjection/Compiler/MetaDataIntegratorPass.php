@@ -53,6 +53,10 @@ final class MetaDataIntegratorPass implements CompilerPassInterface
             }
         }
 
+        if ($integratorConfig === null) {
+            return;
+        }
+
         $options = new OptionsResolver();
         /** @var IntegratorInterface $class */
         $class = $definition->getClass();

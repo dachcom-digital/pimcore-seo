@@ -88,9 +88,9 @@ interface SeoMetaDataInterface
     public function getSchema();
 
     /**
-     * @param string $value
+     * @param array $schemaJsonLd
      */
-    public function addSchema(string $value);
+    public function addSchema(array $schemaJsonLd);
 
     /**
      * @return array

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preview</title>
+    <meta name="description" content="">
+    <link rel="stylesheet" href="{{ asset('bundles/seo/css/integrator/default.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/seo/css/integrator/twitter.css') }}">
+</head>
+<body>
+
+<div id="twitter" class="metadata-group__display is-active">
+    <div class="card-seo-twitter">
+        <div class="card-seo-twitter__image" style="background-image: url({{ asset(imagePath) }})"></div>
+        <div class="card-seo-twitter__text">
+            <span class="card-seo-twitter__title">{{ title }}</span>
+            <span class="card-seo-twitter__description ">{{ description }}</span>
+            <span class="card-seo-twitter__link">{{ url }}</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

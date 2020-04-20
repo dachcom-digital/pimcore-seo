@@ -14,6 +14,9 @@ The last SEO Bundle for pimcore you'll ever need!
 ## Objects
 ![image](https://user-images.githubusercontent.com/700119/79641347-39eb7b00-8197-11ea-9ef7-9ec41f8c2057.png)
 
+## Objects | Tabbed View
+![image](https://user-images.githubusercontent.com/700119/79804274-0578ea00-8364-11ea-8780-3cd8b2d72376.png)
+
 #### Requirements
 * Pimcore >= 6.0.0
 

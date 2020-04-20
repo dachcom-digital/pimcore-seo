@@ -2,8 +2,18 @@
 
 namespace SeoBundle\Model;
 
+use SeoBundle\Middleware\MiddlewareInterface;
+
 interface SeoMetaDataInterface
 {
+    /**
+     * @param string $middlewareAdapterName
+     *
+     * @return MiddlewareInterface
+     * @throws \Exception
+     */
+    public function getMiddleware(string $middlewareAdapterName);
+
     /**
      * @param string $metaDescription
      */
@@ -101,7 +111,8 @@ interface SeoMetaDataInterface
     public function getRaw();
 
     /**
-     * Do not use this method! It's required to allow a seamless migration from old pimcore installations.
+     * Do not use this method!
+     * It's required to allow a seamless migration from old pimcore installations.
      *
      * @param string $value
      *

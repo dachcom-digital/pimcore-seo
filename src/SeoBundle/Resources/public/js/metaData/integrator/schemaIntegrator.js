@@ -55,14 +55,7 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
 
     getAddControl: function () {
 
-        var items = [],
-            configuration = this.getConfiguration(),
-            hasDynamicallyAddedJsonLdData = false,
-            usedJsonLdData = [];
-
-        if (configuration.hasOwnProperty('hasDynamicallyAddedJsonLdData')) {
-            hasDynamicallyAddedJsonLdData = configuration.hasDynamicallyAddedJsonLdData;
-        }
+        var items = [];
 
         items.push({
             cls: 'pimcore_block_button_plus',
@@ -71,25 +64,18 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
             handler: this.addSchemaField.bind(this, null)
         });
 
-        if (hasDynamicallyAddedJsonLdData === true) {
-
-            Ext.Object.each(configuration.dynamicallyAddedJsonLdDataTypes, function (jsonLdType, jsonLdTypeCount) {
-                usedJsonLdData.push('"' + jsonLdType + '" (' + jsonLdTypeCount + 'x)');
-            });
-
-            items.push({
-                xtype: 'label',
-                text: t(' This element has dynamic JSON-LD extractor attached: ' + usedJsonLdData.join(', ') + '. You may face duplicate content if the same schema block gets added multiple times!'),
-                style: {
-                    padding: '5px',
-                    border: '1px solid #A4E8A6',
-                    display: 'inline-block',
-                    background: '#dde8c9',
-                    margin: '0 0 10px 0',
-                    color: 'black'
-                }
-            })
-        }
+        items.push({
+            xtype: 'label',
+            text: t('Note: If you\'re adding custom schema fields, you should be aware of possible duplicate entries. There might be some dynamically added blocks which can\'t be merged automatically.'),
+            style: {
+                padding: '5px',
+                border: '1px solid #A4E8A6',
+                display: 'inline-block',
+                background: '#dde8c9',
+                margin: '0 0 10px 0',
+                color: 'black'
+            }
+        });
 
         return new Ext.Toolbar({
             items: items

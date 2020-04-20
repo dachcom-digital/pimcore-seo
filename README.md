@@ -63,6 +63,7 @@ This Bundle needs some preparation. Please checkout the [Setup && Overview](docs
     - [HTML-Tag Integrator](./docs/MetaData/Integrator/14_HtmlTagIntegrator.md)
   - [Extractors](./docs/MetaData/20_Extractors.md)
     - [Custom Extractor](./docs/MetaData/Extractor/10_CustomExtractor.md)
+  - [Middleware](docs/MetaData/30_Middleware.md)
 - [Index Notification](docs/20_IndexNotification.md) [Push Data to Google Index]
   - [Google Worker](docs/IndexNotification/Worker/01_GoogleWorker.md) [Push Data to Google Index]
 

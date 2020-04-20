@@ -5,6 +5,8 @@ namespace SeoBundle\MetaData;
 use Pimcore\Templating\Helper\HeadMeta;
 use Pimcore\Templating\Helper\HeadTitle;
 use SeoBundle\MetaData\Extractor\ExtractorInterface;
+use SeoBundle\Middleware\MiddlewareDispatcherInterface;
+use SeoBundle\Middleware\MiddlewareInterface;
 use SeoBundle\Model\SeoMetaData;
 use SeoBundle\Registry\MetaDataExtractorRegistryInterface;
 
@@ -26,18 +28,26 @@ class MetaDataProvider implements MetaDataProviderInterface
     protected $extractorRegistry;
 
     /**
+     * @var MiddlewareInterface
+     */
+    protected $middlewareDispatcher;
+
+    /**
      * @param HeadMeta                           $headMeta
      * @param HeadTitle                          $headTitle
      * @param MetaDataExtractorRegistryInterface $extractorRegistry
+     * @param MiddlewareDispatcherInterface      $middlewareDispatcher
      */
     public function __construct(
         HeadMeta $headMeta,
         HeadTitle $headTitle,
-        MetaDataExtractorRegistryInterface $extractorRegistry
+        MetaDataExtractorRegistryInterface $extractorRegistry,
+        MiddlewareDispatcherInterface $middlewareDispatcher
     ) {
         $this->headMeta = $headMeta;
         $this->headTitle = $headTitle;
         $this->extractorRegistry = $extractorRegistry;
+        $this->middlewareDispatcher = $middlewareDispatcher;
     }
 
     /**
@@ -68,7 +78,8 @@ class MetaDataProvider implements MetaDataProviderInterface
         if ($schemaBlocks = $seoMetadata->getSchema()) {
             foreach ($schemaBlocks as $schemaBlock) {
                 if (is_array($schemaBlock)) {
-                    $this->headMeta->addRaw(sprintf('<script type="application/ld+json">%s</script>', json_encode($schemaBlock)));
+                    $schemaTag = sprintf('<script type="application/ld+json">%s</script>', json_encode($schemaBlock, JSON_UNESCAPED_UNICODE));
+                    $this->headMeta->addRaw($schemaTag);
                 }
             }
         }
@@ -91,41 +102,19 @@ class MetaDataProvider implements MetaDataProviderInterface
     /**
      * @param mixed       $element
      * @param string|null $locale
-     * @param array       $excludedExtractors
-     *
-     * @return SeoMetaData
-     * @internal
-     */
-    public function getSeoMetaDataForBackend($element, ?string $locale, array $excludedExtractors = [])
-    {
-        // @todo: check if element has a given SeoMetaData Element?
-        $seoMetaData = new SeoMetaData();
-        $extractors = $this->getExtractorsForElement($element);
-        foreach ($extractors as $extractorName => $extractor) {
-            if (in_array($extractorName, $excludedExtractors)) {
-                continue;
-            }
-
-            $extractor->updateMetadata($element, $locale, $seoMetaData);
-        }
-
-        return $seoMetaData;
-    }
-
-    /**
-     * @param mixed       $element
-     * @param string|null $locale
      *
      * @return SeoMetaData
      */
     protected function getSeoMetaData($element, ?string $locale)
     {
-        // @todo: check if element has a given SeoMetaData Element?
-        $seoMetaData = new SeoMetaData();
+        $seoMetaData = new SeoMetaData($this->middlewareDispatcher);
         $extractors = $this->getExtractorsForElement($element);
         foreach ($extractors as $extractor) {
             $extractor->updateMetadata($element, $locale, $seoMetaData);
+            $this->middlewareDispatcher->dispatchTasks($seoMetaData);
         }
+
+        $this->middlewareDispatcher->dispatchMiddlewareFinisher($seoMetaData);
 
         return $seoMetaData;
     }

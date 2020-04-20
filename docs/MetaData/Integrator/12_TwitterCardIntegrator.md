@@ -30,5 +30,5 @@ seo:
                         types:
                             - ['my_type', 'my_type']
                         properties:
-                            - ['og:test', 'og:test']
+                            - ['twitter:definition', 'twitter:definition']
 ```

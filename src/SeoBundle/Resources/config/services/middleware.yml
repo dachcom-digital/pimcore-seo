@@ -1,0 +1,9 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\Middleware\MiddlewareDispatcherInterface: '@SeoBundle\Middleware\MiddlewareDispatcher'
+    SeoBundle\Middleware\MiddlewareDispatcher: ~

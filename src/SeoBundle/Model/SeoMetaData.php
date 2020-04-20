@@ -2,8 +2,23 @@
 
 namespace SeoBundle\Model;
 
+use SeoBundle\Middleware\MiddlewareDispatcherInterface;
+
 class SeoMetaData implements SeoMetaDataInterface
 {
+    /**
+     * @var MiddlewareDispatcherInterface
+     */
+    private $middlewareDispatcher;
+
+    /**
+     * @param MiddlewareDispatcherInterface $middlewareDispatcher
+     */
+    public function __construct(MiddlewareDispatcherInterface $middlewareDispatcher)
+    {
+        $this->middlewareDispatcher = $middlewareDispatcher;
+    }
+
     /**
      * @var string
      */
@@ -65,6 +80,14 @@ class SeoMetaData implements SeoMetaDataInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMiddleware(string $middlewareAdapterName)
+    {
+        return $this->middlewareDispatcher->buildMiddleware($middlewareAdapterName, $this);
     }
 
     /**

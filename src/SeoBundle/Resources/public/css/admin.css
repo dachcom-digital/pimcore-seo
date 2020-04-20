@@ -1,3 +1,19 @@
 .seo_icon_meta_data {
     background: url(/bundles/seo/img/seo_icon_white.svg) no-repeat scroll left center transparent !important;
 }
+
+.seo_integrator_icon_html_tags {
+    background: url(/bundles/seo/img/integrator/icon_html_tags.svg) center center no-repeat !important;
+}
+.seo_integrator_icon_icon_og {
+    background: url(/bundles/seo/img/integrator/icon_og.svg) center center no-repeat !important;
+}
+.seo_integrator_icon_icon_schema {
+    background: url(/bundles/seo/img/integrator/icon_schema.svg) center center no-repeat !important;
+}
+.seo_integrator_icon_title_description {
+    background: url(/bundles/seo/img/integrator/icon_title_description.svg) center center no-repeat !important;
+}
+.seo_integrator_icon_twitter {
+    background: url(/bundles/seo/img/integrator/icon_twitter.svg) center center no-repeat !important;
+}

@@ -2,6 +2,7 @@ pimcore.registerNS('Seo.MetaData.Integrator.AbstractIntegrator');
 Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
 
     fieldSetTitle: 'Abstract Integrator',
+    iconClass: false,
 
     previewContainerIsLoading: false,
     elementType: null,
@@ -114,6 +115,7 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
 
         this.formPanel = new Ext.form.Panel({
             title: this.renderAsTab ? this.fieldSetTitle : false,
+            iconCls: this.renderAsTab ? this.iconClass : false,
             style: {
                 padding: this.renderAsTab ? '20px' : 0
             }
@@ -121,6 +123,7 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
 
         this.fieldSet = new Ext.form[this.renderAsTab ? 'Panel' : 'FieldSet']({
             title: this.renderAsTab ? false : this.fieldSetTitle,
+            iconCls: this.renderAsTab ? false : this.iconClass,
             layout: {
                 type: 'hbox'
             },

@@ -2,7 +2,7 @@ pimcore.registerNS('Seo.MetaData.Integrator.TitleDescriptionIntegrator');
 Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
     fieldSetTitle: t('title') + ', ' + t('description'),
-
+    iconClass: 'seo_integrator_icon_title_description',
     integratorValueFetcher: null,
 
     buildPanel: function () {

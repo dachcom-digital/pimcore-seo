@@ -2,6 +2,7 @@ pimcore.registerNS('Seo.MetaData.Integrator.SchemaIntegrator');
 Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
     fieldSetTitle: t('Schema Blocks'),
+    iconClass: 'seo_integrator_icon_icon_schema',
     schemaPanel: null,
 
     isCollapsed: function () {

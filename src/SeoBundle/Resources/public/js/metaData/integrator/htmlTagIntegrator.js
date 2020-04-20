@@ -2,6 +2,7 @@ pimcore.registerNS('Seo.MetaData.Integrator.HtmlTagIntegrator');
 Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
     fieldSetTitle: t('html_tags') + ' (&lt;meta .../&gt; &lt;link .../&gt; ...)',
+    iconClass: 'seo_integrator_icon_html_tags',
     htmlTagPanel: null,
 
     isCollapsed: function () {

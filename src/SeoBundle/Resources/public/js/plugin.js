@@ -12,6 +12,18 @@ pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
 
     initialize: function () {
         pimcore.plugin.broker.registerPlugin(this);
+
+        if (!String.prototype.format) {
+            String.prototype.format = function () {
+                var args = arguments;
+                return this.replace(/{(\d+)}/g, function (match, number) {
+                    return typeof args[number] != 'undefined'
+                        ? args[number]
+                        : match
+                        ;
+                });
+            };
+        }
     },
 
     uninstall: function () {
@@ -89,14 +101,12 @@ pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
 
         if (type === 'object'
             && this.configuration.objects.enabled === true
-            && this.configuration.objects.data_classes.indexOf(obj.data.general.o_className) !== -1)
-        {
+            && this.configuration.objects.data_classes.indexOf(obj.data.general.o_className) !== -1) {
             obj.seoPanel = new Seo.MetaData.ObjectMetaDataPanel(obj, this.configuration);
             obj.seoPanel.setup(type);
         } else if (type === 'page'
             && this.configuration.documents.enabled === true
-            && ['page'].indexOf(obj.type) !== -1)
-        {
+            && ['page'].indexOf(obj.type) !== -1) {
             obj.seoPanel = new Seo.MetaData.DocumentMetaDataPanel(obj, this.configuration);
             obj.seoPanel.setup(type, this.configuration.documents.hide_pimcore_default_seo_panel);
         }

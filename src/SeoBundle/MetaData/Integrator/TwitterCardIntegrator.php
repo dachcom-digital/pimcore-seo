@@ -163,37 +163,13 @@ class TwitterCardIntegrator implements IntegratorInterface
      */
     public function setConfiguration(array $configuration)
     {
-        $defaultTypes = [
-            ['summary', 'summary'],
-            ['summary_large_image', 'summary_large_image'],
-            ['app', 'app'],
-            ['player', 'player']
-        ];
+        $defaultTypes = array_map(function ($value) {
+            return [$value['name'], $value['tag']];
+        }, $this->getDefaultTypes());
 
-        $defaultProperties = [
-            ['twitter:card', 'twitter:card'],
-            ['twitter:title', 'twitter:title'],
-            ['twitter:description', 'twitter:description'],
-            ['twitter:image', 'twitter:image'],
-            ['twitter:image:alt', 'twitter:image:alt'],
-            ['twitter:site', 'twitter:site'],
-            ['twitter:site:id', 'twitter:site:id'],
-            ['twitter:creator', 'twitter:creator'],
-            ['twitter:creator:id', 'twitter:creator:id'],
-            ['twitter:player', 'twitter:player'],
-            ['twitter:player:width', 'twitter:player:width'],
-            ['twitter:player:height', 'twitter:player:height'],
-            ['twitter:player:stream', 'twitter:player:stream'],
-            ['twitter:app:name:iphone', 'twitter:app:name:iphone'],
-            ['twitter:app:id:iphone', 'twitter:app:id:iphone'],
-            ['twitter:app:url:iphone', 'twitter:app:url:iphone'],
-            ['twitter:app:name:ipad', 'twitter:app:name:ipad'],
-            ['twitter:app:id:ipad', 'twitter:app:id:ipad'],
-            ['twitter:app:url:ipad', 'twitter:app:url:ipad'],
-            ['twitter:app:name:googleplay', 'twitter:app:name:googleplay'],
-            ['twitter:app:id:googleplay', 'twitter:app:id:googleplay'],
-            ['twitter:app:url:googleplay', 'twitter:app:url:googleplay']
-        ];
+        $defaultProperties = array_map(function ($value) {
+            return [$value, $value];
+        }, $this->getDefaultProperties());
 
         $configuration['types'] = array_merge($defaultTypes, $configuration['types']);
         $configuration['properties'] = array_merge($defaultProperties, $configuration['properties']);
@@ -236,4 +212,61 @@ class TwitterCardIntegrator implements IntegratorInterface
 
         return $imagePath;
     }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultTypes()
+    {
+        return [
+            [
+                'name' => 'Summary',
+                'tag'  => 'summary'
+            ],
+            [
+                'name' => 'Summary (Large Image)',
+                'tag'  => 'summary_large_image'
+            ],
+            [
+                'name' => 'App',
+                'tag'  => 'app'
+            ],
+            [
+                'name' => 'Player',
+                'tag'  => 'player'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultProperties()
+    {
+        return [
+            'twitter:card',
+            'twitter:title',
+            'twitter:description',
+            'twitter:image',
+            'twitter:image:alt',
+            'twitter:site',
+            'twitter:site:id',
+            'twitter:creator',
+            'twitter:creator:id',
+            'twitter:player',
+            'twitter:player:width',
+            'twitter:player:height',
+            'twitter:player:stream',
+            'twitter:app:name:iphone',
+            'twitter:app:id:iphone',
+            'twitter:app:url:iphone',
+            'twitter:app:name:ipad',
+            'twitter:app:id:ipad',
+            'twitter:app:url:ipad',
+            'twitter:app:name:googleplay',
+            'twitter:app:id:googleplay',
+            'twitter:app:url:googleplay'
+        ];
+    }
+
 }

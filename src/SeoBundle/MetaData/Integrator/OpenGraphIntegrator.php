@@ -169,38 +169,15 @@ class OpenGraphIntegrator implements IntegratorInterface
      */
     public function setConfiguration(array $configuration)
     {
-        $defaultTypes = [
-            ['article', 'article'],
-            ['restaurant', 'restaurant'],
-        ];
+        $defaultTypes = array_map(function ($value) {
+            return [$value['name'], $value['tag']];
+        }, $this->getDefaultTypes());
 
-        $defaultProperties = [
-            ['og:type', 'og:type'],
-            ['og:title', 'og:title'],
-            ['og:description', 'og:description'],
-            ['og:image', 'og:image']
-        ];
+        $defaultProperties = array_map(function ($value) {
+            return [$value, $value];
+        }, $this->getDefaultProperties());
 
-        $defaultPresets = [
-            [
-                'label'      => 'Facebook',
-                'icon_class' => 'pimcore_icon_user',
-                'fields'     => [
-                    [
-                        'property' => 'og:type',
-                        'content'  => 'og:article',
-                    ],
-                    [
-                        'property' => 'og:description',
-                        'content'  => null,
-                    ],
-                    [
-                        'property' => 'og:title',
-                        'content'  => null,
-                    ]
-                ]
-            ]
-        ];
+        $defaultPresets = $this->getDefaultPresets();
 
         $configuration['presets'] = array_merge($defaultPresets, $configuration['presets']);
         $configuration['types'] = array_merge($defaultTypes, $configuration['types']);
@@ -246,5 +223,63 @@ class OpenGraphIntegrator implements IntegratorInterface
         }
 
         return $imagePath;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultTypes()
+    {
+        return [
+            [
+                'name' => 'Article',
+                'tag'  => 'article'
+            ],
+            [
+                'name' => 'Website',
+                'tag'  => 'website'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultProperties()
+    {
+        return [
+            'og:type',
+            'og:title',
+            'og:description',
+            'og:image',
+            'og:image.alt',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultPresets()
+    {
+        return [
+            [
+                'label'      => 'Facebook',
+                'icon_class' => 'pimcore_icon_user',
+                'fields'     => [
+                    [
+                        'property' => 'og:type',
+                        'content'  => 'article',
+                    ],
+                    [
+                        'property' => 'og:description',
+                        'content'  => null,
+                    ],
+                    [
+                        'property' => 'og:title',
+                        'content'  => null,
+                    ]
+                ]
+            ]
+        ];
     }
 }

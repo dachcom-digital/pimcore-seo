@@ -1,0 +1,9 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\Tool\UrlGeneratorInterface: '@SeoBundle\Tool\UrlGenerator'
+    SeoBundle\Tool\UrlGenerator: ~

@@ -83,8 +83,12 @@ Seo.MetaData.Integrator.AbstractPropertyIntegrator = Class.create(Seo.MetaData.I
         }
 
         return new Ext.Toolbar({
-            items: items
+            items: this.generateAdditionalToolbarElements(items)
         });
+    },
+
+    generateAdditionalToolbarElements: function (items) {
+        return items;
     },
 
     addPreset: function (preset) {

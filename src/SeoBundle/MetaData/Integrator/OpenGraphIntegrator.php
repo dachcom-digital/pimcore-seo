@@ -4,8 +4,8 @@ namespace SeoBundle\MetaData\Integrator;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Document\Page;
 use SeoBundle\Model\SeoMetaDataInterface;
+use SeoBundle\Tool\UrlGeneratorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OpenGraphIntegrator implements IntegratorInterface
@@ -14,6 +14,19 @@ class OpenGraphIntegrator implements IntegratorInterface
      * @var array
      */
     protected $configuration;
+
+    /**
+     * @var UrlGeneratorInterface
+     */
+    protected $urlGenerator;
+
+    /**
+     * @param UrlGeneratorInterface $urlGenerator
+     */
+    public function __construct(UrlGeneratorInterface $urlGenerator)
+    {
+        $this->urlGenerator = $urlGenerator;
+    }
 
     /**
      * {@inheritdoc}
@@ -41,7 +54,10 @@ class OpenGraphIntegrator implements IntegratorInterface
     {
         $template = in_array($template, ['facebook']) ? $template : 'default';
 
-        $url = 'http://localhost';
+        if (null === $url = $this->urlGenerator->generate($element)) {
+            $url = 'http://localhost/no-url-found';
+        }
+
         $title = isset($data['title']) ? $data['title'] : 'This is a title';
         $description = isset($data['description']) ? $data['description'] : 'This is a very long description which should be not too long.';
 
@@ -50,12 +66,6 @@ class OpenGraphIntegrator implements IntegratorInterface
             if (null !== $thumbImagePath = $this->getImagePath($data['image'])) {
                 $imagePath = $thumbImagePath;
             }
-        }
-
-        try {
-            $url = $element instanceof Page ? $element->getUrl() : 'http://localhost';
-        } catch (\Exception $e) {
-            // fail silently
         }
 
         return [
@@ -112,6 +122,7 @@ class OpenGraphIntegrator implements IntegratorInterface
             return;
         }
 
+        $addedItems = 0;
         foreach ($data as $ogItem) {
 
             if (!isset($ogItem['value']) || empty($ogItem['value']) || empty($ogItem['property'])) {
@@ -119,9 +130,13 @@ class OpenGraphIntegrator implements IntegratorInterface
             }
 
             if (null !== $value = $this->findLocaleAwareData($ogItem['property'], $ogItem['value'], $locale)) {
+                $addedItems++;
                 $seoMetadata->addExtraProperty($ogItem['property'], $value);
             }
+        }
 
+        if ($addedItems > 0 && null !== $elementUrl = $this->urlGenerator->generate($element)) {
+            $seoMetadata->addExtraProperty('og:url', $elementUrl);
         }
     }
 

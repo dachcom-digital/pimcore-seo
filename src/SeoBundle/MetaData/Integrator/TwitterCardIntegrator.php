@@ -4,8 +4,8 @@ namespace SeoBundle\MetaData\Integrator;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Document\Page;
 use SeoBundle\Model\SeoMetaDataInterface;
+use SeoBundle\Tool\UrlGeneratorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TwitterCardIntegrator implements IntegratorInterface
@@ -14,6 +14,19 @@ class TwitterCardIntegrator implements IntegratorInterface
      * @var array
      */
     protected $configuration;
+
+    /**
+     * @var UrlGeneratorInterface
+     */
+    protected $urlGenerator;
+
+    /**
+     * @param UrlGeneratorInterface $urlGenerator
+     */
+    public function __construct(UrlGeneratorInterface $urlGenerator)
+    {
+        $this->urlGenerator = $urlGenerator;
+    }
 
     /**
      * {@inheritdoc}
@@ -36,7 +49,10 @@ class TwitterCardIntegrator implements IntegratorInterface
      */
     public function getPreviewParameter($element, ?string $template, array $data)
     {
-        $url = 'http://localhost';
+        if (null === $url = $this->urlGenerator->getCurrentSchemeAndHost()) {
+            $url = 'http://localhost';
+        }
+
         $title = isset($data['title']) ? $data['title'] : 'This is a title';
         $description = isset($data['description']) ? $data['description'] : 'This is a very long description which should be not too long.';
 
@@ -45,12 +61,6 @@ class TwitterCardIntegrator implements IntegratorInterface
             if (null !== $thumbImagePath = $this->getImagePath($data['image'])) {
                 $imagePath = $thumbImagePath;
             }
-        }
-
-        try {
-            $url = $element instanceof Page ? $element->getUrl() : 'http://localhost';
-        } catch (\Exception $e) {
-            // fail silently
         }
 
         return [
@@ -268,5 +278,4 @@ class TwitterCardIntegrator implements IntegratorInterface
             'twitter:app:url:googleplay'
         ];
     }
-
 }

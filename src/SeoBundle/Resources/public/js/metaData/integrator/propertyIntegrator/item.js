@@ -80,13 +80,15 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
                     fieldLabel: t(Ext.String.capitalize(this.fieldType)),
                     displayField: 'label',
                     valueField: 'key',
-                    labelAlign: 'left',
+                    labelAlign: 'top',
                     queryMode: 'local',
                     triggerAction: 'all',
                     editable: false,
                     allowBlank: true,
                     style: 'margin: 0 10px 0 0',
-                    flex: 1,
+                    maxWidth: 250,
+                    flex: 2,
+                    store: propertyTypeStore,
                     listeners: {
                         change: function (cb, value) {
                             var fieldContainer = cb.up('fieldcontainer'),
@@ -94,15 +96,17 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
                             propertyType.removeAll(true, true);
                             propertyType.add(this.getContentFieldBasedOnType(value));
                         }.bind(this)
-                    },
-                    store: propertyTypeStore
+                    }
                 },
                 {
                     xtype: 'fieldcontainer',
                     label: false,
                     style: 'margin: 0 10px 0 0',
-                    flex: 3,
-                    autoWidth: true,
+                    flex: 2,
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
+                    },
                     items: [
                         field
                     ]
@@ -111,6 +115,9 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
                     xtype: 'button',
                     iconCls: 'pimcore_icon_delete',
                     width: 50,
+                    style: {
+                        marginTop: '30px'
+                    },
                     listeners: {
                         click: function (btn) {
                             this.removeFieldCallback.call(this, btn, this.id);
@@ -138,7 +145,6 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
         var params = {
             showFieldLabel: true,
             fieldLabel: t('seo_bundle.integrator.property.label_content'),
-            gridWidth: 400,
             editorWindowWidth: 700,
             editorWindowHeight: 300,
             onGridRefreshRequest: function () {
@@ -167,12 +173,12 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
             fieldLabel: t('seo_bundle.integrator.property.label_type'),
             displayField: 'label',
             valueField: 'key',
-            labelAlign: 'left',
+            labelAlign: 'top',
             queryMode: 'local',
             triggerAction: 'all',
             editable: false,
             allowBlank: true,
-            width: 400,
+            width: '100%',
             store: typeStore
         }
     },
@@ -211,9 +217,10 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
             field = {
                 xtype: 'textfield',
                 fieldLabel: type,
-                width: 400,
+                labelAlign: 'top',
                 name: 'value',
                 value: value,
+                width: '100%',
                 enableKeyEvents: true,
                 listeners: isProxy ? {} : {
                     keyup: function () {

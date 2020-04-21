@@ -28,7 +28,8 @@ Seo.MetaData.Extension.HrefFieldExtension = Class.create({
             subtype: this.storeData ? this.storeData.subtype : null
         };
 
-        options.width = 400;
+        options.width = '100%';
+        options.labelAlign = 'top';
         options.fieldLabel = this.fieldConfig.label;
         options.enableKeyEvents = true;
         options.emptyText = t('drop_element_here');

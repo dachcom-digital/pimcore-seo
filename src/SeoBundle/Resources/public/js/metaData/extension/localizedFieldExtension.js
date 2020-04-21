@@ -27,7 +27,6 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
         this.params = {
             showFieldLabel: params.hasOwnProperty('showFieldLabel') ? params.showFieldLabel : false,
             fieldLabel: params.hasOwnProperty('fieldLabel') ? params.fieldLabel : null,
-            gridWidth: params.hasOwnProperty('gridWidth') ? params.gridWidth : 600,
             editorWindowWidth: params.hasOwnProperty('editorWindowWidth') ? params.editorWindowWidth : 600,
             editorWindowHeight: params.hasOwnProperty('editorWindowHeight') ? params.editorWindowHeight : 400,
             onSave: params.hasOwnProperty('onSave') ? params.onSave : null,
@@ -92,9 +91,11 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
             store: this.gridStore,
             columnLines: true,
             stripeRows: true,
+            style: {
+                marginBottom: '20px'
+            },
             viewConfig: {
                 markDirty: false,
-                forceFit: true
             },
             listeners: {
                 edit: function () {
@@ -164,8 +165,8 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
 
         return {
             xtype: 'fieldcontainer',
+            labelAlign: 'top',
             fieldLabel: this.params.showFieldLabel ? this.params.fieldLabel : false,
-            width: this.params.gridWidth,
             items: [
                 grid
             ]

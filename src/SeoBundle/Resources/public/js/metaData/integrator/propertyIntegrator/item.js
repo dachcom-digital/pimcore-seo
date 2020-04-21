@@ -137,7 +137,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
 
         var params = {
             showFieldLabel: true,
-            fieldLabel: t('Content'),
+            fieldLabel: t('seo_bundle.integrator.property.label_content'),
             gridWidth: 400,
             editorWindowWidth: 700,
             editorWindowHeight: 300,
@@ -164,7 +164,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
             xtype: 'combo',
             name: 'value',
             value: this.getStoredValue('value', null),
-            fieldLabel: t('Type'),
+            fieldLabel: t('seo_bundle.integrator.property.label_type'),
             displayField: 'label',
             valueField: 'key',
             labelAlign: 'left',
@@ -185,7 +185,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
             value = this.getStoredValue('value', null);
 
         fieldConfig = {
-            label: t('Asset Path'),
+            label: t('seo_bundle.integrator.property.asset_path'),
             id: 'value',
             config: {
                 types: ['asset'],
@@ -228,7 +228,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
     onLocalizedGridStoreRequest: function (lfIdentifier) {
         return [
             {
-                title: t('Content'),
+                title: t('seo_bundle.integrator.property.label_content'),
                 storeIdentifier: 'value',
                 onFetchStoredValue: function (locale) {
                     return this.getStoredValue('value', locale);

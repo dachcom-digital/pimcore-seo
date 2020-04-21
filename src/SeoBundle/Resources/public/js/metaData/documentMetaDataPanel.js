@@ -53,7 +53,7 @@ Seo.MetaData.DocumentMetaDataPanel = Class.create(Seo.MetaData.AbstractMetaDataP
                             flex: 1,
                             xtype: 'label',
                             style: 'display: block; background: #eaeaea; padding: 10px; border: 1px solid #cecece; margin: 20px 0 10px 0;',
-                            text: t('The default SEO Section has been disabled. Use the "SEO" Panel instead.')
+                            text: t('seo_bundle.panel.default_pimcore_disabled')
                         })
                     }
                 });

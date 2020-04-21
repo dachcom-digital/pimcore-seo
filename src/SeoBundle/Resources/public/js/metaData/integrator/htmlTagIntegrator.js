@@ -1,7 +1,7 @@
 pimcore.registerNS('Seo.MetaData.Integrator.HtmlTagIntegrator');
 Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
-    fieldSetTitle: t('html_tags') + ' (&lt;meta .../&gt; &lt;link .../&gt; ...)',
+    fieldSetTitle: t('seo_bundle.integrator.html.title') + ' (&lt;meta .../&gt; &lt;link .../&gt; ...)',
     iconClass: 'seo_integrator_icon_html_tags',
     htmlTagPanel: null,
 
@@ -40,14 +40,14 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
 
         items.push({
             cls: 'pimcore_block_button_plus',
-            text: 'Add HTML Tag Field',
+            text: t('seo_bundle.integrator.html.add_field'),
             iconCls: 'pimcore_icon_plus',
             handler: this.addHtmlTagField.bind(this, null, null)
         });
 
         items.push({
             xtype: 'label',
-            text: t('With great power comes great responsibility! Please do not add raw entities unless it is really necessary!'),
+            text: t('seo_bundle.integrator.html.caution_note'),
             style: {
                 padding: '5px',
                 border: '1px solid #b32d2d',
@@ -79,7 +79,7 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
             items: [
                 {
                     xtype: 'textfield',
-                    fieldLabel: t('Tag'),
+                    fieldLabel: t('seo_bundle.integrator.html.tag'),
                     style: 'margin: 0 10px 0 0',
                     name: 'tags',
                     value: fieldValue,

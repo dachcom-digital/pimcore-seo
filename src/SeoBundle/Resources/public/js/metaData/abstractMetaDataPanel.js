@@ -26,7 +26,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
     buildSeoMetaDataTab: function () {
 
         this.layout = new Ext.FormPanel({
-            title: t('SEO'),
+            title: t('seo_bundle.panel_title'),
             iconCls: 'pimcore_material_icon seo_icon_meta_data',
             border: false,
             autoScroll: true,
@@ -70,7 +70,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
                 this.buildMetaDataIntegrator(resp.data, resp.configuration);
             }.bind(this),
             failure: function () {
-                Ext.Msg.alert(t('error'), t('Error while fetching seo meta data.'));
+                Ext.Msg.alert(t('error'), t('seo_bundle.panel.error_fetch_data'));
             }.bind(this)
         });
 
@@ -121,7 +121,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
                 }
             },
             failure: function (resp) {
-                Ext.Msg.alert(t('error'), t('Error while saving seo meta data.'));
+                Ext.Msg.alert(t('error'), t('seo_bundle.panel.error_save_data'));
             }
         });
     },

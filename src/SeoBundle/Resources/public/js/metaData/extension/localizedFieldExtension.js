@@ -139,7 +139,7 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
                 cellEditing
             ],
             columns: Ext.Array.merge([{
-                text: t('locale'),
+                text: t('seo_bundle.integrator.localized.locale'),
                 sortable: false,
                 hideable: false,
                 menuDisabled: true,
@@ -151,7 +151,7 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
                 {
                     xtype: 'button',
                     scale: 'small',
-                    text: t('edit'),
+                    text: t('seo_bundle.integrator.localized.edit'),
                     iconCls: 'pimcore_icon_edit',
                     handler: this.openEditor.bind(this)
                 }
@@ -214,12 +214,12 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
             modal: true,
             buttons: [
                 {
-                    text: t('save'),
+                    text: t('seo_bundle.integrator.localized.save'),
                     iconCls: 'pimcore_icon_save',
                     handler: this.saveEditorDataAndClose.bind(this)
                 },
                 {
-                    text: t('cancel'),
+                    text: t('seo_bundle.integrator.localized.cancel'),
                     iconCls: 'pimcore_icon_cancel',
                     handler: function () {
                         this.editorWindow.close();

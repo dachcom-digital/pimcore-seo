@@ -174,7 +174,7 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
 
             tbar = [{
                 xtype: 'combo',
-                fieldLabel: t('Preview Template'),
+                fieldLabel: t('seo_bundle.integrator.preview_template'),
                 mode: 'local',
                 editable: false,
                 value: this.previewContainerTemplate,

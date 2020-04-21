@@ -1,7 +1,7 @@
 pimcore.registerNS('Seo.MetaData.Integrator.OpenGraphIntegrator');
 Seo.MetaData.Integrator.OpenGraphIntegrator = Class.create(Seo.MetaData.Integrator.AbstractPropertyIntegrator, {
 
-    fieldSetTitle: 'Open Graph Editor',
+    fieldSetTitle: t('seo_bundle.integrator.og.title'),
     iconClass: 'seo_integrator_icon_icon_og',
     fieldType: 'property',
     fieldTypeProperty: 'og:type',
@@ -11,5 +11,5 @@ Seo.MetaData.Integrator.OpenGraphIntegrator = Class.create(Seo.MetaData.Integrat
         'og:title' : 'title',
         'og:image' : 'image',
     },
-    addFieldButtonLabel: t('Add OG Field')
+    addFieldButtonLabel: t('seo_bundle.integrator.og.add_field')
 });

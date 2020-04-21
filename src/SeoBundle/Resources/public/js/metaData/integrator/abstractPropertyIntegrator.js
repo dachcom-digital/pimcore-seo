@@ -7,8 +7,8 @@ Seo.MetaData.Integrator.AbstractPropertyIntegrator = Class.create(Seo.MetaData.I
     imageAwareTypes: [],
     fields: {},
     previewFields: {},
-    addFieldButtonLabel: t('Add Field'),
-    addPresetButtonLabel: t('Add Preset'),
+    addFieldButtonLabel: t('seo_bundle.integrator.property.add_field'),
+    addPresetButtonLabel: t('seo_bundle.integrator.property.add_preset'),
 
     buildPanel: function () {
 

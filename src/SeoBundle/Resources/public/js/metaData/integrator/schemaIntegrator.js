@@ -1,7 +1,7 @@
 pimcore.registerNS('Seo.MetaData.Integrator.SchemaIntegrator');
 Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
-    fieldSetTitle: t('Schema Blocks'),
+    fieldSetTitle: t('seo_bundle.integrator.schema.title'),
     iconClass: 'seo_integrator_icon_icon_schema',
     schemaPanel: null,
 
@@ -20,7 +20,7 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
                     xtype: 'label',
                     anchor: '100%',
                     style: 'display:block; padding:5px; background:#f5f5f5; border:1px solid #eee; font-weight: 300;',
-                    html: 'HTML tags are not allowed and are removed when saving. Valid data starts with <pre style="display: inline;">"&lt;script type="application/ld+json"&gt;"</pre> and ends with <pre style="display: inline;">"&lt;/script&gt;"</pre>.'
+                    html: t('seo_bundle.integrator.schema.usage_note').format('<pre style="display: inline;">"&lt;script type="application/ld+json"&gt;"</pre>', '<pre style="display: inline;">"&lt;/script&gt;"</pre>')
                 },
                 this.getAddControl()
             ]
@@ -59,14 +59,14 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
 
         items.push({
             cls: 'pimcore_block_button_plus',
-            text: 'Add Schema Field',
+            text: t('seo_bundle.integrator.schema.add_field'),
             iconCls: 'pimcore_icon_plus',
             handler: this.addSchemaField.bind(this, null)
         });
 
         items.push({
             xtype: 'label',
-            text: t('Note: If you\'re adding custom schema fields, you should be aware of possible duplicate entries. There might be some dynamically added blocks which can\'t be merged automatically.'),
+            text: t('seo_bundle.integrator.schema.caution_note'),
             style: {
                 padding: '5px',
                 border: '1px solid #A4E8A6',
@@ -144,7 +144,7 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
     getSchemaEditorField: function (isProxy, lfIdentifier, locale) {
         return {
             xtype: 'textarea',
-            fieldLabel: t('Schema Data'),
+            fieldLabel: t('seo_bundle.integrator.schema.data'),
             style: 'margin: 0 10px 0 0',
             name: lfIdentifier,
             height: 200,
@@ -156,7 +156,7 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
 
     onLocalizedGridStoreRequest: function (lfIdentifier) {
         return [{
-            title: t('Schema Data'),
+            title: t('seo_bundle.integrator.schema.data'),
             storeIdentifier: lfIdentifier,
             renderer: function (v) {
                 if (typeof v === 'string') {

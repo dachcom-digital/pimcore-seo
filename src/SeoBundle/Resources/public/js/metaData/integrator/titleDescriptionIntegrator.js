@@ -1,7 +1,7 @@
 pimcore.registerNS('Seo.MetaData.Integrator.TitleDescriptionIntegrator');
 Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
-    fieldSetTitle: t('title') + ', ' + t('description'),
+    fieldSetTitle: t('seo_bundle.integrator.title_description.title'),
     iconClass: 'seo_integrator_icon_title_description',
     integratorValueFetcher: null,
 
@@ -43,7 +43,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
         return [
             {
                 xtype: 'textarea',
-                fieldLabel: t('title') + ' (' + (titleValue !== null ? titleValue.length : 0) + ')',
+                fieldLabel: t('seo_bundle.integrator.title_description.single_title') + ' (' + (titleValue !== null ? titleValue.length : 0) + ')',
                 name: 'title',
                 itemId: 'title',
                 maxLength: 255,
@@ -52,7 +52,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function (el) {
-                        el.labelEl.update(t('title') + ' (' + el.getValue().length + ')');
+                        el.labelEl.update(t('seo_bundle.integrator.title_description.single_title') + ' (' + el.getValue().length + ')');
                         if (!isProxy) {
                             this.refreshLivePreviewDelayed()
                         }
@@ -61,7 +61,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
             },
             {
                 xtype: 'textarea',
-                fieldLabel: t('description') + ' (' + (descriptionValue !== null ? descriptionValue.length : 0) + ')',
+                fieldLabel: t('seo_bundle.integrator.title_description.single_description') + ' (' + (descriptionValue !== null ? descriptionValue.length : 0) + ')',
                 maxLength: 350,
                 height: 60,
                 name: 'description',
@@ -70,7 +70,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
                 enableKeyEvents: true,
                 listeners: {
                     keyup: function (el) {
-                        el.labelEl.update(t('description') + ' ('+ el.getValue().length + ')');
+                        el.labelEl.update(t('seo_bundle.integrator.title_description.single_description') + ' ('+ el.getValue().length + ')');
                         if (!isProxy) {
                             this.refreshLivePreviewDelayed()
                         }
@@ -84,14 +84,14 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
 
         return [
             {
-                title: 'Title',
+                title: t('seo_bundle.integrator.title_description.single_title'),
                 storeIdentifier: 'title',
                 onFetchStoredValue: function (locale) {
                     return this.getStoredValue('title', locale);
                 }.bind(this)
             },
             {
-                title: 'Description',
+                title: t('seo_bundle.integrator.title_description.single_description'),
                 storeIdentifier: 'description',
                 onFetchStoredValue: function (locale) {
                     return this.getStoredValue('description', locale);

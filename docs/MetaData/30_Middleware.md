@@ -82,9 +82,8 @@ class MyCustomExtractor implements ExtractorInterface
      */
     public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
     {
-        $graphMiddleware = $seoMetadata->getMiddleware('my_custom_adapter');
-
-        $graphMiddleware->addTask(function (SeoMetaDataInterface $seoMetadata, string $string) {
+        $middleware = $seoMetadata->getMiddleware('my_custom_adapter');
+        $middleware->addTask(function (SeoMetaDataInterface $seoMetadata, string $string) {
             $seoMetadata->setTitle($string); // output: "Important string"
         });
     }

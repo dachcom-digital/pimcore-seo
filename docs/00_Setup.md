@@ -17,6 +17,7 @@ all documents will be automatically rendered with corresponding metadata values.
     {% block metadata %}
         {{ pimcore_head_title() }}
         {{ pimcore_head_meta() }}
+        {{ pimcore_head_link() }}
     {% endblock metadata %}
 </head>
 <body>

@@ -171,5 +171,4 @@ class QueueEntry implements QueueEntryInterface
     {
         return $this->creationDate;
     }
-
 }

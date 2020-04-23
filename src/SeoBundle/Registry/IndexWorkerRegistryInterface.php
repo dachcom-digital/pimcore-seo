@@ -17,6 +17,7 @@ interface IndexWorkerRegistryInterface
      * @param string $identifier
      *
      * @return IndexWorkerInterface
+     *
      * @throws \Exception
      */
     public function get($identifier);

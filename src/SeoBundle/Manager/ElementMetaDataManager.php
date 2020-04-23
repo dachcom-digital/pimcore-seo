@@ -52,7 +52,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMetaDataIntegratorConfiguration()
     {
@@ -60,7 +60,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMetaDataIntegratorBackendConfiguration($correspondingElement)
     {
@@ -77,7 +77,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getElementData(string $elementType, int $elementId)
     {
@@ -91,7 +91,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getElementDataForBackend(string $elementType, int $elementId)
     {
@@ -111,7 +111,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data)
     {
@@ -133,6 +133,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
                 $this->entityManager->remove($elementMetaData);
                 $this->entityManager->flush();
             }
+
             return;
         }
 
@@ -143,7 +144,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data)
     {
@@ -156,11 +157,10 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($integratorName);
 
         return $metaDataIntegrator->getPreviewParameter($element, $template, $data);
-
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function deleteElementData(string $elementType, int $elementId)
     {
@@ -247,7 +247,6 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         }
 
         if ($legacyData['hasTitleDescriptionIntegrator'] === true) {
-
             $legacyTitleDescription = [];
             if (!empty($legacyData['title'])) {
                 $legacyTitleDescription['title'] = $legacyData['title'];
@@ -263,7 +262,6 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         }
 
         if ($legacyData['hasHtmlTagIntegrator'] === true) {
-
             $legacyHtmlTags = [];
             if (is_array($legacyData['metaData'])) {
                 foreach ($legacyData['metaData'] as $metaDataRow) {

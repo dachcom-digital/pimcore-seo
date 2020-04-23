@@ -22,7 +22,7 @@ class UrlGenerator implements UrlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function generate($element)
     {
@@ -38,7 +38,7 @@ class UrlGenerator implements UrlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCurrentSchemeAndHost()
     {
@@ -85,5 +85,4 @@ class UrlGenerator implements UrlGeneratorInterface
 
         return null;
     }
-
 }

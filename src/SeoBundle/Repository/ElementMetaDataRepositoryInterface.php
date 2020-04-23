@@ -10,7 +10,7 @@ interface ElementMetaDataRepositoryInterface
      * @param string $elementType
      * @param int    $elementId
      *
-     * @return  ElementMetaDataInterface[]
+     * @return ElementMetaDataInterface[]
      */
     public function findAll(string $elementType, int $elementId);
 

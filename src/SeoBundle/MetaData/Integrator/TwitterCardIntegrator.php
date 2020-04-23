@@ -118,7 +118,6 @@ class TwitterCardIntegrator implements IntegratorInterface
         }
 
         foreach ($data as $twitterItem) {
-
             if (!isset($twitterItem['value']) || empty($twitterItem['value']) || empty($twitterItem['name'])) {
                 continue;
             }

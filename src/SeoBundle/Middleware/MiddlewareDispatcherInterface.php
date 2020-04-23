@@ -36,4 +36,3 @@ interface MiddlewareDispatcherInterface
      */
     public function dispatchMiddlewareFinisher(SeoMetaDataInterface $seoMetadata);
 }
-

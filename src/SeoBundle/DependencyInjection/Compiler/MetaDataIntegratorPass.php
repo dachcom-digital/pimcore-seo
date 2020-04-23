@@ -25,7 +25,6 @@ final class MetaDataIntegratorPass implements CompilerPassInterface
         $definition = $container->getDefinition(MetaDataIntegratorRegistry::class);
         foreach ($container->findTaggedServiceIds('seo.meta_data.integrator', true) as $id => $tags) {
             foreach ($tags as $attributes) {
-
                 if (!isset($attributes['identifier'])) {
                     throw new InvalidArgumentException(sprintf('Attribute "identifier" missing for meta data integrator "%s".', $id));
                 }
@@ -49,6 +48,7 @@ final class MetaDataIntegratorPass implements CompilerPassInterface
         foreach ($integratorConfiguration['enabled_integrator'] as $enabledIntegrator) {
             if ($enabledIntegrator['integrator_name'] === $identifier) {
                 $integratorConfig = $enabledIntegrator['integrator_config'];
+
                 break;
             }
         }

@@ -20,9 +20,7 @@ final class ResourceProcessorPass implements CompilerPassInterface
         $definition = $container->getDefinition(ResourceProcessorRegistry::class);
 
         foreach ($container->findTaggedServiceIds('seo.index.resource_processor', true) as $serviceId => $attributes) {
-
             foreach ($attributes as $attribute) {
-
                 if (isset($attribute['priority'])) {
                     $priority = $attribute['priority'];
                 }
@@ -37,7 +35,6 @@ final class ResourceProcessorPass implements CompilerPassInterface
         });
 
         foreach ($services as [, $index, $serviceId, $attributes]) {
-
             if (!isset($attributes['identifier'])) {
                 throw new InvalidArgumentException(sprintf('Attribute "identifier" missing for resource processor "%s".', $serviceId));
             }

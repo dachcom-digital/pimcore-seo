@@ -20,7 +20,7 @@ class Logger implements LoggerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function log($level, $message, array $context = [])
     {
@@ -34,5 +34,4 @@ class Logger implements LoggerInterface
     {
         return $this->applicationLogger::getInstance('seo-bundle', true);
     }
-
 }

@@ -56,7 +56,7 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function registerTask(callable $callback, string $identifier)
     {
@@ -71,7 +71,7 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatchTasks(SeoMetaDataInterface $seoMetadata)
     {
@@ -85,7 +85,7 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function dispatchMiddlewareFinisher(SeoMetaDataInterface $seoMetadata)
     {

@@ -10,14 +10,14 @@ interface ResourceProcessorInterface
     /**
      * @param string $workerIdentifier
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsWorker(string $workerIdentifier);
 
     /**
      * @param object $resource
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsResource($resource);
 

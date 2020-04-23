@@ -124,7 +124,6 @@ class OpenGraphIntegrator implements IntegratorInterface
 
         $addedItems = 0;
         foreach ($data as $ogItem) {
-
             if (!isset($ogItem['value']) || empty($ogItem['value']) || empty($ogItem['property'])) {
                 continue;
             }

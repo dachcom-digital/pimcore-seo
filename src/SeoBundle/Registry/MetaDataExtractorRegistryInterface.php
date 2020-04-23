@@ -17,6 +17,7 @@ interface MetaDataExtractorRegistryInterface
      * @param string $identifier
      *
      * @return ExtractorInterface
+     *
      * @throws \Exception
      */
     public function get($identifier);

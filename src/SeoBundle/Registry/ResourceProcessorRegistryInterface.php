@@ -17,6 +17,7 @@ interface ResourceProcessorRegistryInterface
      * @param string $identifier
      *
      * @return ResourceProcessorInterface
+     *
      * @throws \Exception
      */
     public function get($identifier);
@@ -25,5 +26,4 @@ interface ResourceProcessorRegistryInterface
      * @return ResourceProcessorInterface[]
      */
     public function getAll();
-
 }

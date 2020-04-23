@@ -48,5 +48,4 @@ interface ElementMetaDataInterface
      * @return array
      */
     public function getData();
-
 }

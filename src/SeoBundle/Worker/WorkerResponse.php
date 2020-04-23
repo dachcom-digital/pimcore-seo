@@ -36,7 +36,7 @@ class WorkerResponse implements WorkerResponseInterface
      * @param string              $message
      * @param bool                $successFullyProcessed
      * @param QueueEntryInterface $queueEntry
-     * @param                     $rawResponse
+     * @param mixed               $rawResponse
      */
     public function __construct(int $status, ?string $message, bool $successFullyProcessed, QueueEntryInterface $queueEntry, $rawResponse)
     {
@@ -48,7 +48,7 @@ class WorkerResponse implements WorkerResponseInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getStatus()
     {
@@ -56,7 +56,7 @@ class WorkerResponse implements WorkerResponseInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMessage()
     {
@@ -64,7 +64,7 @@ class WorkerResponse implements WorkerResponseInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getQueueEntry()
     {
@@ -72,7 +72,7 @@ class WorkerResponse implements WorkerResponseInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRawResponse()
     {
@@ -80,7 +80,7 @@ class WorkerResponse implements WorkerResponseInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function isDone()
     {

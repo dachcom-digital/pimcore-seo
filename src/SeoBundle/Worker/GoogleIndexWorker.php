@@ -14,7 +14,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
     protected $configuration;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @todo:   Handle Quotas? (@see https://developers.google.com/search/apis/indexing-api/v3/quota-pricing)
      * @todo:   We're using batched submission here (@see https://developers.google.com/search/apis/indexing-api/v3/using-api#batching)
@@ -34,10 +34,8 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $chunkedEntries = array_chunk($queueEntries, 40, false);
 
         foreach ($chunkedEntries as $entriesBlock) {
-
             /** @var QueueEntryInterface $queueEntry */
             foreach ($entriesBlock as $queueEntry) {
-
                 $postBody = new \Google_Service_Indexing_UrlNotification();
                 $postBody->setType($this->getUrlType($queueEntry->getType()));
                 $postBody->setUrl($queueEntry->getDataUrl());
@@ -169,6 +167,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
 
     /**
      * @return \Google_Client
+     *
      * @throws \Google_Exception
      */
     protected function getClient()
@@ -196,7 +195,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
      */
     public static function configureOptions(OptionsResolver $resolver)
     {
-         $resolver->setDefaults([
+        $resolver->setDefaults([
             'push_requests_per_day'    => 200,
             'push_requests_per_minute' => 600,
             'auth_config'              => null,

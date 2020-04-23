@@ -20,7 +20,7 @@ interface QueueEntryInterface
     public function getType();
 
     /**
-     * @param $dataId
+     * @param int $dataId
      */
     public function setDataId($dataId);
 
@@ -78,5 +78,4 @@ interface QueueEntryInterface
      * @return \DateTime
      */
     public function getCreationDate();
-
 }

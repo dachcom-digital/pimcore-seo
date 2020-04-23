@@ -19,6 +19,9 @@ class SchemaIntegrator implements IntegratorInterface
      */
     protected $metaDataProvider;
 
+    /**
+     * @param MetaDataProviderInterface $metaDataProvider
+     */
     public function __construct(MetaDataProviderInterface $metaDataProvider)
     {
         $this->metaDataProvider = $metaDataProvider;
@@ -34,7 +37,6 @@ class SchemaIntegrator implements IntegratorInterface
         $addedJsonLdDataTypes = [];
 
         foreach (\Pimcore\Tool::getValidLanguages() as $locale) {
-
             $seoMetaData = null;
             if (method_exists($this->metaDataProvider, 'getSeoMetaDataForBackend')) {
                 /** @var SeoMetaDataInterface $seoMetaData */
@@ -88,6 +90,7 @@ class SchemaIntegrator implements IntegratorInterface
         $schemaBlocksConfiguration = [];
         $cleanData = function (array $schemaBlock) {
             $cleanData = json_encode($schemaBlock, JSON_PRETTY_PRINT);
+
             return sprintf('<script type="application/ld+json">%s</script>', $cleanData);
         };
 
@@ -120,7 +123,6 @@ class SchemaIntegrator implements IntegratorInterface
         }
 
         foreach ($configuration as $index => $schemaBlock) {
-
             $schemaBlockData = null;
             $localized = false;
 
@@ -144,6 +146,7 @@ class SchemaIntegrator implements IntegratorInterface
 
             if ($schemaBlockData === null) {
                 unset($configuration[$index]);
+
                 continue;
             }
 
@@ -162,32 +165,6 @@ class SchemaIntegrator implements IntegratorInterface
     }
 
     /**
-     * @param $data
-     *
-     * @return array|null
-     */
-    public function validateSchemaBlock($data)
-    {
-        $validatedJsonData = null;
-
-        if (!is_string($data)) {
-            return null;
-        }
-
-        try {
-            $validatedJsonData = $this->validateJsonLd($data);
-        } catch (\Throwable $e) {
-            return null;
-        }
-
-        if ($validatedJsonData === false) {
-            return null;
-        }
-
-        return $validatedJsonData;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata)
@@ -201,6 +178,22 @@ class SchemaIntegrator implements IntegratorInterface
                 $seoMetadata->addSchema($value);
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setConfiguration(array $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function configureOptions(OptionsResolver $resolver)
+    {
+        // no options here.
     }
 
     /**
@@ -237,6 +230,32 @@ class SchemaIntegrator implements IntegratorInterface
     }
 
     /**
+     * @param string $data
+     *
+     * @return array|null
+     */
+    protected function validateSchemaBlock($data)
+    {
+        $validatedJsonData = null;
+
+        if (!is_string($data)) {
+            return null;
+        }
+
+        try {
+            $validatedJsonData = $this->validateJsonLd($data);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        if ($validatedJsonData === false) {
+            return null;
+        }
+
+        return $validatedJsonData;
+    }
+
+    /**
      * @param string $jsonLdData
      *
      * @return bool|array
@@ -245,7 +264,9 @@ class SchemaIntegrator implements IntegratorInterface
      */
     protected function validateJsonLd(string $jsonLdData)
     {
-        $jsonLdData = preg_replace('/[ \t\n]+/', ' ',
+        $jsonLdData = preg_replace(
+            '/[ \t\n]+/',
+            ' ',
             preg_replace('/\s*$^\s*/m', ' ', $jsonLdData)
         );
 
@@ -255,7 +276,7 @@ class SchemaIntegrator implements IntegratorInterface
 
         libxml_use_internal_errors(1);
         $dom->loadHTML($jsonLdData);
-        $xpath = new \DOMXpath($dom);
+        $xpath = new \DOMXPath($dom);
         $jsonScripts = $xpath->query('//script[@type="application/ld+json"]');
 
         // Handle CDATA stuff
@@ -273,21 +294,4 @@ class SchemaIntegrator implements IntegratorInterface
 
         return $data;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
-    {
-        $this->configuration = $configuration;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function configureOptions(OptionsResolver $resolver)
-    {
-        // no options here.
-    }
-
 }

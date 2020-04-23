@@ -13,7 +13,7 @@ class MetaDataIntegratorRegistry implements MetaDataIntegratorRegistryInterface
 
     /**
      * @param IntegratorInterface $service
-     * @param string                  $identifier
+     * @param string              $identifier
      */
     public function register($service, string $identifier)
     {

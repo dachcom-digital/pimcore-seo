@@ -68,14 +68,12 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addToQueue(string $processType, $resource)
     {
         foreach ($this->enabledWorker as $workerIdentifier) {
-
             foreach ($this->resourceProcessorRegistry->getAll() as $resourceProcessorIdentifier => $resourceProcessor) {
-
                 if ($resourceProcessor->supportsWorker($workerIdentifier) === false) {
                     continue;
                 }
@@ -96,12 +94,11 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function processQueue()
     {
         foreach ($this->enabledWorker as $workerIdentifier) {
-
             if ($this->hasQueueData($workerIdentifier) === false) {
                 continue;
             }
@@ -120,6 +117,7 @@ class QueueManager implements QueueManagerInterface
      * @param WorkerResponseInterface $workerResponse
      *
      * @throws \Exception
+     *
      * @internal
      */
     public function processResponse(WorkerResponseInterface $workerResponse)
@@ -137,12 +135,14 @@ class QueueManager implements QueueManagerInterface
         } catch (\Throwable $e) {
             $message = sprintf('Error parsing worker response in "%s" processor. Message was: %s', $resourceProcessorIdentifier, $e->getMessage());
             $this->logger->log('error', $message, $logContext);
+
             return;
         }
 
         if ($workerResponse->isDone() === false) {
             $message = sprintf('Processing data with worker %s failed. %s', $workerResponse->getQueueEntry()->getWorker(), $workerResponse->getMessage());
             $this->logger->log('warning', $message, $logContext);
+
             return;
         }
 
@@ -176,10 +176,10 @@ class QueueManager implements QueueManagerInterface
         $queuedEntries = $this->queueEntryRepository->findAllForWorker($workerIdentifier, ['creationDate' => 'DESC']);
 
         foreach ($queuedEntries as $queuedEntry) {
-
             $key = $this->generateEntryKey($queuedEntry);
             if (isset($data[$key])) {
                 $removableEntries[] = $queuedEntry;
+
                 continue;
             }
 
@@ -206,11 +206,15 @@ class QueueManager implements QueueManagerInterface
         }
 
         if (empty($queueEntry->getDataUrl())) {
-            $this->logger->log('warning',
-                sprintf('Queue entry (type: %s, id: %s) has no valid data url. Skipping persistence...',
+            $this->logger->log(
+                'warning',
+                sprintf(
+                    'Queue entry (type: %s, id: %s) has no valid data url. Skipping persistence...',
                     $queueEntry->getDataType(),
-                    $queueEntry->getDataId())
+                    $queueEntry->getDataId()
+                )
             );
+
             return;
         }
 
@@ -232,7 +236,8 @@ class QueueManager implements QueueManagerInterface
      */
     protected function generateEntryKey(QueueEntryInterface $queueEntry)
     {
-        return md5(sprintf('%s_%s_%s',
+        return md5(sprintf(
+            '%s_%s_%s',
             $queueEntry->getDataId(),
             $queueEntry->getDataType(),
             $queueEntry->getDataUrl()

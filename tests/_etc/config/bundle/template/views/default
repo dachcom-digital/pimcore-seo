@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Page for Search Bundle</title>
+    {{ pimcore_head_meta() }}
+    {{ pimcore_head_link() }}
+</head>
+<body>
+    <div id="site">
+        <div class="content">
+            {% if document is defined %}
+                <span id="page-id">{{ document.getId() }}</span>
+            {% endif %}
+        </div>
+        {% block content %}
+            {{ pimcore_areablock('dachcomBundleTest') }}
+        {% endblock %}
+    </div>
+</body>
+</html>

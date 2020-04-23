@@ -6,9 +6,8 @@ use Pimcore\Templating\Helper\HeadMeta;
 use Pimcore\Templating\Helper\HeadTitle;
 use SeoBundle\MetaData\Extractor\ExtractorInterface;
 use SeoBundle\Middleware\MiddlewareDispatcherInterface;
-use SeoBundle\Middleware\MiddlewareInterface;
-use SeoBundle\Model\SeoMetaData;
 use SeoBundle\Registry\MetaDataExtractorRegistryInterface;
+use SeoBundle\Model\SeoMetaData;
 
 class MetaDataProvider implements MetaDataProviderInterface
 {
@@ -28,7 +27,7 @@ class MetaDataProvider implements MetaDataProviderInterface
     protected $extractorRegistry;
 
     /**
-     * @var MiddlewareInterface
+     * @var MiddlewareDispatcherInterface
      */
     protected $middlewareDispatcher;
 

@@ -50,15 +50,16 @@ class HtmlTagIntegrator implements IntegratorInterface
         }
 
         foreach ($configuration as $index => $htmlTag) {
-
             if (!is_string($htmlTag)) {
                 unset($configuration[$index]);
+
                 continue;
             }
 
             // there must be some html tags in there.
             if ($htmlTag === strip_tags($htmlTag)) {
                 unset($configuration[$index]);
+
                 continue;
             }
         }

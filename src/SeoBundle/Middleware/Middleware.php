@@ -25,7 +25,7 @@ class Middleware implements MiddlewareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function addTask($callback)
     {

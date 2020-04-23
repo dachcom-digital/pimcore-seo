@@ -57,5 +57,5 @@ interface IntegratorInterface
      * @param string|null          $locale
      * @param SeoMetaDataInterface $seoMetadata
      */
-    public function updateMetaData($element, array $data,  ?string $locale, SeoMetaDataInterface $seoMetadata);
+    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata);
 }

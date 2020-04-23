@@ -85,7 +85,6 @@ class IntegratorExtractor implements ExtractorInterface
         $elementMetaData = $this->elementMetaDataManager->getElementData($elementType, $elementId);
 
         foreach ($elementMetaData as $elementMeta) {
-
             try {
                 $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($elementMeta->getIntegrator());
             } catch (\Exception $e) {

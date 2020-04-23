@@ -4,3 +4,8 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     symfony:
         container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
+    ignoreErrors:
+        # There is no global constants definition file we could include, ignore it:
+        - '#Constant PIMCORE_[A-Z\\_]+ not found\.#'
+        - '#.*NodeDefinition::append.*#'
+        - '#.*NodeDefinition::addDefaultsIfNotSet.*#'

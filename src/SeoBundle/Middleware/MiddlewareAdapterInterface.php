@@ -7,16 +7,16 @@ use SeoBundle\Model\SeoMetaDataInterface;
 interface MiddlewareAdapterInterface
 {
     /**
-     * Boot your middleware
+     * Boot your middleware.
      *
      * This method gets called once per request - if middleware gets involved at all!
      */
     public function boot();
 
     /**
-     * Array with all arguments to inject them into a task
+     * Array with all arguments to inject them into a task.
      *
-     * @return mixed
+     * @return array
      */
     public function getTaskArguments(): array;
 

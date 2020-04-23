@@ -17,6 +17,7 @@ interface MetaDataIntegratorRegistryInterface
      * @param string $identifier
      *
      * @return IntegratorInterface
+     *
      * @throws \Exception
      */
     public function get($identifier);

@@ -10,6 +10,7 @@ interface SeoMetaDataInterface
      * @param string $middlewareAdapterName
      *
      * @return MiddlewareInterface
+     *
      * @throws \Exception
      */
     public function getMiddleware(string $middlewareAdapterName);
@@ -45,17 +46,17 @@ interface SeoMetaDataInterface
     public function getTitle();
 
     /**
-     * @param array|\Traversable
+     * @param array|\Traversable $extraProperties
      */
     public function setExtraProperties($extraProperties);
 
     /**
-     * @param array|\Traversable
+     * @param array|\Traversable $extraNames
      */
     public function setExtraNames($extraNames);
 
     /**
-     * @param array|\Traversable
+     * @param array|\Traversable $extraHttp
      */
     public function setExtraHttp($extraHttp);
 
@@ -104,6 +105,7 @@ interface SeoMetaDataInterface
 
     /**
      * @return array
+     *
      * @internal Do not use this method!
      *
      * @deprecated
@@ -117,6 +119,7 @@ interface SeoMetaDataInterface
      * @param string $value
      *
      * @deprecated
+     *
      * @internal
      */
     public function addRaw(string $value);

@@ -5,7 +5,7 @@ namespace SeoBundle\Manager;
 interface QueueManagerInterface
 {
     /**
-     * Send data to queue
+     * Send data to queue.
      *
      * @param string $processType
      * @param mixed  $resource
@@ -13,7 +13,7 @@ interface QueueManagerInterface
     public function addToQueue(string $processType, $resource);
 
     /**
-     * Send QueueEntries to enabled index provider workers
+     * Send QueueEntries to enabled index provider workers.
      */
     public function processQueue();
 }

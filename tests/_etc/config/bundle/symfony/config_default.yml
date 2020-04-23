@@ -1,0 +1,30 @@
+seo:
+    meta_data_configuration:
+        meta_data_provider:
+            auto_detect_documents: true
+        meta_data_integrator:
+            integrator_rendering_type: 'tab'
+            documents:
+                enabled: true
+                hide_pimcore_default_seo_panel: true
+            objects:
+                enabled: true
+                data_classes:
+                    - Job
+            enabled_integrator:
+                -   integrator_name: title_description
+                -   integrator_name: twitter_card
+                    integrator_config:
+                        twitter_image_thumbnail: 'socialThumb'
+                -   integrator_name: open_graph
+                    integrator_config:
+                        facebook_image_thumbnail: 'socialThumb'
+                -   integrator_name: schema
+                -   integrator_name: html_tag
+    index_provider_configuration:
+        enabled_worker:
+            -   worker_name: google_index
+                worker_config:
+                    auth_config: app/config/pimcore/google-api-private-key.json
+        pimcore_element_watcher:
+            enabled: true

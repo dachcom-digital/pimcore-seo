@@ -51,6 +51,6 @@ class ResourceProcessorRegistry implements ResourceProcessorRegistryInterface
      */
     public function getAll()
     {
-        return $this->services;
+        return is_array($this->services) ? $this->services : [];
     }
 }

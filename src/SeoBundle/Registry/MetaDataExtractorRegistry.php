@@ -51,6 +51,6 @@ class MetaDataExtractorRegistry implements MetaDataExtractorRegistryInterface
      */
     public function getAll()
     {
-        return $this->services;
+        return is_array($this->services) ? $this->services : [];
     }
 }

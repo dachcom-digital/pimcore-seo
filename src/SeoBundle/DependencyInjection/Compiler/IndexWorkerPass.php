@@ -23,7 +23,6 @@ final class IndexWorkerPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds('seo.index.worker', true) as $id => $tags) {
             foreach ($tags as $attributes) {
-
                 $workerConfiguration = sprintf('seo.index.worker.config.%s', $attributes['identifier']);
                 if (!$container->hasParameter($workerConfiguration)) {
                     continue;

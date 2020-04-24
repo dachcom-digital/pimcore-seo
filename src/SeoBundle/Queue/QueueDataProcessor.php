@@ -76,7 +76,10 @@ class QueueDataProcessor implements QueueDataProcessorInterface
 
         return sprintf(
             'Process "%s" has been locked at %s by "%s" and will stay locked until process is finished with a self-delete failover at %s',
-            $token, $startDate, $executor, $failOverDate
+            $token,
+            $startDate,
+            $executor,
+            $failOverDate
         );
     }
 

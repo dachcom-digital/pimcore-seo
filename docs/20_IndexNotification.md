@@ -46,6 +46,7 @@ use Pimcore\Model\DataObject\Concrete;
 use SeoBundle\Model\QueueEntryInterface;
 use SeoBundle\Worker\WorkerResponseInterface;
 use SeoBundle\ResourceProcessor\ResourceProcessorInterface;
+use SeoBundle\Exception\WorkerResponseInterceptException;
 
 class MyProcessor implements ResourceProcessorInterface
 {
@@ -113,6 +114,12 @@ class MyProcessor implements ResourceProcessorInterface
     {
         // There are already some basic logs in your application logger!
         // @todo: add custom "nice" log to a specific output...
+
+        // throw intercepted response exception.
+        // this will stop SEO Bundle from logging default data to application logger.
+        // if you want to keep the logging, just remove this exception.
+ 
+        throw new WorkerResponseInterceptException();
     }
 }
 ````

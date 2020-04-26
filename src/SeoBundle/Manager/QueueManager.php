@@ -10,6 +10,7 @@ use SeoBundle\Registry\IndexWorkerRegistryInterface;
 use SeoBundle\Registry\ResourceProcessorRegistryInterface;
 use SeoBundle\Repository\QueueEntryRepositoryInterface;
 use SeoBundle\Worker\WorkerResponseInterface;
+use SeoBundle\Exception\WorkerResponseInterceptException;
 
 class QueueManager implements QueueManagerInterface
 {
@@ -115,7 +116,6 @@ class QueueManager implements QueueManagerInterface
 
     /**
      * @param WorkerResponseInterface $workerResponse
-     *
      * @throws \Exception
      *
      * @internal
@@ -132,12 +132,20 @@ class QueueManager implements QueueManagerInterface
 
         try {
             $resourceProcessor->processWorkerResponse($workerResponse);
+        } catch (WorkerResponseInterceptException $e) {
+            // nothing to do, processor intercepted response. remove queue entry and return.
+            $this->removeFromQueue($workerResponse->getQueueEntry());
+
+            return;
         } catch (\Throwable $e) {
             $message = sprintf('Error parsing worker response in "%s" processor. Message was: %s', $resourceProcessorIdentifier, $e->getMessage());
             $this->logger->log('error', $message, $logContext);
 
             return;
         }
+
+        // always remove from queue
+        $this->removeFromQueue($workerResponse->getQueueEntry());
 
         if ($workerResponse->isDone() === false) {
             $message = sprintf('Processing data with worker %s failed. %s', $workerResponse->getQueueEntry()->getWorker(), $workerResponse->getMessage());
@@ -149,9 +157,6 @@ class QueueManager implements QueueManagerInterface
         $message = sprintf('Processing data with worker %s was successfully. %s', $workerResponse->getQueueEntry()->getWorker(), $workerResponse->getMessage());
 
         $this->logger->log('info', $message, $logContext);
-
-        $this->removeFromQueue($workerResponse->getQueueEntry());
-        unset($workerResponse);
     }
 
     /**

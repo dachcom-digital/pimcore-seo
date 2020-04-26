@@ -2,6 +2,7 @@
 
 namespace SeoBundle\ResourceProcessor;
 
+use SeoBundle\Exception\WorkerResponseInterceptException;
 use SeoBundle\Model\QueueEntryInterface;
 use SeoBundle\Worker\WorkerResponseInterface;
 
@@ -42,6 +43,7 @@ interface ResourceProcessorInterface
      * @param WorkerResponseInterface $workerResponse
      *
      * @throws \Exception
+     * @throws WorkerResponseInterceptException
      */
     public function processWorkerResponse(WorkerResponseInterface $workerResponse);
 }

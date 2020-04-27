@@ -100,6 +100,7 @@ class QueueManager implements QueueManagerInterface
     public function processQueue()
     {
         foreach ($this->enabledWorker as $workerIdentifier) {
+
             if ($this->hasQueueData($workerIdentifier) === false) {
                 continue;
             }
@@ -107,7 +108,15 @@ class QueueManager implements QueueManagerInterface
             try {
                 $queuedData = $this->getQueuedData($workerIdentifier);
                 $worker = $this->indexWorkerRegistry->get($workerIdentifier);
-                $worker->process($queuedData, [$this, 'processResponse']);
+
+                if (true !== $processState = $worker->canProcess()) {
+                    if (is_string($processState)) {
+                        $this->logger->log('warning', sprintf('Worker %s process skipped. %s', $workerIdentifier, $processState));
+                    }
+                } else {
+                    $worker->process($queuedData, [$this, 'processResponse']);
+                }
+
             } catch (\Throwable $e) {
                 $this->logger->log('error', sprintf('Error sending queued entries to worker %s. Message was: %s', $workerIdentifier, $e->getMessage()));
             }
@@ -116,6 +125,7 @@ class QueueManager implements QueueManagerInterface
 
     /**
      * @param WorkerResponseInterface $workerResponse
+     *
      * @throws \Exception
      *
      * @internal

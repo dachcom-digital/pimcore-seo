@@ -2,12 +2,19 @@
 
 namespace SeoBundle\Worker;
 
+use Carbon\Carbon;
+use Carbon\CarbonTimeZone;
+use Pimcore\Model\Tool\TmpStore;
 use Psr\Http\Message\RequestInterface;
 use SeoBundle\Model\QueueEntryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GoogleIndexWorker implements IndexWorkerInterface
 {
+    const TMP_STORE_MINUTE_QUOTA_KEY = 'google_index_worker_minute_quota';
+
+    const TMP_STORE_DAILY_QUOTA_KEY = 'google_index_worker_daily_quota';
+
     /**
      * @var array
      */
@@ -15,10 +22,45 @@ class GoogleIndexWorker implements IndexWorkerInterface
 
     /**
      * {@inheritdoc}
+     */
+    public function canProcess()
+    {
+        $dailyQuota = TmpStore::get(self::TMP_STORE_DAILY_QUOTA_KEY);
+
+        if (!$dailyQuota instanceof TmpStore) {
+            return true;
+        }
+
+        $data = $dailyQuota->getData();
+        $maxRequests = $data['quota'];
+
+        if ($maxRequests > 0) {
+            return true;
+        }
+
+        if ($data['log'] === false) {
+            return false;
+        }
+
+        $lifeTime = $this->generateLifeTimeExceed();
+
+        $data['log'] = false;
+        $dailyQuota->setData($data);
+        $dailyQuota->update($lifeTime);
+
+        return sprintf('Limit of daily requests (%d) until %s reached.',
+            $this->configuration['push_requests_per_day'],
+            Carbon::createFromTimestamp(time() + $lifeTime)->format('d.m.Y H:i:s')
+        );
+    }
+
+    /**
+     * {@inheritdoc}
      *
-     * @todo:   Handle Quotas? (@see https://developers.google.com/search/apis/indexing-api/v3/quota-pricing)
-     * @todo:   We're using batched submission here (@see https://developers.google.com/search/apis/indexing-api/v3/using-api#batching)
-     *          So we need to chunk the entries into blocks á 40 entries max.
+     * Handle Quotas: (@see https://developers.google.com/search/apis/indexing-api/v3/quota-pricing)
+     *
+     * We're using batched submission here (@see https://developers.google.com/search/apis/indexing-api/v3/using-api#batching)
+     * So we need to chunk the entries into blocks á 40 entries max.
      *
      * Default Quotas:
      *  - Push requests per day:    200
@@ -31,11 +73,31 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $batch = new \Google_Http_Batch($client, false, 'https://indexing.googleapis.com');
         $service = new \Google_Service_Indexing($client);
 
+        $dailyQuota = TmpStore::get(self::TMP_STORE_DAILY_QUOTA_KEY);
+
+        if ($dailyQuota instanceof TmpStore) {
+            $data = $dailyQuota->getData();
+            $maxRequests = $data['quota'];
+        } else {
+            $maxRequests = $this->configuration['push_requests_per_day'];
+            $data = ['log' => true, 'quota' => $maxRequests];
+        }
+
         $chunkedEntries = array_chunk($queueEntries, 40, false);
 
         foreach ($chunkedEntries as $entriesBlock) {
+
+            if ($maxRequests <= 0) {
+                break;
+            }
+
             /** @var QueueEntryInterface $queueEntry */
             foreach ($entriesBlock as $queueEntry) {
+
+                if ($maxRequests <= 0) {
+                    break;
+                }
+
                 $postBody = new \Google_Service_Indexing_UrlNotification();
                 $postBody->setType($this->getUrlType($queueEntry->getType()));
                 $postBody->setUrl($queueEntry->getDataUrl());
@@ -44,15 +106,36 @@ class GoogleIndexWorker implements IndexWorkerInterface
                 $request = $service->urlNotifications->publish($postBody);
 
                 $batch->add($request, $queueEntry->getUUid());
+
+                $maxRequests--;
             }
 
             $results = $batch->execute();
-
             $this->parseResults($results, $entriesBlock, $resultProcessingCallBack);
 
             // throttle batch requests
             sleep(1);
         }
+
+        $data['quota'] = $maxRequests < 0 ? 0 : $maxRequests;
+
+        TmpStore::set(self::TMP_STORE_DAILY_QUOTA_KEY, $data, null, $this->generateLifeTimeExceed());
+    }
+
+    /**
+     * Daily quotas are refreshed at midnight Pacific Standard Time.
+     *
+     * @see https://developers.google.com/analytics/devguides/config/mgmt/v3/limits-quotas
+     *
+     * @return int
+     */
+    protected function generateLifeTimeExceed()
+    {
+        $quoteLifetime = Carbon::now('PST')->endOfDay();
+        $localeQuoteLifeTime = Carbon::createFromTimestamp($quoteLifetime->getTimestamp(), CarbonTimeZone::create());
+        $diffInSecondsFromNow = $localeQuoteLifeTime->diffInRealSeconds(Carbon::now());
+
+        return $diffInSecondsFromNow;
     }
 
     /**

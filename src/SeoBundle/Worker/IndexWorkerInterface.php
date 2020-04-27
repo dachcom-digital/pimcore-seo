@@ -24,6 +24,14 @@ interface IndexWorkerInterface
     public static function configureOptions(OptionsResolver $resolver);
 
     /**
+     * Return true or false|string.
+     * If string gets returned, it same as return false but will be added to logs.
+     *
+     * @return bool|string
+     */
+    public function canProcess();
+
+    /**
      * @param QueueEntryInterface[] $queueEntries
      * @param array                 $resultCallBack
      *

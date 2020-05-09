@@ -21,11 +21,7 @@ final class MetaDataExtractorPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds('seo.meta_data.extractor', true) as $serviceId => $attributes) {
             foreach ($attributes as $attribute) {
-                if (isset($attribute['priority'])) {
-                    $priority = $attribute['priority'];
-                }
-
-                $priority = $priority ?? 0;
+                $priority = $attribute['priority'] ?? 0;
                 $services[] = [$priority, ++$i, $serviceId, $attribute];
             }
         }

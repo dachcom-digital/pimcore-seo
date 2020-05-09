@@ -21,11 +21,7 @@ final class ResourceProcessorPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds('seo.index.resource_processor', true) as $serviceId => $attributes) {
             foreach ($attributes as $attribute) {
-                if (isset($attribute['priority'])) {
-                    $priority = $attribute['priority'];
-                }
-
-                $priority = $priority ?? 0;
+                $priority = $attribute['priority'] ?? 0;
                 $services[] = [$priority, ++$i, $serviceId, $attribute];
             }
         }

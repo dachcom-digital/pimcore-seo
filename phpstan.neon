@@ -4,6 +4,11 @@ parameters:
     reportUnmatchedIgnoredErrors: false
     symfony:
         container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
+    excludes_analyse:
+        # as long we don't install the dependencies :(
+        - '*SeoBundle/MetaData/Extractor/ThirdParty/News/EntryMetaExtractor.php'
+        - '*SeoBundle/MetaData/Extractor/ThirdParty/CoreShop/OGExtractor.php'
+        - '*SeoBundle/MetaData/Extractor/ThirdParty/CoreShop/TitleDescriptionExtractor.php'
     ignoreErrors:
         # There is no global constants definition file we could include, ignore it:
         - '#Constant PIMCORE_[A-Z\\_]+ not found\.#'

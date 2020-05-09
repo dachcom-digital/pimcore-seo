@@ -54,5 +54,9 @@ class SeoExtension extends Extension
         if (array_key_exists('CoreShopSEOBundle', $bundles)) {
             $loader->load('services/extractors/coreshop.yml');
         }
+
+        if (array_key_exists('NewsBundle', $bundles)) {
+            $loader->load('services/extractors/news.yml');
+        }
     }
 }

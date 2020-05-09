@@ -1,0 +1,10 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SeoBundle\MetaData\Extractor\ThirdParty\News\EntryMetaExtractor:
+        tags:
+            - {name: seo.meta_data.extractor, identifier: news_entry_meta }

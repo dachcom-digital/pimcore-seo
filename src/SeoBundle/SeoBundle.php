@@ -2,6 +2,7 @@
 
 namespace SeoBundle;
 
+use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemoveNewsMetaDataListenerPass;
 use SeoBundle\Tool\Install;
 use SeoBundle\DependencyInjection\Compiler\MetaDataExtractorPass;
 use SeoBundle\DependencyInjection\Compiler\MetaDataIntegratorPass;
@@ -45,6 +46,7 @@ class SeoBundle extends AbstractPimcoreBundle
 
         // third party handling
         $container->addCompilerPass(new RemovePimcoreListenerPass(), PassConfig::TYPE_BEFORE_REMOVING, 250);
+        $container->addCompilerPass(new RemoveNewsMetaDataListenerPass(), PassConfig::TYPE_BEFORE_REMOVING, 250);
         $container->addCompilerPass(new RemoveCoreShopExtractorListenerPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 250);
     }
 

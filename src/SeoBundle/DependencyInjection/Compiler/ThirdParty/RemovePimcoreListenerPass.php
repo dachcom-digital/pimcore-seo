@@ -1,6 +1,6 @@
 <?php
 
-namespace SeoBundle\DependencyInjection\Compiler;
+namespace SeoBundle\DependencyInjection\Compiler\ThirdParty;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

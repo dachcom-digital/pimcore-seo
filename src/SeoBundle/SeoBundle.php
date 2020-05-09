@@ -2,11 +2,12 @@
 
 namespace SeoBundle;
 
+use SeoBundle\Tool\Install;
 use SeoBundle\DependencyInjection\Compiler\MetaDataExtractorPass;
 use SeoBundle\DependencyInjection\Compiler\MetaDataIntegratorPass;
 use SeoBundle\DependencyInjection\Compiler\MetaMiddlewareAdapterPass;
-use SeoBundle\DependencyInjection\Compiler\RemovePimcoreListenerPass;
-use SeoBundle\Tool\Install;
+use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemovePimcoreListenerPass;
+use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemoveCoreShopExtractorListenerPass;
 use SeoBundle\DependencyInjection\Compiler\ResourceProcessorPass;
 use SeoBundle\DependencyInjection\Compiler\IndexWorkerPass;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
@@ -41,7 +42,10 @@ class SeoBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new MetaDataExtractorPass());
         $container->addCompilerPass(new MetaDataIntegratorPass());
         $container->addCompilerPass(new MetaMiddlewareAdapterPass());
+
+        // third party handling
         $container->addCompilerPass(new RemovePimcoreListenerPass(), PassConfig::TYPE_BEFORE_REMOVING, 250);
+        $container->addCompilerPass(new RemoveCoreShopExtractorListenerPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 250);
     }
 
     /**

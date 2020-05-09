@@ -38,5 +38,21 @@ class SeoExtension extends Extension
         $container->setParameter('seo.meta_data_provider.configuration', $config['meta_data_configuration']['meta_data_provider']);
         $container->setParameter('seo.meta_data_integrator.configuration', $config['meta_data_configuration']['meta_data_integrator']);
         $container->setParameter('seo.index.pimcore_element_watcher.enabled', $config['index_provider_configuration']['pimcore_element_watcher']['enabled']);
+
+        $this->checkThirdPartyExtractors($container, $loader);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param YamlFileLoader   $loader
+     *
+     * @throws \Exception
+     */
+    protected function checkThirdPartyExtractors(ContainerBuilder $container, YamlFileLoader $loader)
+    {
+        $bundles = $container->getParameter('kernel.bundles');
+        if (array_key_exists('CoreShopSEOBundle', $bundles)) {
+            $loader->load('services/extractors/coreshop.yml');
+        }
     }
 }

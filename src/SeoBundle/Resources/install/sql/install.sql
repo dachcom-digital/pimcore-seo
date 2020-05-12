@@ -6,7 +6,7 @@ CREATE TABLE `seo_element_meta_data` (
   `data` longtext NOT NULL COMMENT '(DC2Type:array)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `element_type_id_integrator` (`element_type`,`element_id`,`integrator`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE `seo_queue_entry` (
   `uuid` varchar(255) NOT NULL,
@@ -18,4 +18,4 @@ CREATE TABLE `seo_queue_entry` (
   `resource_processor` varchar(255) NOT NULL,
   `creation_date` datetime NOT NULL,
   PRIMARY KEY (`uuid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;

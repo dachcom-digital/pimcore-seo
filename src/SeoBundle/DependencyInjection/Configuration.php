@@ -58,9 +58,26 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->arrayNode('meta_data_provider')
-                ->addDefaultsIfNotSet()
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->booleanNode('auto_detect_documents')->defaultFalse()->end()
+                        ->arrayNode('third_party')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('news')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->booleanNode('disable_default_extractors')->defaultFalse()->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode('coreshop')
+                                    ->addDefaultsIfNotSet()
+                                    ->children()
+                                        ->booleanNode('disable_default_extractors')->defaultFalse()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('meta_data_integrator')
@@ -94,6 +111,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+
 
         return $node;
     }

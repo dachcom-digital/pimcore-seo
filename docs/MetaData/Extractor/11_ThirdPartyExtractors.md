@@ -23,7 +23,17 @@ If you also have some custom coreshop extractors, please migrate them to the seo
 - Extractors:
   - Title & Description Extractor (`coreshop_title_description`)
   - OG Type, Title, Description and Image Extractor (`coreshop_og_tags`)
- 
+  
+#### Disable Default CoreShop Extractor
+```yaml
+seo:
+    meta_data_configuration:
+        meta_data_provider:
+            third_party:
+                coreshop:
+                    disable_default_extractors: true
+```
+
 ***
 
 ### News Bundle
@@ -35,4 +45,12 @@ If you also have some custom coreshop extractors, please migrate them to the seo
 - Extractors:
   - Entry Meta Extractor (`news_entry_meta`, still using the `NewsBundle\Generator` Service to generate metadata and keep bc)
  
- 
+#### Disable Default News Extractor
+```yaml
+seo:
+    meta_data_configuration:
+        meta_data_provider:
+            third_party:
+                news:
+                    disable_default_extractors: true
+```

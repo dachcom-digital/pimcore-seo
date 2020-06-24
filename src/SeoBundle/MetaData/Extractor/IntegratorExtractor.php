@@ -2,7 +2,6 @@
 
 namespace SeoBundle\MetaData\Extractor;
 
-use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
@@ -70,7 +69,7 @@ class IntegratorExtractor implements ExtractorInterface
         $elementId = null;
         $elementType = null;
 
-        if ($element instanceof DataObject) {
+        if ($element instanceof Concrete) {
             $elementId = $element->getId();
             $elementType = 'object';
         } elseif ($element instanceof Document) {

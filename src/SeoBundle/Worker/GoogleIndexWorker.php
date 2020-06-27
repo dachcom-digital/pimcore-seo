@@ -246,6 +246,8 @@ class GoogleIndexWorker implements IndexWorkerInterface
         } elseif ($type === IndexWorkerInterface::TYPE_DELETE) {
             return 'URL_DELETED';
         }
+
+        return 'INVALID_TYPE';
     }
 
     /**

@@ -35,11 +35,12 @@ class QueuedIndexDataCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
+     * {@inheritDoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->dataProcessor->process([]);
+
+        return 0;
     }
 }

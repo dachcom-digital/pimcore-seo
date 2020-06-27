@@ -12,7 +12,7 @@ final class EntryMetaExtractor implements ExtractorInterface
     /**
      * @var HeadMetaGeneratorInterface
      */
-    protected $headMetaGenerator;
+    private $headMetaGenerator;
 
     /**
      * @param HeadMetaGeneratorInterface $headMetaGenerator

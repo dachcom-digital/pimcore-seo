@@ -26,7 +26,6 @@ final class RemoveCoreShopExtractorListenerPass implements CompilerPassInterface
         ];
 
         foreach ($definitions as $aliasDefinition => $definition) {
-
             if ($container->hasAlias($aliasDefinition)) {
                 $container->removeAlias($aliasDefinition);
             }

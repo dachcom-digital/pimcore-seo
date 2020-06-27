@@ -100,7 +100,6 @@ class QueueManager implements QueueManagerInterface
     public function processQueue()
     {
         foreach ($this->enabledWorker as $workerIdentifier) {
-
             if ($this->hasQueueData($workerIdentifier) === false) {
                 continue;
             }
@@ -116,7 +115,6 @@ class QueueManager implements QueueManagerInterface
                 } else {
                     $worker->process($queuedData, [$this, 'processResponse']);
                 }
-
             } catch (\Throwable $e) {
                 $this->logger->log('error', sprintf('Error sending queued entries to worker %s. Message was: %s', $workerIdentifier, $e->getMessage()));
             }

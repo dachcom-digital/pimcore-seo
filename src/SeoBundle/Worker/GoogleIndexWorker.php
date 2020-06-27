@@ -48,7 +48,8 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $dailyQuota->setData($data);
         $dailyQuota->update($lifeTime);
 
-        return sprintf('Limit of daily requests (%d) until %s reached.',
+        return sprintf(
+            'Limit of daily requests (%d) until %s reached.',
             $this->configuration['push_requests_per_day'],
             Carbon::createFromTimestamp(time() + $lifeTime)->format('d.m.Y H:i:s')
         );
@@ -86,14 +87,12 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $chunkedEntries = array_chunk($queueEntries, 40, false);
 
         foreach ($chunkedEntries as $entriesBlock) {
-
             if ($maxRequests <= 0) {
                 break;
             }
 
             /** @var QueueEntryInterface $queueEntry */
             foreach ($entriesBlock as $queueEntry) {
-
                 if ($maxRequests <= 0) {
                     break;
                 }

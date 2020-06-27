@@ -1,4 +1,9 @@
 # Pimcore SEO Bundle
+[![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/seo.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/seo)
+[![Travis](https://img.shields.io/travis/com/dachcom-digital/pimcore-seo/master.svg?style=flat-square)](https://travis-ci.com/dachcom-digital/pimcore-seo)
+[![PhpStan](https://img.shields.io/badge/PHPStan-level%202-brightgreen.svg?style=flat-square)](#)
+
 The last SEO Bundle for pimcore you'll ever need!
 
 - Create title, description and meta tags (OG-Tags, Twitter-Cards) for documents **and** objects!

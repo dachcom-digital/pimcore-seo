@@ -232,7 +232,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         if ($asset instanceof Asset\Image) {
             $thumbnail = $asset->getThumbnail($this->configuration['facebook_image_thumbnail']);
             if ($thumbnail instanceof Asset\Image\Thumbnail) {
-                $imagePath = $thumbnail->getPath(false);
+                $imagePath = \Pimcore\Tool::getHostUrl() . $thumbnail->getPath(false);
             }
         }
 

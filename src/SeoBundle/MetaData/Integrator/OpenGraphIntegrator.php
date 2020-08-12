@@ -102,14 +102,6 @@ class OpenGraphIntegrator implements IntegratorInterface
             return null;
         }
 
-        foreach ($configuration as &$ogField) {
-            if ($ogField['property'] === 'og:image') {
-                if (null !== $imagePath = $this->getImagePath($ogField['value'])) {
-                    $ogField['value']['thumbPath'] = $imagePath;
-                }
-            }
-        }
-
         return $configuration;
     }
 
@@ -149,7 +141,7 @@ class OpenGraphIntegrator implements IntegratorInterface
     protected function findLocaleAwareData(string $property, $value, $locale)
     {
         if ($property === 'og:image') {
-            return isset($value['thumbPath']) && !empty($value['thumbPath']) ? $value['thumbPath'] : null;
+            return isset($value['id']) && is_numeric($value['id']) ? $this->getImagePath($value) : null;
         }
 
         if (!is_array($value)) {
@@ -226,17 +218,13 @@ class OpenGraphIntegrator implements IntegratorInterface
      */
     protected function getImagePath(array $data)
     {
-        $imagePath = null;
-
         $asset = Asset::getById($data['id']);
-        if ($asset instanceof Asset\Image) {
-            $thumbnail = $asset->getThumbnail($this->configuration['facebook_image_thumbnail']);
-            if ($thumbnail instanceof Asset\Image\Thumbnail) {
-                $imagePath = $thumbnail->getPath(false);
-            }
+
+        if (!$asset instanceof Asset) {
+            return null;
         }
 
-        return $imagePath;
+        return $this->urlGenerator->generate($asset, ['thumbnail' => $this->configuration['facebook_image_thumbnail']]);
     }
 
     /**

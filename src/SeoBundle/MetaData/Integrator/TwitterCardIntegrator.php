@@ -97,14 +97,6 @@ class TwitterCardIntegrator implements IntegratorInterface
             return null;
         }
 
-        foreach ($configuration as &$twitterItem) {
-            if ($twitterItem['name'] === 'twitter:image') {
-                if (null !== $imagePath = $this->getImagePath($twitterItem['value'])) {
-                    $twitterItem['value']['thumbPath'] = $imagePath;
-                }
-            }
-        }
-
         return $configuration;
     }
 
@@ -138,7 +130,7 @@ class TwitterCardIntegrator implements IntegratorInterface
     protected function findLocaleAwareData(string $property, $value, $locale)
     {
         if ($property === 'twitter:image') {
-            return isset($value['thumbPath']) && !empty($value['thumbPath']) ? $value['thumbPath'] : null;
+            return isset($value['id']) && is_numeric($value['id']) ? $this->getImagePath($value) : null;
         }
 
         if (!is_array($value)) {
@@ -209,17 +201,13 @@ class TwitterCardIntegrator implements IntegratorInterface
      */
     protected function getImagePath(array $data)
     {
-        $imagePath = null;
-
         $asset = Asset::getById($data['id']);
-        if ($asset instanceof Asset\Image) {
-            $thumbnail = $asset->getThumbnail($this->configuration['twitter_image_thumbnail']);
-            if ($thumbnail instanceof Asset\Image\Thumbnail) {
-                $imagePath = $thumbnail->getPath(false);
-            }
+
+        if (!$asset instanceof Asset) {
+            return null;
         }
 
-        return $imagePath;
+        return $this->urlGenerator->generate($asset, ['thumbnail' => $this->configuration['twitter_image_thumbnail']]);
     }
 
     /**

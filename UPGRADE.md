@@ -7,3 +7,6 @@ After every update you should check the pimcore extension manager.
 Just click the "update" button or execute the migration command to finish the bundle update.
 
 ***
+
+#### Update from Version 1.0 to Version 1.0.5
+- **[BUGFIX]** Use absolute url in image tags, also don't store path in DB to prevent invalid data (https://github.com/dachcom-digital/pimcore-seo/issues/9)

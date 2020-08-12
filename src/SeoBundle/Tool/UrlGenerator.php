@@ -2,6 +2,7 @@
 
 namespace SeoBundle\Tool;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -24,14 +25,14 @@ class UrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate($element)
+    public function generate($element, array $options = [])
     {
         if ($element instanceof Page) {
-            return $this->generateForDocument($element);
-        }
-
-        if ($element instanceof DataObject\Concrete) {
-            return $this->generateForObject($element);
+            return $this->generateForDocument($element, $options);
+        } elseif ($element instanceof Asset) {
+            return $this->generateForAsset($element, $options);
+        } elseif ($element instanceof DataObject\Concrete) {
+            return $this->generateForObject($element, $options);
         }
 
         return null;
@@ -49,11 +50,12 @@ class UrlGenerator implements UrlGeneratorInterface
     }
 
     /**
-     * @param Page $document
+     * @param Page  $document
+     * @param array $options
      *
      * @return string|null
      */
-    protected function generateForDocument(Page $document)
+    protected function generateForDocument(Page $document, array $options)
     {
         $url = null;
 
@@ -68,10 +70,11 @@ class UrlGenerator implements UrlGeneratorInterface
 
     /**
      * @param DataObject\Concrete $object
+     * @param array               $options
      *
      * @return string|null
      */
-    protected function generateForObject(DataObject\Concrete $object)
+    protected function generateForObject(DataObject\Concrete $object, array $options)
     {
         $linkGenerator = $object->getClass()->getLinkGenerator();
         if ($linkGenerator instanceof DataObject\ClassDefinition\LinkGeneratorInterface) {
@@ -84,5 +87,38 @@ class UrlGenerator implements UrlGeneratorInterface
         }
 
         return null;
+    }
+
+    /**
+     * @param Asset $asset
+     * @param array $options
+     *
+     * @return string|null
+     */
+    protected function generateForAsset(Asset $asset, array $options)
+    {
+        if (!$asset instanceof Asset\Image) {
+            return null;
+        }
+
+        if (!isset($options['thumbnail']) || empty($options['thumbnail'])) {
+            return null;
+        }
+
+        $thumbnail = $asset->getThumbnail($options['thumbnail']);
+        if (!$thumbnail instanceof Asset\Image\Thumbnail) {
+            return null;
+        }
+
+        $imagePath = $thumbnail->getPath(false);
+        if (is_null($imagePath)) {
+            return null;
+        }
+
+        if (strpos($imagePath, 'http') !== false) {
+            return $imagePath;
+        }
+
+        return sprintf('%s/%s', $this->getCurrentSchemeAndHost(), ltrim($imagePath, '/'));
     }
 }

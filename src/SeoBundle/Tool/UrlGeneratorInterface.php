@@ -6,10 +6,11 @@ interface UrlGeneratorInterface
 {
     /**
      * @param mixed $element
+     * @param array $options
      *
      * @return string|null
      */
-    public function generate($element);
+    public function generate($element, array $options = []);
 
     /**
      * @return string

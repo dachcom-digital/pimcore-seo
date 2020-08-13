@@ -10,4 +10,5 @@ Just click the "update" button or execute the migration command to finish the bu
 
 #### Update from Version 1.0 to Version 1.0.5
 - **[BUGFIX]** Use absolute url in image tags, also don't store path in DB to prevent invalid data (https://github.com/dachcom-digital/pimcore-seo/issues/9)
+- **[BUGFIX]** Lower third party extractor priority to allow simple overrides on project layer (https://github.com/dachcom-digital/pimcore-seo/issues/7)
 - **[ENHANCEMENT]** Always update document legacy `title` and `description` (https://github.com/dachcom-digital/pimcore-seo/issues/12)

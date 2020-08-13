@@ -7,8 +7,8 @@ services:
 
     SeoBundle\MetaData\Extractor\ThirdParty\CoreShop\TitleDescriptionExtractor:
         tags:
-            - {name: seo.meta_data.extractor, identifier: coreshop_title_description }
+            - {name: seo.meta_data.extractor, identifier: coreshop_title_description, priority: 10 }
 
     SeoBundle\MetaData\Extractor\ThirdParty\CoreShop\OGExtractor:
         tags:
-            - {name: seo.meta_data.extractor, identifier: coreshop_og_tags }
+            - {name: seo.meta_data.extractor, identifier: coreshop_og_tags, priority: 10 }

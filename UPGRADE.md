@@ -10,3 +10,4 @@ Just click the "update" button or execute the migration command to finish the bu
 
 #### Update from Version 1.0 to Version 1.0.5
 - **[BUGFIX]** Use absolute url in image tags, also don't store path in DB to prevent invalid data (https://github.com/dachcom-digital/pimcore-seo/issues/9)
+- **[ENHANCEMENT]** Always update document legacy `title` and `description` (https://github.com/dachcom-digital/pimcore-seo/issues/12)

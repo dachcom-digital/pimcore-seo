@@ -43,6 +43,11 @@ Seo.MetaData.DocumentMetaDataPanel = Class.create(Seo.MetaData.AbstractMetaDataP
             return;
         }
 
+        tabPanel.cls = 'seo-pimcore-legacy-tab-panel ' + (tabPanel.cls !== undefined ? tabPanel.cls : '');
+        if(tabPanel.hasOwnProperty('layout')) {
+            tabPanel.layout.deferredRender = false;
+        }
+
         tabPanel.items.each(function (tab) {
             if (tab.iconCls.indexOf('page_settings') !== -1) {
                 tab.setTitle('Settings');

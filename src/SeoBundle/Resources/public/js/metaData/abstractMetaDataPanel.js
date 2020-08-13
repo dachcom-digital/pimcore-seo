@@ -79,22 +79,19 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
     buildMetaDataIntegrator: function (data, configuration) {
 
         Ext.Array.each(this.configuration.enabled_integrator, function (integrator) {
-
-            var integratorName = integrator['integrator_name'],
+            var integratorClass,
+                integratorName = integrator['integrator_name'],
                 integratorClassName = this.getIntegratorClassName(integratorName),
-                integratorClass,
                 integratorConfiguration = configuration !== null && configuration.hasOwnProperty(integratorName) ? configuration[integratorName] : null,
                 integratorData = data !== null && data.hasOwnProperty(integratorName) ? data[integratorName] : null;
 
             if (Seo.MetaData.Integrator.hasOwnProperty(integratorClassName)) {
-
                 integratorClass = new Seo.MetaData.Integrator[integratorClassName](this.getElementType(), this.getElementId(), integratorName, integratorConfiguration, integratorData, this.renderAsTab);
                 this.integrator.push(integratorClass);
                 this[this.renderAsTab === true ? 'tabPanel' : 'layout'].add(integratorClass.buildLayout());
             } else {
                 console.warn('Integrator class Seo.MetaData.Integrator.' + integratorClassName + ' not found!');
             }
-
         }.bind(this));
 
         if (this.renderAsTab === true) {

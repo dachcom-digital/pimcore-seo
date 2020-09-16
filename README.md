@@ -34,7 +34,7 @@ The last SEO Bundle for pimcore you'll ever need!
 ```
 
 ### Installation via Extension Manager
-After you have installed the SEO Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
+After you have installed the SEO Bundle via composer, open Pimcore backend and go to `Tools` => `Bundles`:
 - Click the green `+` Button in `Enable / Disable` row
 - Click the green `+` Button in `Install/Uninstall` row
 
@@ -46,7 +46,7 @@ After you have installed the SEO Bundle via composer:
 ## Upgrading
 
 ### Upgrading via Extension Manager
-After you have updated the SEO Bundle via composer, open pimcore backend and go to `Tools` => `Extension`:
+After you have updated the SEO Bundle via composer, open Pimcore backend and go to `Tools` => `Bundles`:
 - Click the green `+` Button in `Update` row
 
 ### Upgrading via CommandLine

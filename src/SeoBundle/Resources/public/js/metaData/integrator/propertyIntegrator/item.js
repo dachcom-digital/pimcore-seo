@@ -281,13 +281,11 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
 
     getValuesForPreview: function () {
 
-        var locales,
+        var locales = Ext.isArray(this.availableLocales) ? this.availableLocales : ['en'],
             values = {};
 
         this.integratorValueFetcher.setStorageData(this.data);
         this.integratorValueFetcher.setEditData(this.getValues());
-
-        locales = Ext.isArray(pimcore.settings.websiteLanguages) ? pimcore.settings.websiteLanguages : ['en'];
 
         values[this.fieldType] = this.integratorValueFetcher.fetchForPreview(this.fieldType, null);
         values['value'] = this.integratorValueFetcher.fetchForPreview('value', locales[0]);

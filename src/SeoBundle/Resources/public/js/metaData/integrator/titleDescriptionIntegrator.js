@@ -164,7 +164,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
 
     getValuesForPreview: function () {
 
-        var locales;
+        var locales = this.getAvailableLocales();
 
         if (this.integratorValueFetcher === null) {
             return null;
@@ -173,11 +173,11 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
         this.integratorValueFetcher.setStorageData(this.data);
         this.integratorValueFetcher.setEditData(this.getValues());
 
-        locales = Ext.isArray(pimcore.settings.websiteLanguages) ? pimcore.settings.websiteLanguages : ['en'];
+        locales = Ext.isArray(locales) ? locales : ['en'];
 
         return {
             title: this.integratorValueFetcher.fetchForPreview('title', locales[0]),
             description: this.integratorValueFetcher.fetchForPreview('description', locales[0])
-        };
+        }
     }
 });

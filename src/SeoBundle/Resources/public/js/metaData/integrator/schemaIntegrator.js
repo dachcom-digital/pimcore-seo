@@ -55,7 +55,12 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
 
     getAddControl: function () {
 
-        var items = [];
+        var items = [],
+            user = pimcore.globalmanager.get('user');
+
+        if(user.isAllowed('seo_bundle_add_property') === false) {
+            return [];
+        }
 
         items.push({
             cls: 'pimcore_block_button_plus',
@@ -87,7 +92,8 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
         var itemContainer,
             itemFieldContainer,
             assertedFieldId = fieldId ? fieldId : Ext.id(),
-            identifierValue = this.getStoredValue(assertedFieldId, 'identifier', null);
+            identifierValue = this.getStoredValue(assertedFieldId, 'identifier', null),
+            user = pimcore.globalmanager.get('user');
 
         itemFieldContainer = new Ext.form.FieldContainer({
             xtype: 'fieldcontainer',
@@ -104,6 +110,7 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
                     xtype: 'button',
                     iconCls: 'pimcore_icon_delete',
                     width: 50,
+                    hidden: !user.isAllowed('seo_bundle_remove_property'),
                     listeners: {
                         click: this.removeSchemaField.bind(this)
                     }

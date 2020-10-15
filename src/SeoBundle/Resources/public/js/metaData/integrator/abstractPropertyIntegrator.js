@@ -55,7 +55,12 @@ Seo.MetaData.Integrator.AbstractPropertyIntegrator = Class.create(Seo.MetaData.I
         var items = [],
             presetMenu = [],
             configuration = this.getConfiguration(),
-            availableOgPresets = configuration.hasOwnProperty('presets') ? configuration.presets : [];
+            availableOgPresets = configuration.hasOwnProperty('presets') ? configuration.presets : [],
+            user = pimcore.globalmanager.get('user');
+
+        if(user.isAllowed('seo_bundle_add_property') === false) {
+            return [];
+        }
 
         items.push({
             cls: 'pimcore_block_button_plus',

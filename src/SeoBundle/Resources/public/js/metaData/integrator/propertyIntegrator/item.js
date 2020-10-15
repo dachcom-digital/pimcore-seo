@@ -60,7 +60,8 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
             configuration = this.configuration,
             typeStoreValue = this.getStoredValue(this.fieldType, null),
             propertyTypeValue = typeStoreValue === null ? this.fieldTypeProperty : typeStoreValue,
-            field = this.getContentFieldBasedOnType(propertyTypeValue, this.id);
+            field = this.getContentFieldBasedOnType(propertyTypeValue, this.id),
+            user = pimcore.globalmanager.get('user');
 
         propertyTypeStore = new Ext.data.ArrayStore({
             fields: ['label', 'key'],
@@ -118,6 +119,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
                     xtype: 'button',
                     iconCls: 'pimcore_icon_delete',
                     width: 50,
+                    hidden: !user.isAllowed('seo_bundle_remove_property'),
                     style: {
                         marginTop: '30px'
                     },

@@ -3,17 +3,27 @@
 namespace SeoBundle\Tool;
 
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Migrations\MigrationException;
 use Doctrine\DBAL\Migrations\Version;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Db\Connection;
+use Pimcore\Model\User\Permission;
 use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
 use Pimcore\Migrations\Migration\InstallMigration;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 class Install extends MigrationInstaller
 {
+    /**
+     * @var array
+     */
+    const REQUIRED_PERMISSION = [
+        'seo_bundle_remove_property',
+        'seo_bundle_add_property',
+    ];
+
     /**
      * @var TokenStorageUserResolver
      */
@@ -84,11 +94,13 @@ class Install extends MigrationInstaller
     }
 
     /**
+     * @throws AbortMigrationException
      * @throws DBALException
      */
     public function initializeFreshSetup()
     {
         $this->installDbStructure();
+        $this->installPermissions();
     }
 
     /**
@@ -125,6 +137,31 @@ class Install extends MigrationInstaller
         /** @var Connection $db */
         $db = \Pimcore\Db::get();
         $db->query(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
+    }
+
+    /**
+     * @throws AbortMigrationException
+     */
+    protected function installPermissions()
+    {
+        foreach (self::REQUIRED_PERMISSION as $permission) {
+            $definition = Permission\Definition::getByKey($permission);
+
+            if ($definition) {
+                $this->outputWriter->write(sprintf(
+                    '     <comment>WARNING:</comment> Skipping permission "%s" as it already exists',
+                    $permission
+                ));
+
+                continue;
+            }
+
+            try {
+                Permission\Definition::create($permission);
+            } catch (\Throwable $e) {
+                throw new AbortMigrationException(sprintf('Failed to create permission "%s": %s', $permission, $e->getMessage()));
+            }
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
 
     type: null,
     configuration: null,
+    availableLocales: null,
     data: null,
 
     formPanel: null,
@@ -20,11 +21,12 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
     renderAsTab: false,
     isInShutDownMode: false,
 
-    initialize: function (elementType, elementId, type, configuration, data, renderAsTab) {
+    initialize: function (elementType, elementId, type, configuration, availableLocales, data, renderAsTab) {
         this.elementType = elementType;
         this.elementId = elementId;
         this.type = type;
         this.configuration = configuration;
+        this.availableLocales = availableLocales;
         this.data = data;
         this.renderAsTab = renderAsTab;
         this.delayedRefreshTask = new Ext.util.DelayedTask(this.refreshLivePreview.bind(this));
@@ -36,6 +38,10 @@ Seo.MetaData.Integrator.AbstractIntegrator = Class.create({
 
     getConfiguration: function () {
         return this.configuration;
+    },
+
+    getAvailableLocales: function () {
+        return this.availableLocales;
     },
 
     hasData: function () {

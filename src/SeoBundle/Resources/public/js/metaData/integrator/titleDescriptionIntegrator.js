@@ -54,7 +54,7 @@ Seo.MetaData.Integrator.TitleDescriptionIntegrator = Class.create(Seo.MetaData.I
             }];
         }
 
-        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(null);
+        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(null, this.getAvailableLocales());
 
         params = {
             showFieldLabel: false,

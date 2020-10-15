@@ -3,6 +3,7 @@
 namespace SeoBundle\MetaData\Integrator;
 
 use Pimcore\Model\DataObject;
+use SeoBundle\Helper\ArrayHelper;
 use SeoBundle\MetaData\MetaDataProviderInterface;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -81,10 +82,10 @@ class SchemaIntegrator implements IntegratorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $configuration)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
     {
-        if (!is_array($configuration) || count($configuration) === 0) {
-            return $configuration;
+        if (!is_array($data) || count($data) === 0) {
+            return $data;
         }
 
         $schemaBlocksConfiguration = [];
@@ -94,7 +95,7 @@ class SchemaIntegrator implements IntegratorInterface
             return sprintf('<script type="application/ld+json">%s</script>', $cleanData);
         };
 
-        foreach ($configuration as $schemaBlock) {
+        foreach ($data as $schemaBlock) {
             if ($schemaBlock['localized'] === false) {
                 $schemaBlocksConfiguration[] = ['localized' => false, 'data' => $cleanData($schemaBlock['data'])];
             } elseif ($schemaBlock['localized'] === true) {
@@ -106,7 +107,11 @@ class SchemaIntegrator implements IntegratorInterface
                     ];
                 }
 
-                $schemaBlocksConfiguration[] = ['localized' => true, 'data' => $localizedSchemaBlocksConfiguration];
+                $schemaBlocksConfiguration[] = [
+                    'localized'  => true,
+                    'data'       => $localizedSchemaBlocksConfiguration,
+                    'identifier' => $schemaBlock['identifier']
+                ];
             }
         }
 
@@ -116,13 +121,25 @@ class SchemaIntegrator implements IntegratorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateBeforePersist(string $elementType, int $elementId, array $configuration)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
     {
-        if (is_array($configuration) && count($configuration) === 0) {
+        if (is_array($data) && count($data) === 0) {
             return null;
         }
 
-        foreach ($configuration as $index => $schemaBlock) {
+        // assert identifier
+        foreach ($data as $idx => $row) {
+            if (!isset($row['identifier']) || empty($row['identifier'])) {
+                $data[$idx]['identifier'] = uniqid('si');
+            }
+        }
+
+        if ($elementType === 'object') {
+            $arrayModifier = new ArrayHelper();
+            $data = $arrayModifier->mergeLocaleAwareArrays($data, $previousData, 'identifier', 'data');
+        }
+
+        foreach ($data as $index => $schemaBlock) {
             $schemaBlockData = null;
             $localized = false;
 
@@ -145,23 +162,25 @@ class SchemaIntegrator implements IntegratorInterface
             }
 
             if ($schemaBlockData === null) {
-                unset($configuration[$index]);
+                unset($data[$index]);
 
                 continue;
             }
 
-            $configuration[$index] = [
-                'localized' => $localized,
-                'data'      => $schemaBlockData
+            $data[$index] = [
+                'localized'  => $localized,
+                'data'       => $schemaBlockData,
+                'identifier' => $schemaBlock['identifier']
             ];
         }
 
-        $indexedConfiguration = array_values($configuration);
-        if (count($indexedConfiguration) === 0) {
+        $indexedData = array_values($data);
+
+        if (count($indexedData) === 0) {
             return null;
         }
 
-        return $indexedConfiguration;
+        return $indexedData;
     }
 
     /**
@@ -237,6 +256,11 @@ class SchemaIntegrator implements IntegratorInterface
     protected function validateSchemaBlock($data)
     {
         $validatedJsonData = null;
+
+        // already validated
+        if (is_array($data)) {
+            return $data;
+        }
 
         if (!is_string($data)) {
             return null;

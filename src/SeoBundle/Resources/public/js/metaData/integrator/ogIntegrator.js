@@ -15,12 +15,12 @@ Seo.MetaData.Integrator.OpenGraphIntegrator = Class.create(Seo.MetaData.Integrat
 
     generateAdditionalToolbarElements: function (items) {
         items.push({
-            xtype: 'label',
-            text: t('seo_bundle.integrator.og.url_note'),
+            xtype: 'container',
+            flex: 1,
+            html: t('seo_bundle.integrator.og.url_note'),
             style: {
                 padding: '5px',
                 border: '1px solid #A4E8A6',
-                display: 'inline-block',
                 background: '#dde8c9',
                 margin: '0 0 10px 0',
                 color: 'black'

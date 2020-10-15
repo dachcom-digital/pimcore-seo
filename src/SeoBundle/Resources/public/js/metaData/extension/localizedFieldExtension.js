@@ -2,26 +2,34 @@ pimcore.registerNS('Seo.MetaData.Extension.LocalizedFieldExtension');
 Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
 
     lfIdentifier: null,
+    availableLocales: null,
     previewGridConfig: null,
     gridStore: null,
     localizedFieldPanels: {},
     editorWindow: null,
     params: null,
 
-    initialize: function (lfIdentifier) {
+    initialize: function (lfIdentifier, availableLocales) {
         this.lfIdentifier = lfIdentifier;
+        this.availableLocales = availableLocales;
         this.previewGridConfig = null;
         this.gridStore = null;
         this.localizedFieldPanels = {};
     },
 
     getLocales: function () {
-        return Ext.isArray(pimcore.settings.websiteLanguages) ? pimcore.settings.websiteLanguages : [];
+
+        if (!Ext.isArray(this.availableLocales)) {
+            return [];
+        }
+
+        return this.availableLocales;
     },
 
     generateLocalizedField: function (params) {
 
-        var gridColumns = [],
+        var grid,
+            gridColumns = [],
             storeSelectionFields = ['locale'];
 
         this.params = {
@@ -80,11 +88,7 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
             },
         });
 
-        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
-        });
-
-        var grid = {
+        grid = {
             xtype: 'grid',
             title: false,
             isFormField: true,
@@ -119,9 +123,9 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
                     grid.getStore().each(function (record) {
                         var rowValue = record.get(fieldConfigRow.storeIdentifier),
                             rowLocale = record.get('locale');
-                        if (rowValue !== null && rowValue !== '') {
-                            rowValues.push({locale: rowLocale, value: rowValue});
-                        }
+
+                        rowValues.push({locale: rowLocale, value: rowValue === '' ? null : rowValue});
+
                     }.bind(this));
                     if (rowValues.length > 0) {
                         data[fieldConfigRow.storeIdentifier] = rowValues
@@ -137,7 +141,9 @@ Seo.MetaData.Extension.LocalizedFieldExtension = Class.create({
                 return true
             },
             plugins: [
-                cellEditing
+                Ext.create('Ext.grid.plugin.CellEditing', {
+                    clicksToEdit: 1
+                })
             ],
             columns: Ext.Array.merge([{
                 text: t('seo_bundle.integrator.localized.locale'),

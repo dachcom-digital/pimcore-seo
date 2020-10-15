@@ -2,10 +2,11 @@
 
 namespace SeoBundle\Controller\Admin;
 
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use SeoBundle\Manager\ElementMetaDataManagerInterface;
+use SeoBundle\Tool\LocaleProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,11 +19,20 @@ class MetaDataController extends AdminController
     protected $elementMetaDataManager;
 
     /**
-     * @param ElementMetaDataManagerInterface $elementMetaDataManager
+     * @var LocaleProviderInterface
      */
-    public function __construct(ElementMetaDataManagerInterface $elementMetaDataManager)
-    {
+    protected $localeProvider;
+
+    /**
+     * @param ElementMetaDataManagerInterface $elementMetaDataManager
+     * @param LocaleProviderInterface         $localeProvider
+     */
+    public function __construct(
+        ElementMetaDataManagerInterface $elementMetaDataManager,
+        LocaleProviderInterface $localeProvider
+    ) {
         $this->elementMetaDataManager = $elementMetaDataManager;
+        $this->localeProvider = $localeProvider;
     }
 
     /**
@@ -45,12 +55,14 @@ class MetaDataController extends AdminController
     public function getElementMetaDataConfigurationAction(Request $request)
     {
         $element = null;
+        $availableLocales = null;
 
         $elementId = (int) $request->query->get('elementId', 0);
         $elementType = $request->query->get('elementType');
 
         if ($elementType === 'object') {
             $element = DataObject::getById($elementId);
+            $availableLocales = $this->localeProvider->getAllowedLocalesForObject($element);
         } elseif ($elementType === 'document') {
             $element = Document::getById($elementId);
         }
@@ -59,9 +71,10 @@ class MetaDataController extends AdminController
         $data = $this->elementMetaDataManager->getElementDataForBackend($elementType, $elementId);
 
         return $this->adminJson([
-            'success'       => true,
-            'data'          => $data,
-            'configuration' => $configuration,
+            'success'          => true,
+            'data'             => $data,
+            'availableLocales' => $availableLocales,
+            'configuration'    => $configuration,
         ]);
     }
 

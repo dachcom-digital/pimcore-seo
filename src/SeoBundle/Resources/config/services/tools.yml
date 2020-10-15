@@ -7,3 +7,6 @@ services:
 
     SeoBundle\Tool\UrlGeneratorInterface: '@SeoBundle\Tool\UrlGenerator'
     SeoBundle\Tool\UrlGenerator: ~
+
+    SeoBundle\Tool\LocaleProviderInterface: '@SeoBundle\Tool\LocaleProvider'
+    SeoBundle\Tool\LocaleProvider: ~

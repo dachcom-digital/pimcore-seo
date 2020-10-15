@@ -35,42 +35,42 @@ class HtmlTagIntegrator implements IntegratorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $configuration)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
     {
-        return $configuration;
+        return $data;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function validateBeforePersist(string $elementType, int $elementId, array $configuration)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
     {
-        if (is_array($configuration) && count($configuration) === 0) {
+        if (is_array($data) && count($data) === 0) {
             return null;
         }
 
-        foreach ($configuration as $index => $htmlTag) {
+        foreach ($data as $index => $htmlTag) {
             if (!is_string($htmlTag)) {
-                unset($configuration[$index]);
+                unset($data[$index]);
 
                 continue;
             }
 
             // there must be some html tags in there.
             if ($htmlTag === strip_tags($htmlTag)) {
-                unset($configuration[$index]);
+                unset($data[$index]);
 
                 continue;
             }
         }
 
-        $indexedConfiguration = array_values($configuration);
+        $indexedData = array_values($data);
 
-        if (count($indexedConfiguration) === 0) {
+        if (count($indexedData) === 0) {
             return null;
         }
 
-        return $indexedConfiguration;
+        return $indexedData;
     }
 
     /**

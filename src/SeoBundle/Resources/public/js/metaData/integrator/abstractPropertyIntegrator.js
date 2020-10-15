@@ -133,7 +133,8 @@ Seo.MetaData.Integrator.AbstractPropertyIntegrator = Class.create(Seo.MetaData.I
             this.imageAwareTypes,
             this.onRemoveField.bind(this),
             this.refreshLivePreviewDelayed.bind(this),
-            this.getConfiguration()
+            this.getConfiguration(),
+            this.getAvailableLocales()
         );
 
         itemFieldContainer = elementItem.createItem();

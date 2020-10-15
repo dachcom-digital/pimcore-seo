@@ -46,12 +46,12 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
         });
 
         items.push({
-            xtype: 'label',
-            text: t('seo_bundle.integrator.html.caution_note'),
+            xtype: 'container',
+            flex: 1,
+            html: t('seo_bundle.integrator.html.caution_note'),
             style: {
                 padding: '5px',
                 border: '1px solid #b32d2d',
-                display: 'inline-block',
                 background: '#e8acac',
                 margin: '0 0 10px 0',
                 color: 'black'

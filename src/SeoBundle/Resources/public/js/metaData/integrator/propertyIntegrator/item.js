@@ -7,6 +7,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
     fieldTypeProperty: null,
     imageAwareTypes: [],
     configuration: null,
+    availableLocales: null,
     removeFieldCallback: null,
     refreshFieldCallback: null,
     form: null,
@@ -20,7 +21,8 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
         imageAwareTypes,
         removeFieldCallback,
         refreshFieldCallback,
-        configuration
+        configuration,
+        availableLocales
     ) {
         this.id = id;
         this.data = data;
@@ -30,6 +32,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
         this.removeFieldCallback = removeFieldCallback;
         this.refreshFieldCallback = refreshFieldCallback;
         this.configuration = configuration;
+        this.availableLocales = availableLocales;
         this.integratorValueFetcher = new Seo.MetaData.Extension.IntegratorValueFetcher();
     },
 
@@ -130,7 +133,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
 
     getContentFieldBasedOnType: function (propertyTypeValue) {
 
-        var lfExtension;
+        var lfExtension, params;
 
         if (propertyTypeValue === this.fieldTypeProperty) {
             return this.generateTypeField();
@@ -142,7 +145,9 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
             return this.generateContentField(propertyTypeValue, false, false, null);
         }
 
-        var params = {
+        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(this.id, this.availableLocales);
+
+        params = {
             showFieldLabel: true,
             fieldLabel: t('seo_bundle.integrator.property.label_content'),
             editorWindowWidth: 700,
@@ -151,10 +156,9 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
                 this.refreshFieldCallback.call(this)
             }.bind(this),
             onGridStoreRequest: this.onLocalizedGridStoreRequest.bind(this),
-            onLayoutRequest: this.generateContentField.bind(this, propertyTypeValue, true, true, null)
+            onLayoutRequest: this.generateContentField.bind(this, propertyTypeValue, true, true)
         };
 
-        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(this.id);
 
         return lfExtension.generateLocalizedField(params);
     },

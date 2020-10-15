@@ -4,6 +4,7 @@ namespace SeoBundle\MetaData\Integrator;
 
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document\Page;
+use SeoBundle\Helper\ArrayHelper;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -60,21 +61,60 @@ class TitleDescriptionIntegrator implements IntegratorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $configuration)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
     {
-        return $configuration;
+        return $data;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function validateBeforePersist(string $elementType, int $elementId, array $configuration)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
     {
-        if (empty($configuration['title']) && empty($configuration['description'])) {
+        if ($elementType === 'object') {
+            $data = $this->mergeStorageAndEditModeLocaleAwareData($data, $previousData);
+        }
+
+        if (empty($data['title']) && empty($data['description'])) {
             return null;
         }
 
-        return $configuration;
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @param array $previousData
+     *
+     * @return array
+     */
+    protected function mergeStorageAndEditModeLocaleAwareData(array $data, ?array $previousData)
+    {
+        $arrayModifier = new ArrayHelper();
+
+        // nothing to merge, just clean up
+        if (!is_array($previousData) || count($previousData) === 0) {
+            return [
+                'title'       => $arrayModifier->cleanEmptyLocaleRows($data['title']),
+                'description' => $arrayModifier->cleanEmptyLocaleRows($data['description'])
+            ];
+        }
+
+        $newData = [];
+
+        foreach (['title', 'description'] as $type) {
+
+            $rebuildRow = isset($previousData[$type]) ? $previousData[$type] : [];
+
+            if (!isset($data[$type]) || !is_array($data[$type])) {
+                $newData[$type] = $rebuildRow;
+                continue;
+            }
+
+            $newData[$type] = $arrayModifier->rebuildLocaleValueRow($data[$type], $rebuildRow);
+        }
+
+        return $newData;
     }
 
     /**

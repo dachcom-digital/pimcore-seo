@@ -34,13 +34,14 @@ interface IntegratorInterface
     public function validateBeforeBackend(string $elementType, int $elementId, array $data);
 
     /**
-     * @param string $elementType
-     * @param int    $elementId
-     * @param array  $data
+     * @param string     $elementType
+     * @param int        $elementId
+     * @param array      $data
+     * @param array|null $previousData
      *
      * @return array|null
      */
-    public function validateBeforePersist(string $elementType, int $elementId, array $data);
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null);
 
     /**
      * @param mixed       $element

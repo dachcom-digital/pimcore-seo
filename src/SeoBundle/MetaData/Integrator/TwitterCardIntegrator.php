@@ -4,6 +4,7 @@ namespace SeoBundle\MetaData\Integrator;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use SeoBundle\Helper\ArrayHelper;
 use SeoBundle\Model\SeoMetaDataInterface;
 use SeoBundle\Tool\UrlGeneratorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -77,27 +78,32 @@ class TwitterCardIntegrator implements IntegratorInterface
     /**
      * {@inheritdoc}
      */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $configuration)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
     {
-        foreach ($configuration as &$twitterItem) {
+        foreach ($data as &$twitterItem) {
             if ($twitterItem['name'] === 'twitter:image' && isset($twitterItem['value']['thumbPath'])) {
                 unset($twitterItem['value']['thumbPath']);
             }
         }
 
-        return $configuration;
+        return $data;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function validateBeforePersist(string $elementType, int $elementId, array $configuration)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
     {
-        if (is_array($configuration) && count($configuration) === 0) {
+        if ($elementType === 'object') {
+            $arrayModifier = new ArrayHelper();
+            $data = $arrayModifier->mergeLocaleAwareArrays($data, $previousData, 'name');
+        }
+
+        if (is_array($data) && count($data) === 0) {
             return null;
         }
 
-        return $configuration;
+        return $data;
     }
 
     /**

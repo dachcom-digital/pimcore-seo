@@ -67,7 +67,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
                     return;
                 }
 
-                this.buildMetaDataIntegrator(resp.data, resp.configuration);
+                this.buildMetaDataIntegrator(resp.data, resp.configuration, resp.availableLocales);
             }.bind(this),
             failure: function () {
                 Ext.Msg.alert(t('error'), t('seo_bundle.panel.error_fetch_data'));
@@ -76,7 +76,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
 
     },
 
-    buildMetaDataIntegrator: function (data, configuration) {
+    buildMetaDataIntegrator: function (data, configuration, availableLocales) {
 
         Ext.Array.each(this.configuration.enabled_integrator, function (integrator) {
             var integratorClass,
@@ -86,7 +86,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
                 integratorData = data !== null && data.hasOwnProperty(integratorName) ? data[integratorName] : null;
 
             if (Seo.MetaData.Integrator.hasOwnProperty(integratorClassName)) {
-                integratorClass = new Seo.MetaData.Integrator[integratorClassName](this.getElementType(), this.getElementId(), integratorName, integratorConfiguration, integratorData, this.renderAsTab);
+                integratorClass = new Seo.MetaData.Integrator[integratorClassName](this.getElementType(), this.getElementId(), integratorName, integratorConfiguration, availableLocales, integratorData, this.renderAsTab);
                 this.integrator.push(integratorClass);
                 this[this.renderAsTab === true ? 'tabPanel' : 'layout'].add(integratorClass.buildLayout());
             } else {

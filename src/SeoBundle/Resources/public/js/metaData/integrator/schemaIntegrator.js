@@ -65,12 +65,12 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
         });
 
         items.push({
-            xtype: 'label',
-            text: t('seo_bundle.integrator.schema.caution_note'),
+            xtype: 'container',
+            flex: 1,
+            html: t('seo_bundle.integrator.schema.caution_note'),
             style: {
                 padding: '5px',
                 border: '1px solid #A4E8A6',
-                display: 'inline-block',
                 background: '#dde8c9',
                 margin: '0 0 10px 0',
                 color: 'black'
@@ -84,8 +84,10 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
 
     addSchemaField: function (fieldId) {
 
-        var itemFieldContainer,
-            assertedFieldId = fieldId ? fieldId : Ext.id();
+        var itemContainer,
+            itemFieldContainer,
+            assertedFieldId = fieldId ? fieldId : Ext.id(),
+            identifierValue = this.getStoredValue(assertedFieldId, 'identifier', null);
 
         itemFieldContainer = new Ext.form.FieldContainer({
             xtype: 'fieldcontainer',
@@ -109,7 +111,23 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
             ]
         });
 
-        this.schemaPanel.add(itemFieldContainer);
+        itemContainer = new Ext.form.Panel({
+            title: false,
+            autoScroll: false,
+            border: false,
+            items: [
+                {
+                    xtype: 'hidden',
+                    fieldLabel: 'Identifier',
+                    labelAlign: this.configuration.useLocalizedFields ? 'top' : 'left',
+                    name: assertedFieldId + '_identifier',
+                    value: identifierValue === null || identifierValue === undefined ? assertedFieldId : identifierValue,
+                },
+                itemFieldContainer
+            ]
+        });
+
+        this.schemaPanel.add(itemContainer);
     },
 
     getSchemaField: function (fieldId) {
@@ -127,7 +145,7 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
             onLayoutRequest: this.getSchemaEditorField.bind(this, true)
         };
 
-        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(fieldId);
+        lfExtension = new Seo.MetaData.Extension.LocalizedFieldExtension(fieldId, this.getAvailableLocales());
 
         return {
             xtype: 'fieldcontainer',
@@ -148,7 +166,7 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
             style: 'margin: 0 10px 0 0',
             name: lfIdentifier,
             height: 200,
-            value: this.getStoredValue(lfIdentifier, locale),
+            value: this.getStoredValue(lfIdentifier, 'data', locale),
             inputAttrTpl: 'spellcheck="false"',
             flex: 1,
         }
@@ -165,29 +183,29 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
                 return (v === '' || v === null) ? '--' : v;
             },
             onFetchStoredValue: function (locale) {
-                return this.getStoredValue(lfIdentifier, locale);
+                return this.getStoredValue(lfIdentifier, 'data', locale);
             }.bind(this)
         }];
     },
 
     removeSchemaField: function (btn) {
-        this.schemaPanel.remove(btn.up('fieldcontainer'));
+        this.schemaPanel.remove(btn.up('panel'));
     },
 
-    getStoredValue: function (fieldId, locale) {
+    getStoredValue: function (fieldId, node, locale) {
 
         var value;
 
-        value = this.getStoredValueOfType(fieldId, locale, 'form');
+        value = this.getStoredValueOfType(fieldId, node, locale, 'form');
 
         if (value !== null) {
             return value;
         }
 
-        return this.getStoredValueOfType(fieldId, locale, 'storage');
+        return this.getStoredValueOfType(fieldId, node, locale, 'storage');
     },
 
-    getStoredValueOfType: function (fieldId, locale, type) {
+    getStoredValueOfType: function (fieldId, node, locale, type) {
 
         var value, formValues,
             localizedValue = null,
@@ -195,9 +213,11 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
 
         if (type === 'form') {
             formValues = this.formPanel.getForm().getValues();
-            if (!Ext.isObject(formValues)) {
+            if (Ext.isObject(formValues)) {
                 Ext.Object.each(formValues, function (fieldId, data) {
-                    values[fieldId] = {localized: Ext.isArray(data), data: data}
+                    if (fieldId.indexOf('_identifier') === -1) {
+                        values[fieldId] = {localized: Ext.isArray(data), data: data, identifier: values[fieldId + '_identifier']}
+                    }
                 });
             }
         } else if (type === 'storage') {
@@ -218,7 +238,11 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
         }
 
         if (value.localized === false) {
-            return value.data;
+            return value[node];
+        }
+
+        if (!Ext.isArray(value[node])) {
+            return value[node];
         }
 
         Ext.Array.each(value.data, function (localizedValueData) {
@@ -241,7 +265,9 @@ Seo.MetaData.Integrator.SchemaIntegrator = Class.create(Seo.MetaData.Integrator.
         }
 
         Ext.Object.each(values, function (fieldId, data) {
-            returnValues.push({localized: Ext.isArray(data), data: data})
+            if (fieldId.indexOf('_identifier') === -1) {
+                returnValues.push({localized: Ext.isArray(data), data: data, identifier: values[fieldId + '_identifier']});
+            }
         });
 
         return returnValues;

@@ -125,7 +125,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         }
 
         $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($integratorName);
-        $sanitizedData = $metaDataIntegrator->validateBeforePersist($elementType, $elementId, $data);
+        $sanitizedData = $metaDataIntegrator->validateBeforePersist($elementType, $elementId, $data, $elementMetaData->getData());
 
         // remove empty meta data
         if ($sanitizedData === null) {

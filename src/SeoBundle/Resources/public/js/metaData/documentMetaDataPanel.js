@@ -50,7 +50,7 @@ Seo.MetaData.DocumentMetaDataPanel = Class.create(Seo.MetaData.AbstractMetaDataP
 
         tabPanel.items.each(function (tab) {
             if (tab.iconCls.indexOf('page_settings') !== -1) {
-                tab.setTitle('Settings');
+                tab.setTitle(t('settings'));
                 tab.items.each(function (tabItem) {
                     if (tabItem.itemId === 'metaDataPanel') {
                         tab.remove(tabItem);

@@ -18,6 +18,14 @@
             "SeoBundle\\": "src/SeoBundle"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "": "src/"
+        },
+        "classmap": [
+            "app/TestKernel.php"
+        ]
+    },
     "extra": {
         "pimcore": {
             "bundles": [
@@ -27,7 +35,7 @@
     },
     "require": {
         "google/apiclient": "^2.0",
-        "pimcore/pimcore": "^6.0.0",
+        "pimcore/pimcore": "^6.0",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {

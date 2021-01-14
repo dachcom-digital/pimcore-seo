@@ -1,12 +1,12 @@
 actor: FunctionalTester
 modules:
     enabled:
-        - \DachcomBundle\Test\Helper\PimcoreCore:
+        - \Dachcom\Codeception\Helper\PimcoreCore:
                 connect_db: true
                 rebootable_client: true
-        - \DachcomBundle\Test\Helper\PimcoreBundleCore:
+        - \Dachcom\Codeception\Helper\PimcoreBundleCore:
                 run_installer: true
-        - \DachcomBundle\Test\Helper\Browser\PhpBrowser:
-                depends: \DachcomBundle\Test\Helper\PimcoreCore
-        - \DachcomBundle\Test\Helper\PimcoreBackend
-        - \DachcomBundle\Test\Helper\PimcoreUser
+        - \Dachcom\Codeception\Helper\Browser\PhpBrowser:
+                depends: \Dachcom\Codeception\Helper\PimcoreCore
+        - \Dachcom\Codeception\Helper\PimcoreBackend
+        - \Dachcom\Codeception\Helper\PimcoreUser

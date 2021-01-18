@@ -5,11 +5,11 @@ namespace SeoBundle\Helper;
 class ArrayHelper
 {
     /**
-     * @param array  $data
-     * @param array  $previousData
-     * @param string $rowIdentifier
+     * @param array      $data
+     * @param array|null $previousData
+     * @param string     $rowIdentifier
      *
-     * @param string $dataIdentifier
+     * @param string     $dataIdentifier
      *
      * @return array
      */

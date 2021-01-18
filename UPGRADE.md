@@ -8,6 +8,9 @@ Just click the "update" button or execute the migration command to finish the bu
 
 ***
 
+#### Update from Version 1.1.0 to Version 1.1.1
+- **[ENHANCEMENT]** Improve Dependency Check [#20](https://github.com/dachcom-digital/pimcore-seo/issues/20)
+
 #### Update from Version 1.0.4 to Version 1.1.0
 - **[ENHANCEMENT]** Respect user locales [#16](https://github.com/dachcom-digital/pimcore-seo/issues/16)
 - **[ENHANCEMENT]** Add Permissions. New permissions will be added via migration. Please update your users accordingly [#17](https://github.com/dachcom-digital/pimcore-seo/issues/17)

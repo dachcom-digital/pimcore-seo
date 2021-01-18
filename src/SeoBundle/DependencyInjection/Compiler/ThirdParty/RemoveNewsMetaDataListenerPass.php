@@ -2,6 +2,7 @@
 
 namespace SeoBundle\DependencyInjection\Compiler\ThirdParty;
 
+use SeoBundle\Tool\Bundle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -13,9 +14,8 @@ final class RemoveNewsMetaDataListenerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $definition = 'NewsBundle\EventListener\MetaDataListener';
-        $bundles = $container->getParameter('kernel.bundles');
 
-        if (!array_key_exists('NewsBundle', $bundles)) {
+        if (Bundle::hasDachcomBundle('NewsBundle', $container->getParameter('kernel.bundles')) === false) {
             return;
         }
 

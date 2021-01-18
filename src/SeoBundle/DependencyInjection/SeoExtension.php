@@ -2,6 +2,7 @@
 
 namespace SeoBundle\DependencyInjection;
 
+use SeoBundle\Tool\Bundle;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -52,11 +53,12 @@ class SeoExtension extends Extension
     protected function checkThirdPartyExtractors(ContainerBuilder $container, YamlFileLoader $loader, array $thirdPartyOptions)
     {
         $bundles = $container->getParameter('kernel.bundles');
-        if (array_key_exists('CoreShopSEOBundle', $bundles) && $thirdPartyOptions['coreshop']['disable_default_extractors'] === false) {
+
+        if (Bundle::hasBundle('CoreShopSEOBundle', $bundles) === true && $thirdPartyOptions['coreshop']['disable_default_extractors'] === false) {
             $loader->load('services/extractors/coreshop.yml');
         }
 
-        if (array_key_exists('NewsBundle', $bundles) && $thirdPartyOptions['news']['disable_default_extractors'] === false) {
+        if (Bundle::hasDachcomBundle('NewsBundle', $bundles) === true && $thirdPartyOptions['news']['disable_default_extractors'] === false) {
             $loader->load('services/extractors/news.yml');
         }
     }

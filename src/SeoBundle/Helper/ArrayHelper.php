@@ -4,7 +4,7 @@ namespace SeoBundle\Helper;
 
 class ArrayHelper
 {
-    public function mergeLocaleAwareArrays(array $data, ?array $previousData, string $rowIdentifier = 'name', string $dataIdentifier = 'value'): array
+    public function mergeLocaleAwareArrays(array $data, ?array $previousData, string $rowIdentifier = 'name', string $dataIdentifier = 'value'): ?array
     {
         // nothing to merge
         if (!is_array($previousData) || count($previousData) === 0) {

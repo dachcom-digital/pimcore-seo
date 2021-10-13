@@ -137,7 +137,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
 
     protected function parseResult(mixed $result, string $queueEntryId, array $processedQueueEntries, array $callable): void
     {
-        $linkedQueueEntry = array_reduce($processedQueueEntries, function ($result, QueueEntryInterface $item) use ($queueEntryId) {
+        $linkedQueueEntry = array_reduce($processedQueueEntries, static function ($result, QueueEntryInterface $item) use ($queueEntryId) {
             return $item->getUuid() === $queueEntryId ? $item : $result;
         });
 
@@ -162,7 +162,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
             $formattedMessages[] = $error['message'];
         }
 
-        $formattedMessage = join(', ', $formattedMessages);
+        $formattedMessage = implode(', ', $formattedMessages);
 
         return new WorkerResponse($formattedStatus, $formattedMessage, false, $linkedQueueEntry, $response);
     }
@@ -182,7 +182,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
             $formattedMessageMeta[] = sprintf('Latest Remove Info: %s %s', $latestRemoveInfo->getType(), $latestRemoveInfo->getNotifyTime());
         }
 
-        $formattedMessage = sprintf('Url "%s" successfully submitted to index. %s', $notificationMetaData->getUrl(), join(', ', $formattedMessageMeta));
+        $formattedMessage = sprintf('Url "%s" successfully submitted to index. %s', $notificationMetaData->getUrl(), implode(', ', $formattedMessageMeta));
 
         return new WorkerResponse(200, $formattedMessage, true, $linkedQueueEntry, $response);
     }

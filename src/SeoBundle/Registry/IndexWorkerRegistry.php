@@ -35,6 +35,6 @@ class IndexWorkerRegistry implements IndexWorkerRegistryInterface
 
     public function getAll(): array
     {
-        return is_array($this->services) ? $this->services : [];
+        return $this->services;
     }
 }

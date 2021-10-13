@@ -6,7 +6,7 @@ use SeoBundle\Model\QueueEntryInterface;
 
 class WorkerResponse implements WorkerResponseInterface
 {
-    protected string $status;
+    protected int $status;
     protected string $message;
     protected bool $successFullyProcessed;
     protected QueueEntryInterface $queueEntry;
@@ -21,7 +21,7 @@ class WorkerResponse implements WorkerResponseInterface
         $this->rawResponse = $rawResponse;
     }
 
-    public function getStatus(): string
+    public function getStatus(): int
     {
         return $this->status;
     }

@@ -35,10 +35,7 @@ class UrlGenerator implements UrlGeneratorInterface
 
     public function getCurrentSchemeAndHost(): string
     {
-        $scheme = $this->requestStack->getMainRequest()->getScheme();
-        $host = $this->requestStack->getMainRequest()->getHost();
-
-        return sprintf('%s://%s', $scheme, $host);
+        return sprintf('%s://%s', $this->requestStack->getMainRequest()->getScheme(), $this->requestStack->getMainRequest()->getHost());
     }
 
     protected function generateForDocument(Page $document, array $options): ?string
@@ -83,9 +80,6 @@ class UrlGenerator implements UrlGeneratorInterface
         }
 
         $imagePath = $thumbnail->getPath(false);
-        if (is_null($imagePath)) {
-            return null;
-        }
 
         if (str_contains($imagePath, 'http')) {
             return $imagePath;

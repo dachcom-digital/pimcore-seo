@@ -6,7 +6,7 @@ use SeoBundle\Model\QueueEntryInterface;
 
 interface WorkerResponseInterface
 {
-    public function getStatus(): string;
+    public function getStatus(): int;
 
     public function getMessage(): string;
 

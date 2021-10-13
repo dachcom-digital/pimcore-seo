@@ -32,9 +32,7 @@ class TwitterCardIntegrator implements IntegratorInterface
 
     public function getPreviewParameter(mixed $element, ?string $template, array $data): array
     {
-        if (null === $url = $this->urlGenerator->getCurrentSchemeAndHost()) {
-            $url = 'http://localhost';
-        }
+        $url = $this->urlGenerator->getCurrentSchemeAndHost();
 
         $title = $data['title'] ?? 'This is a title';
         $description = $data['description'] ?? 'This is a very long description which should be not too long.';

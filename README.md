@@ -4,14 +4,6 @@
 [![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-seo/Codeception/master?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3ACodeception+branch%3Amaster)
 [![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-seo/PHP%20Stan/master?style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
 
-### Release Plan
-
-| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
-|---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **2.x** | `10.1`                            | `5.3`                      | --           | Feature Branch | dev-master |
-| **1.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 27.04.2020   | Unsupported    | 1.x        |
-
-
 The last SEO Bundle for pimcore you'll ever need!
 
 - Create title, description and meta tags (OG-Tags, Twitter-Cards) for documents **and** objects!
@@ -29,6 +21,14 @@ The last SEO Bundle for pimcore you'll ever need!
 
 ## Objects | Tabbed View
 ![image](https://user-images.githubusercontent.com/700119/79804274-0578ea00-8364-11ea-8780-3cd8b2d72376.png)
+
+### Release Plan
+
+| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
+|---------|-----------------------------------|----------------------------|--------------|----------------|------------|
+| **2.x** | `10.1`                            | `5.3`                      | --           | Feature Branch | dev-master |
+| **1.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 27.04.2020   | Unsupported    | 1.x        |
+
 
 ## Installation
 

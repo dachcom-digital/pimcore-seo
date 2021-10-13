@@ -6,24 +6,15 @@ use SeoBundle\MetaData\Integrator\IntegratorInterface;
 
 interface MetaDataIntegratorRegistryInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier);
+    public function has(string $identifier): bool;
 
     /**
-     * @param string $identifier
-     *
-     * @return IntegratorInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier);
+    public function get(string $identifier): IntegratorInterface;
 
     /**
-     * @return IntegratorInterface[]
+     * @return array<int, IntegratorInterface>
      */
-    public function getAll();
+    public function getAll(): array;
 }

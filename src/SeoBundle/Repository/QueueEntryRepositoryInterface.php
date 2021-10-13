@@ -7,24 +7,14 @@ use SeoBundle\Model\QueueEntryInterface;
 interface QueueEntryRepositoryInterface
 {
     /**
-     * @param string $workerName
-     *
-     * @return QueueEntryInterface|null
+     * @return array<int, QueueEntryInterface>
      */
-    public function findAtLeastOneForWorker(string $workerName);
+    public function findAll(?array $orderBy = null): array;
 
     /**
-     * @param array|null $orderBy
-     *
-     * @return QueueEntryInterface[]
+     * @return array<int, QueueEntryInterface>
      */
-    public function findAll(array $orderBy = null);
+    public function findAllForWorker(string $workerName, ?array $orderBy = null): array;
 
-    /**
-     * @param string     $workerName
-     * @param array|null $orderBy
-     *
-     * @return QueueEntryInterface[]
-     */
-    public function findAllForWorker(string $workerName, array $orderBy = null);
+    public function findAtLeastOneForWorker(string $workerName): ?QueueEntryInterface;
 }

@@ -4,78 +4,33 @@ namespace SeoBundle\Model;
 
 interface QueueEntryInterface
 {
-    /**
-     * @return string
-     */
-    public function getUuid();
+    public function getUuid(): string;
 
-    /**
-     * @param string $type
-     */
-    public function setType(string $type);
+    public function setType(string $type): void;
 
-    /**
-     * @return string
-     */
-    public function getType();
+    public function getType(): string;
 
-    /**
-     * @param int $dataId
-     */
-    public function setDataId($dataId);
+    public function setDataId(int $dataId): void;
 
-    /**
-     * @return int
-     */
-    public function getDataId();
+    public function getDataId(): int;
 
-    /**
-     * @param string $dataType
-     */
-    public function setDataType(string $dataType);
+    public function setDataType(string $dataType): void;
 
-    /**
-     * @return string
-     */
-    public function getDataType();
+    public function getDataType(): string;
 
-    /**
-     * @param string $dataUrl
-     */
-    public function setDataUrl(string $dataUrl);
+    public function setDataUrl(string $dataUrl): void;
 
-    /**
-     * @return string
-     */
-    public function getDataUrl();
+    public function getDataUrl(): string;
 
-    /**
-     * @param string $worker
-     */
-    public function setWorker(string $worker);
+    public function setWorker(string $worker): void;
 
-    /**
-     * @return string
-     */
-    public function getWorker();
+    public function getWorker(): string;
 
-    /**
-     * @param string $resourceProcessor
-     */
-    public function setResourceProcessor(string $resourceProcessor);
+    public function setResourceProcessor(string $resourceProcessor): void;
 
-    /**
-     * @return string
-     */
-    public function getResourceProcessor();
+    public function getResourceProcessor(): string;
 
-    /**
-     * @param \DateTime $date
-     */
-    public function setCreationDate(\DateTime $date);
+    public function setCreationDate(\DateTime $date): void;
 
-    /**
-     * @return \DateTime
-     */
-    public function getCreationDate();
+    public function getCreationDate(): \DateTime;
 }

@@ -4,8 +4,5 @@ namespace SeoBundle\Queue;
 
 interface QueueDataProcessorInterface
 {
-    /**
-     * @param array $options
-     */
-    public function process(array $options);
+    public function process(array $options): void;
 }

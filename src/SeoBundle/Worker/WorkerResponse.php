@@ -6,39 +6,13 @@ use SeoBundle\Model\QueueEntryInterface;
 
 class WorkerResponse implements WorkerResponseInterface
 {
-    /**
-     * @var string
-     */
-    protected $status;
+    protected string $status;
+    protected string $message;
+    protected bool $successFullyProcessed;
+    protected QueueEntryInterface $queueEntry;
+    protected mixed $rawResponse;
 
-    /**
-     * @var string
-     */
-    protected $message;
-
-    /**
-     * @var bool
-     */
-    protected $successFullyProcessed;
-
-    /**
-     * @var QueueEntryInterface
-     */
-    protected $queueEntry;
-
-    /**
-     * @var mixed
-     */
-    protected $rawResponse;
-
-    /**
-     * @param int                 $status
-     * @param string              $message
-     * @param bool                $successFullyProcessed
-     * @param QueueEntryInterface $queueEntry
-     * @param mixed               $rawResponse
-     */
-    public function __construct(int $status, ?string $message, bool $successFullyProcessed, QueueEntryInterface $queueEntry, $rawResponse)
+    public function __construct(int $status, ?string $message, bool $successFullyProcessed, QueueEntryInterface $queueEntry, mixed $rawResponse)
     {
         $this->status = $status;
         $this->message = $message;
@@ -47,42 +21,27 @@ class WorkerResponse implements WorkerResponseInterface
         $this->rawResponse = $rawResponse;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getQueueEntry()
+    public function getQueueEntry(): QueueEntryInterface
     {
         return $this->queueEntry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRawResponse()
+    public function getRawResponse(): mixed
     {
         return $this->rawResponse;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isDone()
+    public function isDone(): bool
     {
         return $this->successFullyProcessed === true;
     }

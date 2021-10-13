@@ -7,15 +7,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HtmlTagIntegrator implements IntegratorInterface
 {
-    /**
-     * @var array
-     */
-    protected $configuration;
+    protected array $configuration;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBackendConfiguration($element)
+    public function getBackendConfiguration(mixed $element): array
     {
         return [
             'hasLivePreview'       => false,
@@ -24,26 +18,17 @@ class HtmlTagIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPreviewParameter($element, ?string $template, array $data)
+    public function getPreviewParameter(mixed $element, ?string $template, array $data): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data): array
     {
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
     {
         if (is_array($data) && count($data) === 0) {
             return null;
@@ -73,10 +58,7 @@ class HtmlTagIntegrator implements IntegratorInterface
         return $indexedData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData(mixed $element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         if (count($data) === 0) {
             return;
@@ -89,18 +71,12 @@ class HtmlTagIntegrator implements IntegratorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function configureOptions(OptionsResolver $resolver)
+    public static function configureOptions(OptionsResolver $resolver): void
     {
         // no options here.
     }

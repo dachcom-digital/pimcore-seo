@@ -13,32 +13,11 @@ use SeoBundle\Repository\ElementMetaDataRepositoryInterface;
 
 class ElementMetaDataManager implements ElementMetaDataManagerInterface
 {
-    /**
-     * @var array
-     */
-    protected $integratorConfiguration;
+    protected array $integratorConfiguration;
+    protected EntityManagerInterface $entityManager;
+    protected MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry;
+    protected ElementMetaDataRepositoryInterface $elementMetaDataRepository;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * @var MetaDataIntegratorRegistryInterface
-     */
-    protected $metaDataIntegratorRegistry;
-
-    /**
-     * @var ElementMetaDataRepositoryInterface
-     */
-    protected $elementMetaDataRepository;
-
-    /**
-     * @param array                               $integratorConfiguration
-     * @param EntityManagerInterface              $entityManager
-     * @param MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry
-     * @param ElementMetaDataRepositoryInterface  $elementMetaDataRepository
-     */
     public function __construct(
         array $integratorConfiguration,
         EntityManagerInterface $entityManager,
@@ -51,18 +30,12 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         $this->elementMetaDataRepository = $elementMetaDataRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMetaDataIntegratorConfiguration()
+    public function getMetaDataIntegratorConfiguration(): array
     {
         return $this->integratorConfiguration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMetaDataIntegratorBackendConfiguration($correspondingElement)
+    public function getMetaDataIntegratorBackendConfiguration(mixed $correspondingElement): array
     {
         $configuration = [];
 
@@ -76,24 +49,16 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getElementData(string $elementType, int $elementId)
+    public function getElementData(string $elementType, int $elementId): array
     {
         $elementValues = $this->elementMetaDataRepository->findAll($elementType, $elementId);
 
         // BC Reason: If old document metadata is available, use it!
         // @todo: make this decision configurable? We don't need this within fresh installations!
-        $elementValues = $this->checkForLegacyData($elementValues, $elementType, $elementId);
-
-        return $elementValues;
+        return $this->checkForLegacyData($elementValues, $elementType, $elementId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getElementDataForBackend(string $elementType, int $elementId)
+    public function getElementDataForBackend(string $elementType, int $elementId): array
     {
         $parsedData = [];
         $data = $this->getElementData($elementType, $elementId);
@@ -105,15 +70,10 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
 
         // BC Reason: If old document metadata is available, use it!
         // @todo: make this decision configurable? We don't need this within fresh installations!
-        $parsedData = $this->checkForLegacyBackendData($parsedData, $elementType, $elementId);
-
-        return $parsedData;
+        return $this->checkForLegacyBackendData($parsedData, $elementType, $elementId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data)
+    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data): void
     {
         $elementMetaData = $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName);
 
@@ -143,10 +103,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         $this->entityManager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data)
+    public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data): array
     {
         if ($elementType === 'object') {
             $element = DataObject::getById($elementId);
@@ -159,10 +116,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return $metaDataIntegrator->getPreviewParameter($element, $template, $data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function deleteElementData(string $elementType, int $elementId)
+    public function deleteElementData(string $elementType, int $elementId): void
     {
         $elementData = $this->elementMetaDataRepository->findAll($elementType, $elementId);
 
@@ -178,13 +132,9 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     }
 
     /**
-     * @param ElementMetaDataInterface[] $elements
-     * @param string                     $elementType
-     * @param int                        $elementId
-     *
-     * @return array|ElementMetaDataInterface[]
+     * @return array<int, ElementMetaDataInterface>
      */
-    protected function checkForLegacyData(array $elements, string $elementType, int $elementId)
+    protected function checkForLegacyData(array $elements, string $elementType, int $elementId): array
     {
         // as soon we have configured seo elements,
         // we'll never check the document again. It's all about performance.
@@ -222,14 +172,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return $elements;
     }
 
-    /**
-     * @param array  $parsedData
-     * @param string $elementType
-     * @param int    $elementId
-     *
-     * @return array
-     */
-    protected function checkForLegacyBackendData(array $parsedData, string $elementType, int $elementId)
+    protected function checkForLegacyBackendData(array $parsedData, string $elementType, int $elementId): array
     {
         // as soon we have configured seo elements,
         // we'll never check the document again. It's all about performance.
@@ -277,20 +220,15 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return $parsedData;
     }
 
-    /**
-     * @param int $documentId
-     *
-     * @return array|null
-     */
-    protected function getDocumentLegacyData($documentId)
+    protected function getDocumentLegacyData(int $documentId): ?array
     {
         $enabledIntegrator = $this->integratorConfiguration['enabled_integrator'];
         if (!is_array($enabledIntegrator) || count($enabledIntegrator) === 0) {
             return null;
         }
 
-        $hasTitleDescriptionIntegrator = array_search('title_description', array_column($enabledIntegrator, 'integrator_name'));
-        $hasHtmlTagIntegrator = array_search('html_tag', array_column($enabledIntegrator, 'integrator_name'));
+        $hasTitleDescriptionIntegrator = array_search('title_description', array_column($enabledIntegrator, 'integrator_name'), true);
+        $hasHtmlTagIntegrator = array_search('html_tag', array_column($enabledIntegrator, 'integrator_name'), true);
 
         // no required integrators are active. skip this task...
         if ($hasTitleDescriptionIntegrator === false && $hasHtmlTagIntegrator === false) {

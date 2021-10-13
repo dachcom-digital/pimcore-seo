@@ -7,29 +7,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface IndexWorkerInterface
 {
-    const TYPE_ADD = 'add';
-
-    const TYPE_UPDATE = 'update';
-
-    const TYPE_DELETE = 'delete';
-
-    /**
-     * @param array $configuration
-     */
-    public function setConfiguration(array $configuration);
-
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public static function configureOptions(OptionsResolver $resolver);
+    public const TYPE_ADD = 'add';
+    public const TYPE_UPDATE = 'update';
+    public const TYPE_DELETE = 'delete';
 
     /**
      * Return true or false|string.
      * If string gets returned, it same as return false but will be added to logs.
-     *
-     * @return bool|string
      */
-    public function canProcess();
+    public function canProcess(): string|bool;
 
     /**
      * @param QueueEntryInterface[] $queueEntries
@@ -37,5 +23,10 @@ interface IndexWorkerInterface
      *
      * @throws \Exception
      */
-    public function process(array $queueEntries, array $resultCallBack);
+    public function process(array $queueEntries, array $resultCallBack): void;
+
+    public function setConfiguration(array $configuration): void;
+
+    public static function configureOptions(OptionsResolver $resolver): void;
+
 }

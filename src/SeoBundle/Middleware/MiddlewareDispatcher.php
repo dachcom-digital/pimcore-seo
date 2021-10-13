@@ -6,20 +6,9 @@ use SeoBundle\Model\SeoMetaDataInterface;
 
 class MiddlewareDispatcher implements MiddlewareDispatcherInterface
 {
-    /**
-     * @var MiddlewareAdapterInterface[]
-     */
-    protected $middlewareAdapterStack;
-
-    /**
-     * @var array
-     */
-    protected $middleware;
-
-    /**
-     * @var array
-     */
-    protected $tasks;
+    protected array $middlewareAdapterStack;
+    protected array $middleware;
+    protected array $tasks;
 
     public function __construct()
     {
@@ -28,18 +17,12 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
         $this->tasks = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerMiddlewareAdapter(string $identifier, MiddlewareAdapterInterface $middlewareAdapter)
+    public function registerMiddlewareAdapter(string $identifier, MiddlewareAdapterInterface $middlewareAdapter): void
     {
         $this->middlewareAdapterStack[$identifier] = $middlewareAdapter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildMiddleware(string $identifier, SeoMetaDataInterface $seoMetaData)
+    public function buildMiddleware(string $identifier, SeoMetaDataInterface $seoMetaData): MiddlewareInterface
     {
         if (!isset($this->middlewareAdapterStack[$identifier])) {
             throw new \Exception(sprintf('SEO MetaData middleware "%s" not registered.', $identifier));
@@ -55,10 +38,7 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
         return $this->middleware[$identifier];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function registerTask(callable $callback, string $identifier)
+    public function registerTask(callable $callback, string $identifier): void
     {
         if (!is_callable($callback)) {
             return;
@@ -70,10 +50,7 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatchTasks(SeoMetaDataInterface $seoMetadata)
+    public function dispatchTasks(SeoMetaDataInterface $seoMetadata): void
     {
         foreach ($this->tasks as $immediateTask) {
             $middlewareAdapter = $this->middlewareAdapterStack[$immediateTask['identifier']];
@@ -84,10 +61,7 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
         $this->tasks = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function dispatchMiddlewareFinisher(SeoMetaDataInterface $seoMetadata)
+    public function dispatchMiddlewareFinisher(SeoMetaDataInterface $seoMetadata): void
     {
         foreach ($this->middleware as $identifier => $middleware) {
             $middlewareAdapter = $this->middlewareAdapterStack[$identifier];

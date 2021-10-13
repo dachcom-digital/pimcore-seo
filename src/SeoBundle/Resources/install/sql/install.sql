@@ -1,4 +1,4 @@
-CREATE TABLE `seo_element_meta_data` (
+CREATE TABLE IF NOT EXISTS `seo_element_meta_data` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `element_type` varchar(255) NOT NULL,
   `element_id` int(11) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE `seo_element_meta_data` (
   UNIQUE KEY `element_type_id_integrator` (`element_type`,`element_id`,`integrator`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-CREATE TABLE `seo_queue_entry` (
+CREATE TABLE IF NOT EXISTS `seo_queue_entry` (
   `uuid` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `data_type` varchar(255) NOT NULL,

@@ -10,29 +10,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TitleDescriptionIntegrator implements IntegratorInterface
 {
-    /**
-     * @var array
-     */
-    protected $configuration;
+    protected array $configuration;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBackendConfiguration($element)
+    public function getBackendConfiguration($element): array
     {
-        $useLocalizedFields = $element instanceof DataObject;
-
         return [
             'hasLivePreview'       => true,
             'livePreviewTemplates' => [],
-            'useLocalizedFields'   => $useLocalizedFields
+            'useLocalizedFields'   => $element instanceof DataObject
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPreviewParameter($element, ?string $template, array $data)
+    public function getPreviewParameter(mixed $element, ?string $template, array $data): array
     {
         $url = 'http://localhost';
 
@@ -43,11 +32,11 @@ class TitleDescriptionIntegrator implements IntegratorInterface
         }
 
         $author = 'John Doe';
-        $title = isset($data['title']) ? $data['title'] : 'This is a title';
-        $description = isset($data['description']) ? $data['description'] : 'This is a very long description which should be not too long.';
+        $title = $data['title'] ?? 'This is a title';
+        $description = $data['description'] ?? 'This is a very long description which should be not too long.';
 
         return [
-            'path'   => '@SeoBundle/Resources/views/preview/titleDescription/preview.html.twig',
+            'path'   => '@Seo/preview/titleDescription/preview.html.twig',
             'params' => [
                 'url'         => $url,
                 'author'      => $author,
@@ -58,18 +47,12 @@ class TitleDescriptionIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data): array
     {
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
     {
         if ($elementType === 'object') {
             $data = $this->mergeStorageAndEditModeLocaleAwareData($data, $previousData);
@@ -82,13 +65,7 @@ class TitleDescriptionIntegrator implements IntegratorInterface
         return $data;
     }
 
-    /**
-     * @param array $data
-     * @param array $previousData
-     *
-     * @return array
-     */
-    protected function mergeStorageAndEditModeLocaleAwareData(array $data, ?array $previousData)
+    protected function mergeStorageAndEditModeLocaleAwareData(array $data, ?array $previousData): array
     {
         $arrayModifier = new ArrayHelper();
 
@@ -104,7 +81,7 @@ class TitleDescriptionIntegrator implements IntegratorInterface
 
         foreach (['title', 'description'] as $type) {
 
-            $rebuildRow = isset($previousData[$type]) ? $previousData[$type] : [];
+            $rebuildRow = $previousData[$type] ?? [];
 
             if (!isset($data[$type]) || !is_array($data[$type])) {
                 $newData[$type] = $rebuildRow;
@@ -117,10 +94,7 @@ class TitleDescriptionIntegrator implements IntegratorInterface
         return $newData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData(mixed $element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         if (!empty($data['description'])) {
             if (null !== $value = $this->findLocaleAwareData($data['description'], $locale)) {
@@ -135,27 +109,21 @@ class TitleDescriptionIntegrator implements IntegratorInterface
         }
     }
 
-    /**
-     * @param array|string $value
-     * @param string       $locale
-     *
-     * @return mixed|null
-     */
-    protected function findLocaleAwareData($value, $locale)
+    protected function findLocaleAwareData(mixed $value, ?string $locale): int|float|string|bool|null
     {
         if (!is_array($value)) {
             return $value;
-        }
-
-        if (empty($locale)) {
-            return null;
         }
 
         if (count($value) === 0) {
             return null;
         }
 
-        $index = array_search($locale, array_column($value, 'locale'));
+        if (empty($locale)) {
+            return null;
+        }
+
+        $index = array_search($locale, array_column($value, 'locale'), true);
         if ($index === false) {
             return null;
         }
@@ -169,18 +137,12 @@ class TitleDescriptionIntegrator implements IntegratorInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function configureOptions(OptionsResolver $resolver)
+    public static function configureOptions(OptionsResolver $resolver): void
     {
         // no options here.
     }

@@ -8,15 +8,12 @@ interface MiddlewareAdapterInterface
 {
     /**
      * Boot your middleware.
-     *
      * This method gets called once per request - if middleware gets involved at all!
      */
-    public function boot();
+    public function boot(): void;
 
     /**
      * Array with all arguments to inject them into a task.
-     *
-     * @return array
      */
     public function getTaskArguments(): array;
 
@@ -27,8 +24,6 @@ interface MiddlewareAdapterInterface
      *
      * After all extractors have been dispatched, the called adapter is allowed to modify the SeoMetaDataInterface
      * before its data gets appended to the documents head.
-     *
-     * @param SeoMetaDataInterface $seoMetadata
      */
-    public function onFinish(SeoMetaDataInterface $seoMetadata);
+    public function onFinish(SeoMetaDataInterface $seoMetadata): void;
 }

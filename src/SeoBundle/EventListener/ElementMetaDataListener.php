@@ -11,23 +11,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ElementMetaDataListener implements EventSubscriberInterface
 {
-    /**
-     * @var ElementMetaDataManagerInterface
-     */
-    protected $elementMetaDataManager;
+    protected ElementMetaDataManagerInterface $elementMetaDataManager;
 
-    /**
-     * @param ElementMetaDataManagerInterface $elementMetaDataManager
-     */
     public function __construct(ElementMetaDataManagerInterface $elementMetaDataManager)
     {
         $this->elementMetaDataManager = $elementMetaDataManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DataObjectEvents::PRE_DELETE => 'handleObjectDeletion',
@@ -35,18 +26,12 @@ class ElementMetaDataListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param DocumentEvent $event
-     */
-    public function handleDocumentDeletion(DocumentEvent $event)
+    public function handleDocumentDeletion(DocumentEvent $event): void
     {
         $this->elementMetaDataManager->deleteElementData('document', $event->getDocument()->getId());
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function handleObjectDeletion(DataObjectEvent $event)
+    public function handleObjectDeletion(DataObjectEvent $event): void
     {
         $this->elementMetaDataManager->deleteElementData('object', $event->getObject()->getId());
     }

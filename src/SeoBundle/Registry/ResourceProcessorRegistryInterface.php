@@ -6,24 +6,15 @@ use SeoBundle\ResourceProcessor\ResourceProcessorInterface;
 
 interface ResourceProcessorRegistryInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier);
+    public function has(string $identifier): bool;
 
     /**
-     * @param string $identifier
-     *
-     * @return ResourceProcessorInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier);
+    public function get(string $identifier): ResourceProcessorInterface;
 
     /**
-     * @return ResourceProcessorInterface[]
+     * @return array<int, ResourceProcessorInterface>
      */
-    public function getAll();
+    public function getAll(): array;
 }

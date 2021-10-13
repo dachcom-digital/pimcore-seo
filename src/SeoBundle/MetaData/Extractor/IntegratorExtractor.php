@@ -11,26 +11,10 @@ use SeoBundle\Registry\MetaDataIntegratorRegistryInterface;
 
 class IntegratorExtractor implements ExtractorInterface
 {
-    /**
-     * @var array
-     */
-    protected $integratorConfiguration;
+    protected array $integratorConfiguration;
+    protected ElementMetaDataManagerInterface $elementMetaDataManager;
+    protected MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry;
 
-    /**
-     * @var ElementMetaDataManagerInterface
-     */
-    protected $elementMetaDataManager;
-
-    /**
-     * @var MetaDataIntegratorRegistryInterface
-     */
-    protected $metaDataIntegratorRegistry;
-
-    /**
-     * @param array                               $integratorConfiguration
-     * @param ElementMetaDataManagerInterface     $elementMetaDataManager
-     * @param MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry
-     */
     public function __construct(
         array $integratorConfiguration,
         ElementMetaDataManagerInterface $elementMetaDataManager,
@@ -41,17 +25,14 @@ class IntegratorExtractor implements ExtractorInterface
         $this->metaDataIntegratorRegistry = $metaDataIntegratorRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($element)
+    public function supports(mixed $element): bool
     {
         if ($element instanceof Concrete) {
             if ($this->integratorConfiguration['objects']['enabled'] === false) {
                 return false;
             }
 
-            return in_array($element->getClassName(), $this->integratorConfiguration['objects']['data_classes']);
+            return in_array($element->getClassName(), $this->integratorConfiguration['objects']['data_classes'], true);
         }
 
         if ($element instanceof Page) {
@@ -61,10 +42,7 @@ class IntegratorExtractor implements ExtractorInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData(mixed $element, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         $elementId = null;
         $elementType = null;

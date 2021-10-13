@@ -5,26 +5,18 @@ namespace SeoBundle\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SeoBundle\Model\ElementMetaData;
+use SeoBundle\Model\ElementMetaDataInterface;
 
 class ElementMetaDataRepository implements ElementMetaDataRepositoryInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
+    protected EntityRepository $repository;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(ElementMetaData::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findAll(string $elementType, int $elementId)
+    public function findAll(string $elementType, int $elementId): array
     {
         return $this->repository->findBy([
             'elementType' => $elementType,
@@ -32,10 +24,7 @@ class ElementMetaDataRepository implements ElementMetaDataRepositoryInterface
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findByIntegrator(string $elementType, int $elementId, string $integrator)
+    public function findByIntegrator(string $elementType, int $elementId, string $integrator): ?ElementMetaDataInterface
     {
         return $this->repository->findOneBy([
             'elementType' => $elementType,

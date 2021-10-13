@@ -2,7 +2,7 @@
 <html lang="{{ app.request.locale }}">
 <head>
     <meta charset="UTF-8">
-    <title>Test Page for Test Bundle</title>
+    {{ pimcore_head_title() }}
     {{ pimcore_head_meta() }}
     {{ pimcore_head_link() }}
 </head>
@@ -10,7 +10,7 @@
     <div id="site">
         <div class="content">
             {% if document is defined %}
-                <span id="page-id">{{ document.getId() }}</span>
+                <span id="page-id">{{ document.id }}</span>
             {% endif %}
         </div>
         {% block content %}

@@ -21,20 +21,14 @@ class SeoBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
-    const PACKAGE_NAME = 'dachcom-digital/seo';
+    public const PACKAGE_NAME = 'dachcom-digital/seo';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getInstaller()
+    public function getInstaller(): Install
     {
         return $this->container->get(Install::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         $this->configureDoctrineExtension($container);
 
@@ -50,17 +44,11 @@ class SeoBundle extends AbstractPimcoreBundle
         $container->addCompilerPass(new RemoveCoreShopExtractorListenerPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 250);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getComposerPackageName(): string
     {
         return self::PACKAGE_NAME;
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     protected function configureDoctrineExtension(ContainerBuilder $container): void
     {
         $container->addCompilerPass(
@@ -72,20 +60,14 @@ class SeoBundle extends AbstractPimcoreBundle
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [
             '/bundles/seo/css/admin.css'
         ];
     }
 
-    /**
-     * @return string[]
-     */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         return [
             '/bundles/seo/js/plugin.js',
@@ -107,18 +89,12 @@ class SeoBundle extends AbstractPimcoreBundle
         ];
     }
 
-    /**
-     * @return string|null
-     */
-    protected function getNamespaceName()
+    protected function getNamespaceName(): string
     {
         return 'SeoBundle\Model';
     }
 
-    /**
-     * @return string
-     */
-    protected function getNameSpacePath()
+    protected function getNameSpacePath(): string
     {
         return sprintf(
             '%s/Resources/config/doctrine/%s',

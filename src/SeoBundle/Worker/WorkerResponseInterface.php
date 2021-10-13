@@ -6,28 +6,13 @@ use SeoBundle\Model\QueueEntryInterface;
 
 interface WorkerResponseInterface
 {
-    /**
-     * @return string
-     */
-    public function getStatus();
+    public function getStatus(): string;
 
-    /**
-     * @return string
-     */
-    public function getMessage();
+    public function getMessage(): string;
 
-    /**
-     * @return QueueEntryInterface
-     */
-    public function getQueueEntry();
+    public function getQueueEntry(): QueueEntryInterface;
 
-    /**
-     * @return mixed
-     */
-    public function getRawResponse();
+    public function getRawResponse(): mixed;
 
-    /**
-     * @return bool
-     */
-    public function isDone();
+    public function isDone(): bool;
 }

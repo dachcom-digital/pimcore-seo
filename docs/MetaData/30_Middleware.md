@@ -8,7 +8,7 @@ For example, the [Schema Bundle](https://github.com/dachcom-digital/pimcore-sche
 # app/config/services.yml
 services:
 
-    AppBundle\Seo\Middleware\MyCustomAdapter:
+    App\Seo\Middleware\MyCustomAdapter:
         tags:
             - { name: seo.meta_data.middleware.adapter, identifier: my_custom_adapter }
 ```
@@ -16,38 +16,26 @@ services:
 ```php
 <?php
 
-namespace AppBundle\Seo\Middleware;
+namespace App\Seo\Middleware;
 
 use SeoBundle\Middleware\MiddlewareAdapterInterface;
 use SeoBundle\Model\SeoMetaDataInterface;
 
 class MyCustomAdapter implements MiddlewareAdapterInterface
 {
-    /**
-     * @var string
-     */
-    protected $string;
+    protected string $string;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function boot()
+    public function boot(): void
     {
         $this->string = 'Important string!';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getTaskArguments(): array
     {
         return [$this->string];
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function onFinish(SeoMetaDataInterface $seoMetadata)
+    public function onFinish(SeoMetaDataInterface $seoMetadata): void
     {
         // nothing to do by default
         // in some extended usages you may want to finalize and add some data to the SeoMetaData object after all extractors have been dispatched.
@@ -61,29 +49,22 @@ In your extractor you could use it like this:
 ```php
 <?php
 
-namespace AppBundle\MetaData\Extractor;
+namespace App\MetaData\Extractor;
 
 use SeoBundle\MetaData\Extractor\ExtractorInterface;
 use SeoBundle\Model\SeoMetaDataInterface;
 
 class MyCustomExtractor implements ExtractorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($element)
+    public function supports(mixed $element): bool
     {
         return $element instanceof MyClass;
     }
 
-    /**
-     * {@inheritdoc}
-     * @throws \Exception
-     */
-    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData(mixed $element, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         $middleware = $seoMetadata->getMiddleware('my_custom_adapter');
-        $middleware->addTask(function (SeoMetaDataInterface $seoMetadata, string $string) {
+        $middleware->addTask(static function (SeoMetaDataInterface $seoMetadata, string $string) {
             $seoMetadata->setTitle($string); // output: "Important string"
         });
     }

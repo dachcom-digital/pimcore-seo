@@ -4,107 +4,58 @@ namespace SeoBundle\Model;
 
 class ElementMetaData implements ElementMetaDataInterface
 {
-    /**
-     * @var int
-     */
-    protected $id;
+    protected ?int $id = null;
+    protected string $elementType;
+    protected int $elementId;
+    protected string $integrator;
+    protected array $data = [];
 
-    /**
-     * @var string
-     */
-    protected $elementType;
-
-    /**
-     * @var int
-     */
-    protected $elementId;
-
-    /**
-     * @var string
-     */
-    protected $integrator;
-
-    /**
-     * @var array
-     */
-    protected $data;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setId(string $id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setElementType(string $elementType)
+    public function setElementType(string $elementType): void
     {
         $this->elementType = $elementType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getElementType()
+    public function getElementType(): string
     {
         return $this->elementType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setElementId($elementId)
+    public function setElementId($elementId): void
     {
         $this->elementId = $elementId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getElementId()
+    public function getElementId(): int
     {
         return $this->elementId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setIntegrator(string $integrator)
+    public function setIntegrator(string $integrator): void
     {
         $this->integrator = $integrator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getIntegrator()
+    public function getIntegrator(): string
     {
         return $this->integrator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setData(array $data)
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }

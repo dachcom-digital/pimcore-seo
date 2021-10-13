@@ -12,8 +12,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('seo');
+        $treeBuilder = new TreeBuilder('seo');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->createIndexProviderConfigurationNode());
         $rootNode->append($this->createMetaDataConfigurationNode());
@@ -25,7 +25,7 @@ class Configuration implements ConfigurationInterface
     private function createIndexProviderConfigurationNode()
     {
         $treeBuilder = new TreeBuilder('index_provider_configuration');
-        $node = $treeBuilder->root('index_provider_configuration');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()
@@ -52,7 +52,7 @@ class Configuration implements ConfigurationInterface
     private function createMetaDataConfigurationNode()
     {
         $treeBuilder = new TreeBuilder('meta_data_configuration');
-        $node = $treeBuilder->root('meta_data_configuration');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()
@@ -118,7 +118,7 @@ class Configuration implements ConfigurationInterface
     private function createPersistenceNode()
     {
         $treeBuilder = new TreeBuilder('persistence');
-        $node = $treeBuilder->root('persistence');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()

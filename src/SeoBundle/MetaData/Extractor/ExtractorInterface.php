@@ -6,17 +6,7 @@ use SeoBundle\Model\SeoMetaDataInterface;
 
 interface ExtractorInterface
 {
-    /**
-     * @param object $element
-     *
-     * @return bool
-     */
-    public function supports($element);
+    public function supports(mixed $element): bool;
 
-    /**
-     * @param object               $element
-     * @param string|null          $locale
-     * @param SeoMetaDataInterface $seoMetadata
-     */
-    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata);
+    public function updateMetaData(mixed $element, ?string $locale, SeoMetaDataInterface $seoMetadata): void;
 }

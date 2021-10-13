@@ -4,16 +4,7 @@ namespace SeoBundle\Helper;
 
 class ArrayHelper
 {
-    /**
-     * @param array      $data
-     * @param array|null $previousData
-     * @param string     $rowIdentifier
-     *
-     * @param string     $dataIdentifier
-     *
-     * @return array
-     */
-    public function mergeLocaleAwareArrays(array $data, ?array $previousData, string $rowIdentifier = 'name', $dataIdentifier = 'value')
+    public function mergeLocaleAwareArrays(array $data, ?array $previousData, string $rowIdentifier = 'name', string $dataIdentifier = 'value'): array
     {
         // nothing to merge
         if (!is_array($previousData) || count($previousData) === 0) {
@@ -23,7 +14,7 @@ class ArrayHelper
         $newData = [];
         foreach ($data as $row) {
 
-            $previousRowIndex = array_search($row[$rowIdentifier], array_column($previousData, $rowIdentifier));
+            $previousRowIndex = array_search($row[$rowIdentifier], array_column($previousData, $rowIdentifier), true);
 
             if ($previousRowIndex === false) {
                 if (null !== $cleanRowValues = $this->cleanEmptyLocaleValues($row[$dataIdentifier])) {
@@ -51,20 +42,14 @@ class ArrayHelper
         return $newData;
     }
 
-    /**
-     * @param array $values
-     * @param array $rebuildRow
-     *
-     * @return array
-     */
-    public function rebuildLocaleValueRow(array $values, array $rebuildRow)
+    public function rebuildLocaleValueRow(array $values, array $rebuildRow): array
     {
         foreach ($values as $currentRow) {
 
             $locale = $currentRow['locale'];
             $value = $currentRow['value'];
 
-            $index = array_search($locale, array_column($rebuildRow, 'locale'));
+            $index = array_search($locale, array_column($rebuildRow, 'locale'), true);
 
             if ($index !== false) {
 
@@ -73,8 +58,6 @@ class ArrayHelper
                 } else {
                     $rebuildRow[$index] = $currentRow;
                 }
-
-                continue;
 
             } elseif ($value !== null) {
                 $rebuildRow[] = $currentRow;
@@ -85,13 +68,7 @@ class ArrayHelper
         return array_values($rebuildRow);
     }
 
-    /**
-     * @param array  $field
-     * @param string $dataIdentifier
-     *
-     * @return array|null
-     */
-    public function cleanEmptyLocaleRows(array $field, $dataIdentifier = 'value')
+    public function cleanEmptyLocaleRows(array $field, string $dataIdentifier = 'value'): ?array
     {
         if (!is_array($field)) {
             return $field;
@@ -119,12 +96,7 @@ class ArrayHelper
         return count($cleanData) === 0 ? null : $cleanData;
     }
 
-    /**
-     * @param array $field
-     *
-     * @return array|null
-     */
-    public function cleanEmptyLocaleValues(array $field)
+    public function cleanEmptyLocaleValues(array $field): ?array
     {
         if (!is_array($field)) {
             return $field;
@@ -140,12 +112,7 @@ class ArrayHelper
         return count($cleanData) === 0 ? null : $cleanData;
     }
 
-    /**
-     * @param array $array
-     *
-     * @return bool
-     */
-    public function isAssocArray(array $array)
+    public function isAssocArray(array $array): bool
     {
         if ($array === []) {
             return false;

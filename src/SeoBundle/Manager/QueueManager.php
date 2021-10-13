@@ -14,44 +14,13 @@ use SeoBundle\Exception\WorkerResponseInterceptException;
 
 class QueueManager implements QueueManagerInterface
 {
-    /**
-     * @var array
-     */
-    protected $enabledWorker;
+    protected array $enabledWorker;
+    protected EntityManagerInterface $entityManager;
+    protected QueueEntryRepositoryInterface $queueEntryRepository;
+    protected ResourceProcessorRegistryInterface $resourceProcessorRegistry;
+    protected IndexWorkerRegistryInterface $indexWorkerRegistry;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    protected $entityManager;
-
-    /**
-     * @var QueueEntryRepositoryInterface
-     */
-    protected $queueEntryRepository;
-
-    /**
-     * @var ResourceProcessorRegistryInterface
-     */
-    protected $resourceProcessorRegistry;
-
-    /**
-     * @var IndexWorkerRegistryInterface
-     */
-    protected $indexWorkerRegistry;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @param array                              $enabledWorker
-     * @param EntityManagerInterface             $entityManager
-     * @param QueueEntryRepositoryInterface      $queueEntryRepository
-     * @param ResourceProcessorRegistryInterface $resourceProcessorRegistry
-     * @param IndexWorkerRegistryInterface       $indexWorkerRegistry
-     * @param LoggerInterface                    $logger
-     */
     public function __construct(
         array $enabledWorker,
         EntityManagerInterface $entityManager,
@@ -68,10 +37,7 @@ class QueueManager implements QueueManagerInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addToQueue(string $processType, $resource)
+    public function addToQueue(string $processType, mixed $resource): void
     {
         foreach ($this->enabledWorker as $workerIdentifier) {
             foreach ($this->resourceProcessorRegistry->getAll() as $resourceProcessorIdentifier => $resourceProcessor) {
@@ -94,10 +60,7 @@ class QueueManager implements QueueManagerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function processQueue()
+    public function processQueue(): void
     {
         foreach ($this->enabledWorker as $workerIdentifier) {
             if ($this->hasQueueData($workerIdentifier) === false) {
@@ -122,13 +85,11 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * @param WorkerResponseInterface $workerResponse
-     *
      * @throws \Exception
      *
      * @internal
      */
-    public function processResponse(WorkerResponseInterface $workerResponse)
+    public function processResponse(WorkerResponseInterface $workerResponse): void
     {
         $resourceProcessorIdentifier = $workerResponse->getQueueEntry()->getResourceProcessor();
         $resourceProcessor = $this->resourceProcessorRegistry->get($resourceProcessorIdentifier);
@@ -167,22 +128,12 @@ class QueueManager implements QueueManagerInterface
         $this->logger->log('info', $message, $logContext);
     }
 
-    /**
-     * @param string $workerIdentifier
-     *
-     * @return bool
-     */
-    protected function hasQueueData(string $workerIdentifier)
+    protected function hasQueueData(string $workerIdentifier): bool
     {
         return $this->queueEntryRepository->findAtLeastOneForWorker($workerIdentifier) instanceof QueueEntryInterface;
     }
 
-    /**
-     * @param string $workerIdentifier
-     *
-     * @return array
-     */
-    protected function getQueuedData(string $workerIdentifier)
+    protected function getQueuedData(string $workerIdentifier): array
     {
         $data = [];
         $removableEntries = [];
@@ -206,18 +157,8 @@ class QueueManager implements QueueManagerInterface
         return $data;
     }
 
-    /**
-     * @param string              $processType
-     * @param string              $workerIdentifier
-     * @param string              $resourceProcessorIdentifier
-     * @param QueueEntryInterface $queueEntry
-     */
-    protected function createQueueEntry(string $processType, string $workerIdentifier, string $resourceProcessorIdentifier, QueueEntryInterface $queueEntry)
+    protected function createQueueEntry(string $processType, string $workerIdentifier, string $resourceProcessorIdentifier, QueueEntryInterface $queueEntry): void
     {
-        if (!$queueEntry instanceof QueueEntryInterface) {
-            return;
-        }
-
         if (empty($queueEntry->getDataUrl())) {
             $this->logger->log(
                 'warning',
@@ -242,12 +183,7 @@ class QueueManager implements QueueManagerInterface
         }
     }
 
-    /**
-     * @param QueueEntryInterface $queueEntry
-     *
-     * @return string
-     */
-    protected function generateEntryKey(QueueEntryInterface $queueEntry)
+    protected function generateEntryKey(QueueEntryInterface $queueEntry): string
     {
         return md5(sprintf(
             '%s_%s_%s',
@@ -257,19 +193,13 @@ class QueueManager implements QueueManagerInterface
         ));
     }
 
-    /**
-     * @param QueueEntryInterface $queueEntry
-     */
-    protected function storeInQueue(QueueEntryInterface $queueEntry)
+    protected function storeInQueue(QueueEntryInterface $queueEntry): void
     {
         $this->entityManager->persist($queueEntry);
         $this->entityManager->flush();
     }
 
-    /**
-     * @param QueueEntryInterface $queueEntry
-     */
-    protected function removeFromQueue(QueueEntryInterface $queueEntry)
+    protected function removeFromQueue(QueueEntryInterface $queueEntry): void
     {
         $this->entityManager->remove($queueEntry);
         $this->entityManager->flush();
@@ -278,7 +208,7 @@ class QueueManager implements QueueManagerInterface
     /**
      * @param QueueEntryInterface[] $queueEntries
      */
-    protected function removeMultipleFromQueue(array $queueEntries)
+    protected function removeMultipleFromQueue(array $queueEntries): void
     {
         foreach ($queueEntries as $queueEntry) {
             $this->entityManager->remove($queueEntry);

@@ -8,42 +8,26 @@ use Twig\TwigFunction;
 
 class SeoExtension extends AbstractExtension
 {
-    /**
-     * @var MetaDataProviderInterface
-     */
-    protected $metaDataProvider;
+    protected MetaDataProviderInterface $metaDataProvider;
 
-    /**
-     * @param MetaDataProviderInterface $metaDataProvider
-     */
     public function __construct(MetaDataProviderInterface $metaDataProvider)
     {
         $this->metaDataProvider = $metaDataProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('seo_update_metadata', [$this, 'updateMetadata']),
         ];
     }
 
-    /**
-     * @param object      $element
-     * @param string|null $locale
-     */
-    public function updateMetadata($element, ?string $locale)
+    public function updateMetadata(mixed $element, ?string $locale): void
     {
         $this->metaDataProvider->updateSeoElement($element, $locale);
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return 'seo_metadata';
     }

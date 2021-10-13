@@ -21,10 +21,7 @@
     "autoload-dev": {
         "psr-4": {
             "": "src/"
-        },
-        "classmap": [
-            "app/TestKernel.php"
-        ]
+        }
     },
     "extra": {
         "pimcore": {
@@ -34,17 +31,19 @@
         }
     },
     "require": {
+        "pimcore/pimcore": "^10.1",
         "google/apiclient": "^2.0",
-        "pimcore/pimcore": "^6.0",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {
-        "codeception/codeception": "~2.4.0",
+        "codeception/codeception": "^4.1",
+        "codeception/module-webdriver": "^1.4",
+        "codeception/module-symfony": "^1.6",
         "phpstan/phpstan": "^0.12",
         "phpstan/phpstan-symfony": "^0.12",
-        "symplify/easy-coding-standard": "^5.4"
+        "symplify/easy-coding-standard": "^9.0"
     },
     "suggest": {
-        "dachcom-digital/schema": "^1.0"
+        "dachcom-digital/schema": "^2.0"
     }
 }

@@ -4,9 +4,5 @@ namespace SeoBundle\MetaData;
 
 interface MetaDataProviderInterface
 {
-    /**
-     * @param object      $element
-     * @param string|null $locale
-     */
-    public function updateSeoElement($element, ?string $locale);
+    public function updateSeoElement(mixed $element, ?string $locale): void;
 }

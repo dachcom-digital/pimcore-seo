@@ -6,16 +6,9 @@ use SeoBundle\MetaData\Integrator\IntegratorInterface;
 
 class MetaDataIntegratorRegistry implements MetaDataIntegratorRegistryInterface
 {
-    /**
-     * @var array
-     */
-    protected $services;
+    protected array $services = [];
 
-    /**
-     * @param IntegratorInterface $service
-     * @param string              $identifier
-     */
-    public function register($service, string $identifier)
+    public function register(mixed $service, string $identifier): void
     {
         if (!in_array(IntegratorInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -26,18 +19,12 @@ class MetaDataIntegratorRegistry implements MetaDataIntegratorRegistryInterface
         $this->services[$identifier] = $service;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($identifier)
+    public function has($identifier): bool
     {
         return isset($this->services[$identifier]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($identifier)
+    public function get($identifier): IntegratorInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" Meta Data Integrator does not exist');
@@ -46,10 +33,7 @@ class MetaDataIntegratorRegistry implements MetaDataIntegratorRegistryInterface
         return $this->services[$identifier];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAll()
+    public function getAll(): array
     {
         return is_array($this->services) ? $this->services : [];
     }

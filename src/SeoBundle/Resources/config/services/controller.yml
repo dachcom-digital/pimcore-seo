@@ -1,10 +1,8 @@
 services:
 
-    _defaults:
+    SeoBundle\Controller\:
+        resource: '../../Controller'
+        public: true
         autowire: true
         autoconfigure: true
-        public: true
-
-    SeoBundle\Controller\Admin\MetaDataController:
-        calls:
-            - [setContainer, ['@service_container']]
+        tags: ['controller.service_arguments']

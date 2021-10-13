@@ -7,56 +7,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface IntegratorInterface
 {
-    /**
-     * @param array $configuration
-     */
-    public function setConfiguration(array $configuration);
+    public function setConfiguration(array $configuration): void;
 
-    /**
-     * @param OptionsResolver $resolver
-     */
-    public static function configureOptions(OptionsResolver $resolver);
+    public static function configureOptions(OptionsResolver $resolver): void;
 
-    /**
-     * @param mixed $element
-     *
-     * @return array
-     */
-    public function getBackendConfiguration($element);
+    public function getBackendConfiguration(mixed $element): array;
 
-    /**
-     * @param string $elementType
-     * @param int    $elementId
-     * @param array  $data
-     *
-     * @return array
-     */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $data);
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data): array;
 
-    /**
-     * @param string     $elementType
-     * @param int        $elementId
-     * @param array      $data
-     * @param array|null $previousData
-     *
-     * @return array|null
-     */
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null);
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null): ?array;
 
-    /**
-     * @param mixed       $element
-     * @param string|null $template
-     * @param array       $data
-     *
-     * @return array
-     */
-    public function getPreviewParameter($element, ?string $template, array $data);
+    public function getPreviewParameter(mixed $element, ?string $template, array $data): array;
 
-    /**
-     * @param mixed                $element
-     * @param array                $data
-     * @param string|null          $locale
-     * @param SeoMetaDataInterface $seoMetadata
-     */
-    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata);
+    public function updateMetaData(mixed $element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void;
 }

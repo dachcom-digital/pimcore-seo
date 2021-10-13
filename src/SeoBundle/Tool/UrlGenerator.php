@@ -9,56 +9,40 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class UrlGenerator implements UrlGeneratorInterface
 {
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
+    protected RequestStack $requestStack;
 
-    /**
-     * @param RequestStack $requestStack
-     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generate($element, array $options = [])
+    public function generate($element, array $options = []): ?string
     {
         if ($element instanceof Page) {
             return $this->generateForDocument($element, $options);
-        } elseif ($element instanceof Asset) {
+        }
+
+        if ($element instanceof Asset) {
             return $this->generateForAsset($element, $options);
-        } elseif ($element instanceof DataObject\Concrete) {
+        }
+
+        if ($element instanceof DataObject\Concrete) {
             return $this->generateForObject($element, $options);
         }
 
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCurrentSchemeAndHost()
+    public function getCurrentSchemeAndHost(): string
     {
-        $scheme = $this->requestStack->getMasterRequest()->getScheme();
-        $host = $this->requestStack->getMasterRequest()->getHost();
+        $scheme = $this->requestStack->getMainRequest()->getScheme();
+        $host = $this->requestStack->getMainRequest()->getHost();
 
         return sprintf('%s://%s', $scheme, $host);
     }
 
-    /**
-     * @param Page  $document
-     * @param array $options
-     *
-     * @return string|null
-     */
-    protected function generateForDocument(Page $document, array $options)
+    protected function generateForDocument(Page $document, array $options): ?string
     {
-        $url = null;
-
         try {
             $url = $document->getUrl();
         } catch (\Exception $e) {
@@ -68,18 +52,12 @@ class UrlGenerator implements UrlGeneratorInterface
         return $url;
     }
 
-    /**
-     * @param DataObject\Concrete $object
-     * @param array               $options
-     *
-     * @return string|null
-     */
-    protected function generateForObject(DataObject\Concrete $object, array $options)
+    protected function generateForObject(DataObject\Concrete $object, array $options): ?string
     {
         $linkGenerator = $object->getClass()->getLinkGenerator();
         if ($linkGenerator instanceof DataObject\ClassDefinition\LinkGeneratorInterface) {
             $link = $linkGenerator->generate($object, []);
-            if (strpos($link, 'http') === false) {
+            if (!str_contains($link, 'http')) {
                 $link = sprintf('%s/%s', $this->getCurrentSchemeAndHost(), ltrim($link, '/'));
             }
 
@@ -89,13 +67,7 @@ class UrlGenerator implements UrlGeneratorInterface
         return null;
     }
 
-    /**
-     * @param Asset $asset
-     * @param array $options
-     *
-     * @return string|null
-     */
-    protected function generateForAsset(Asset $asset, array $options)
+    protected function generateForAsset(Asset $asset, array $options): ?string
     {
         if (!$asset instanceof Asset\Image) {
             return null;
@@ -115,7 +87,7 @@ class UrlGenerator implements UrlGeneratorInterface
             return null;
         }
 
-        if (strpos($imagePath, 'http') !== false) {
+        if (str_contains($imagePath, 'http')) {
             return $imagePath;
         }
 

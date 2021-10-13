@@ -2,8 +2,8 @@
 
 namespace SeoBundle\MetaData;
 
-use Pimcore\Templating\Helper\HeadMeta;
-use Pimcore\Templating\Helper\HeadTitle;
+use Pimcore\Twig\Extension\Templating\HeadMeta;
+use Pimcore\Twig\Extension\Templating\HeadTitle;
 use SeoBundle\MetaData\Extractor\ExtractorInterface;
 use SeoBundle\Middleware\MiddlewareDispatcherInterface;
 use SeoBundle\Registry\MetaDataExtractorRegistryInterface;
@@ -11,32 +11,11 @@ use SeoBundle\Model\SeoMetaData;
 
 class MetaDataProvider implements MetaDataProviderInterface
 {
-    /**
-     * @var HeadMeta
-     */
-    protected $headMeta;
+    protected HeadMeta $headMeta;
+    protected HeadTitle $headTitle;
+    protected MetaDataExtractorRegistryInterface $extractorRegistry;
+    protected MiddlewareDispatcherInterface $middlewareDispatcher;
 
-    /**
-     * @var HeadTitle
-     */
-    protected $headTitle;
-
-    /**
-     * @var MetaDataExtractorRegistryInterface
-     */
-    protected $extractorRegistry;
-
-    /**
-     * @var MiddlewareDispatcherInterface
-     */
-    protected $middlewareDispatcher;
-
-    /**
-     * @param HeadMeta                           $headMeta
-     * @param HeadTitle                          $headTitle
-     * @param MetaDataExtractorRegistryInterface $extractorRegistry
-     * @param MiddlewareDispatcherInterface      $middlewareDispatcher
-     */
     public function __construct(
         HeadMeta $headMeta,
         HeadTitle $headTitle,
@@ -49,10 +28,7 @@ class MetaDataProvider implements MetaDataProviderInterface
         $this->middlewareDispatcher = $middlewareDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateSeoElement($element, ?string $locale)
+    public function updateSeoElement($element, ?string $locale): void
     {
         $seoMetadata = $this->getSeoMetaData($element, $locale);
 
@@ -98,13 +74,7 @@ class MetaDataProvider implements MetaDataProviderInterface
         }
     }
 
-    /**
-     * @param mixed       $element
-     * @param string|null $locale
-     *
-     * @return SeoMetaData
-     */
-    protected function getSeoMetaData($element, ?string $locale)
+    protected function getSeoMetaData(mixed $element, ?string $locale): SeoMetaData
     {
         $seoMetaData = new SeoMetaData($this->middlewareDispatcher);
         $extractors = $this->getExtractorsForElement($element);
@@ -119,13 +89,11 @@ class MetaDataProvider implements MetaDataProviderInterface
     }
 
     /**
-     * @param object $element
-     *
-     * @return ExtractorInterface[]
+     * @return array<int, ExtractorInterface>
      */
-    protected function getExtractorsForElement($element)
+    protected function getExtractorsForElement($element): array
     {
-        return array_filter($this->extractorRegistry->getAll(), function (ExtractorInterface $extractor) use ($element) {
+        return array_filter($this->extractorRegistry->getAll(), static function (ExtractorInterface $extractor) use ($element) {
             return $extractor->supports($element);
         });
     }

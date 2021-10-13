@@ -6,24 +6,15 @@ use SeoBundle\MetaData\Extractor\ExtractorInterface;
 
 interface MetaDataExtractorRegistryInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier);
+    public function has(string  $identifier): bool;
 
     /**
-     * @param string $identifier
-     *
-     * @return ExtractorInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier);
+    public function get(string $identifier): ExtractorInterface;
 
     /**
-     * @return ExtractorInterface[]
+     * @return array<int, ExtractorInterface>
      */
-    public function getAll();
+    public function getAll(): array;
 }

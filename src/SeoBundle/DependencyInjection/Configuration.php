@@ -2,15 +2,13 @@
 
 namespace SeoBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @return TreeBuilder
-     */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('seo');
         $rootNode = $treeBuilder->getRootNode();
@@ -22,7 +20,7 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function createIndexProviderConfigurationNode()
+    private function createIndexProviderConfigurationNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('index_provider_configuration');
         $node = $treeBuilder->getRootNode();
@@ -49,7 +47,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createMetaDataConfigurationNode()
+    private function createMetaDataConfigurationNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('meta_data_configuration');
         $node = $treeBuilder->getRootNode();
@@ -115,7 +113,7 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createPersistenceNode()
+    private function createPersistenceNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('persistence');
         $node = $treeBuilder->getRootNode();

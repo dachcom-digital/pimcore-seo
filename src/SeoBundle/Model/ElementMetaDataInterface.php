@@ -4,48 +4,21 @@ namespace SeoBundle\Model;
 
 interface ElementMetaDataInterface
 {
-    /**
-     * @return string
-     */
-    public function getId();
+    public function getId(): ?int;
 
-    /**
-     * @param string $elementType
-     */
-    public function setElementType(string $elementType);
+    public function setElementType(string $elementType): void;
 
-    /**
-     * @return string
-     */
-    public function getElementType();
+    public function getElementType(): string;
 
-    /**
-     * @param int $elementId
-     */
-    public function setElementId(int $elementId);
+    public function setElementId(int $elementId): void;
 
-    /**
-     * @return int
-     */
-    public function getElementId();
+    public function getElementId(): int;
 
-    /**
-     * @param string $integrator
-     */
-    public function setIntegrator(string $integrator);
+    public function setIntegrator(string $integrator): void;
 
-    /**
-     * @return string
-     */
-    public function getIntegrator();
+    public function getIntegrator(): string;
 
-    /**
-     * @param array $data
-     */
-    public function setData(array $data);
+    public function setData(array $data): void;
 
-    /**
-     * @return array
-     */
-    public function getData();
+    public function getData(): array;
 }

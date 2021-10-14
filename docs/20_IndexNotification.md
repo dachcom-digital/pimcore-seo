@@ -30,7 +30,7 @@ seo:
 ## Register Service
 
 ```yaml
-AppBundle\Seo\ResourceProcessor\MyProcessor:
+App\Seo\ResourceProcessor\MyProcessor:
     tags:
         - { name: seo.index.resource_processor, identifier: my_processor }
 ```
@@ -40,7 +40,7 @@ AppBundle\Seo\ResourceProcessor\MyProcessor:
 ````php
 <?php
 
-namespace AppBundle\Seo\ResourceProcessor;
+namespace App\Seo\ResourceProcessor;
 
 use Pimcore\Model\DataObject\Concrete;
 use SeoBundle\Model\QueueEntryInterface;

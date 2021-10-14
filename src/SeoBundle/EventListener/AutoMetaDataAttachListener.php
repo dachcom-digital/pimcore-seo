@@ -7,44 +7,18 @@ use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document\Page;
 use SeoBundle\MetaData\MetaDataProviderInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AutoMetaDataAttachListener implements EventSubscriberInterface
 {
-    /**
-     * @var array
-     */
-    protected $configuration;
+    protected array $configuration;
+    protected MetaDataProviderInterface $metaDataProvider;
+    protected RequestHelper $requestHelper;
+    protected PimcoreContextResolver $pimcoreContextResolver;
+    protected DocumentResolver $documentResolverService;
 
-    /**
-     * @var MetaDataProviderInterface
-     */
-    protected $metaDataProvider;
-
-    /**
-     * @var RequestHelper
-     */
-    protected $requestHelper;
-
-    /**
-     * @var PimcoreContextResolver
-     */
-    protected $pimcoreContextResolver;
-
-    /**
-     * @var DocumentResolver
-     */
-    protected $documentResolverService;
-
-    /**
-     * @param array                     $configuration
-     * @param MetaDataProviderInterface $metaDataProvider
-     * @param RequestHelper             $requestHelper
-     * @param PimcoreContextResolver    $contextResolver
-     * @param DocumentResolver          $documentResolverService
-     */
     public function __construct(
         array $configuration,
         MetaDataProviderInterface $metaDataProvider,
@@ -59,20 +33,14 @@ class AutoMetaDataAttachListener implements EventSubscriberInterface
         $this->documentResolverService = $documentResolverService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::REQUEST => ['onKernelRequest', -255]
         ];
     }
 
-    /**
-     * @param GetResponseEvent $event
-     */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event): void
     {
         $request = $event->getRequest();
 

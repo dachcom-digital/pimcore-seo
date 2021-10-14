@@ -6,16 +6,9 @@ use SeoBundle\ResourceProcessor\ResourceProcessorInterface;
 
 class ResourceProcessorRegistry implements ResourceProcessorRegistryInterface
 {
-    /**
-     * @var array
-     */
-    protected $services;
+    protected array $services = [];
 
-    /**
-     * @param ResourceProcessorInterface $service
-     * @param string                     $identifier
-     */
-    public function register($service, string $identifier)
+    public function register(mixed $service, string $identifier): void
     {
         if (!in_array(ResourceProcessorInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -26,18 +19,12 @@ class ResourceProcessorRegistry implements ResourceProcessorRegistryInterface
         $this->services[$identifier] = $service;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($identifier)
+    public function has($identifier): bool
     {
         return isset($this->services[$identifier]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($identifier)
+    public function get($identifier): ResourceProcessorInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" Resource Processor does not exist');
@@ -46,11 +33,8 @@ class ResourceProcessorRegistry implements ResourceProcessorRegistryInterface
         return $this->services[$identifier];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAll()
+    public function getAll(): array
     {
-        return is_array($this->services) ? $this->services : [];
+        return $this->services;
     }
 }

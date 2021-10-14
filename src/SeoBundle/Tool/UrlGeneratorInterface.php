@@ -4,16 +4,7 @@ namespace SeoBundle\Tool;
 
 interface UrlGeneratorInterface
 {
-    /**
-     * @param mixed $element
-     * @param array $options
-     *
-     * @return string|null
-     */
-    public function generate($element, array $options = []);
+    public function generate(mixed $element, array $options = []): ?string;
 
-    /**
-     * @return string
-     */
-    public function getCurrentSchemeAndHost();
+    public function getCurrentSchemeAndHost(): string;
 }

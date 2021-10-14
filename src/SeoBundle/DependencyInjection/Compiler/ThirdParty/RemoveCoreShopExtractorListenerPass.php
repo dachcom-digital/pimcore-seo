@@ -8,10 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class RemoveCoreShopExtractorListenerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (Bundle::hasBundle('CoreShopSEOBundle', $container->getParameter('kernel.bundles')) === false) {
             return;

@@ -4,24 +4,12 @@ namespace SeoBundle\Tool;
 
 class Bundle
 {
-    /**
-     * @param string $bundleName
-     * @param array  $installedBundle
-     *
-     * @return bool
-     */
-    public static function hasBundle(string $bundleName, array $installedBundle)
+    public static function hasBundle(string $bundleName, array $installedBundle): bool
     {
         return array_key_exists($bundleName, $installedBundle);
     }
 
-    /**
-     * @param string $bundleName
-     * @param array  $installedBundle
-     *
-     * @return bool
-     */
-    public static function hasDachcomBundle(string $bundleName, array $installedBundle)
+    public static function hasDachcomBundle(string $bundleName, array $installedBundle): bool
     {
         if (!array_key_exists($bundleName, $installedBundle)) {
             return false;
@@ -32,7 +20,7 @@ class Bundle
             return false;
         }
 
-        if (strpos($class::PACKAGE_NAME, 'dachcom-digital') === false) {
+        if (!str_contains($class::PACKAGE_NAME, 'dachcom-digital')) {
             return false;
         }
 

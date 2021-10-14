@@ -15,30 +15,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PimcoreElementListener implements EventSubscriberInterface
 {
-    /**
-     * @var bool
-     */
-    protected $enabled;
+    protected bool $enabled;
+    protected QueueManagerInterface $queueManager;
 
-    /**
-     * @var QueueManagerInterface
-     */
-    protected $queueManager;
-
-    /**
-     * @param bool                  $enabled
-     * @param QueueManagerInterface $queueManager
-     */
     public function __construct(bool $enabled, QueueManagerInterface $queueManager)
     {
         $this->enabled = $enabled;
         $this->queueManager = $queueManager;
     }
 
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             DocumentEvents::POST_UPDATE   => 'onDocumentPostUpdate',
@@ -51,10 +37,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param DocumentEvent $event
-     */
-    public function onDocumentPostUpdate(DocumentEvent $event)
+    public function onDocumentPostUpdate(DocumentEvent $event): void
     {
         if ($this->enabled === false) {
             return;
@@ -71,10 +54,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         $this->queueManager->addToQueue($dispatchType, $event->getDocument());
     }
 
-    /**
-     * @param DocumentEvent $event
-     */
-    public function onDocumentPreDelete(DocumentEvent $event)
+    public function onDocumentPreDelete(DocumentEvent $event): void
     {
         if ($this->enabled === false) {
             return;
@@ -87,10 +67,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         $this->queueManager->addToQueue(IndexWorkerInterface::TYPE_DELETE, $event->getDocument());
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function onObjectPostUpdate(DataObjectEvent $event)
+    public function onObjectPostUpdate(DataObjectEvent $event): void
     {
         if ($this->enabled === false) {
             return;
@@ -108,10 +85,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         $this->queueManager->addToQueue($dispatchType, $event->getObject());
     }
 
-    /**
-     * @param DataObjectEvent $event
-     */
-    public function onObjectPreDelete(DataObjectEvent $event)
+    public function onObjectPreDelete(DataObjectEvent $event): void
     {
         if ($this->enabled === false) {
             return;
@@ -120,10 +94,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         $this->queueManager->addToQueue(IndexWorkerInterface::TYPE_DELETE, $event->getObject());
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPostAdd(AssetEvent $event)
+    public function onAssetPostAdd(AssetEvent $event): void
     {
         if ($this->enabled === false) {
             return;
@@ -132,10 +103,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         $this->queueManager->addToQueue(IndexWorkerInterface::TYPE_ADD, $event->getAsset());
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPostUpdate(AssetEvent $event)
+    public function onAssetPostUpdate(AssetEvent $event): void
     {
         if ($this->enabled === false) {
             return;
@@ -144,10 +112,7 @@ class PimcoreElementListener implements EventSubscriberInterface
         $this->queueManager->addToQueue(IndexWorkerInterface::TYPE_UPDATE, $event->getAsset());
     }
 
-    /**
-     * @param AssetEvent $event
-     */
-    public function onAssetPreDelete(AssetEvent $event)
+    public function onAssetPreDelete(AssetEvent $event): void
     {
         if ($this->enabled === false) {
             return;

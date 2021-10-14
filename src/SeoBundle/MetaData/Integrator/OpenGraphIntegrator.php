@@ -11,28 +11,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OpenGraphIntegrator implements IntegratorInterface
 {
-    /**
-     * @var array
-     */
-    protected $configuration;
+    protected array $configuration;
+    protected UrlGeneratorInterface $urlGenerator;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $urlGenerator;
-
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBackendConfiguration($element)
+    public function getBackendConfiguration($element): array
     {
         $useLocalizedFields = $element instanceof DataObject;
 
@@ -48,19 +35,16 @@ class OpenGraphIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPreviewParameter($element, ?string $template, array $data)
+    public function getPreviewParameter(mixed $element, ?string $template, array $data): array
     {
-        $template = in_array($template, ['facebook']) ? $template : 'default';
+        $template = $template === 'facebook' ? $template : 'default';
 
         if (null === $url = $this->urlGenerator->generate($element)) {
             $url = 'http://localhost/no-url-found';
         }
 
-        $title = isset($data['title']) ? $data['title'] : 'This is a title';
-        $description = isset($data['description']) ? $data['description'] : 'This is a very long description which should be not too long.';
+        $title = $data['title'] ?? 'This is a title';
+        $description = $data['description'] ?? 'This is a very long description which should be not too long.';
 
         $imagePath = 'bundles/seo/img/integrator/demoImage.jpg';
         if (isset($data['image']) && is_array($data['image'])) {
@@ -70,7 +54,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         }
 
         return [
-            'path'   => sprintf('@SeoBundle/Resources/views/preview/ogGraph/%s.html.twig', $template),
+            'path'   => sprintf('@Seo/preview/ogGraph/%s.html.twig', $template),
             'params' => [
                 'title'       => $title,
                 'description' => $description,
@@ -80,10 +64,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data): array
     {
         foreach ($data as &$ogField) {
             if ($ogField['property'] === 'og:image' && isset($ogField['value']['thumbPath'])) {
@@ -94,10 +75,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
     {
         if ($elementType === 'object') {
             $arrayModifier = new ArrayHelper();
@@ -111,14 +89,13 @@ class OpenGraphIntegrator implements IntegratorInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         if (count($data) === 0) {
             return;
         }
+
+        dump($data);
 
         $addedItems = 0;
         foreach ($data as $ogItem) {
@@ -137,14 +114,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         }
     }
 
-    /**
-     * @param string       $property
-     * @param array|string $value
-     * @param string       $locale
-     *
-     * @return string|null
-     */
-    protected function findLocaleAwareData(string $property, $value, $locale)
+    protected function findLocaleAwareData(string $property, mixed $value, ?string $locale): int|float|string|bool|null
     {
         if ($property === 'og:image') {
             return isset($value['id']) && is_numeric($value['id']) ? $this->getImagePath($value) : null;
@@ -154,15 +124,15 @@ class OpenGraphIntegrator implements IntegratorInterface
             return $value;
         }
 
-        if (empty($locale)) {
-            return $value;
-        }
-
         if (count($value) === 0) {
             return null;
         }
 
-        $index = array_search($locale, array_column($value, 'locale'));
+        if (empty($locale)) {
+            return null;
+        }
+
+        $index = array_search($locale, array_column($value, 'locale'), true);
         if ($index === false) {
             return null;
         }
@@ -176,16 +146,13 @@ class OpenGraphIntegrator implements IntegratorInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
-        $defaultTypes = array_map(function ($value) {
+        $defaultTypes = array_map(static function ($value) {
             return [$value['name'], $value['tag']];
         }, $this->getDefaultTypes());
 
-        $defaultProperties = array_map(function ($value) {
+        $defaultProperties = array_map(static function ($value) {
             return [$value, $value];
         }, $this->getDefaultProperties());
 
@@ -198,10 +165,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function configureOptions(OptionsResolver $resolver)
+    public static function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'facebook_image_thumbnail' => null,
@@ -217,12 +181,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         $resolver->setAllowedTypes('properties', ['array']);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return string|null
-     */
-    protected function getImagePath(array $data)
+    protected function getImagePath(array $data): ?string
     {
         $asset = Asset::getById($data['id']);
 
@@ -233,10 +192,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         return $this->urlGenerator->generate($asset, ['thumbnail' => $this->configuration['facebook_image_thumbnail']]);
     }
 
-    /**
-     * @return array
-     */
-    protected function getDefaultTypes()
+    protected function getDefaultTypes(): array
     {
         return [
             [
@@ -250,10 +206,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getDefaultProperties()
+    protected function getDefaultProperties(): array
     {
         return [
             'og:type',
@@ -264,10 +217,7 @@ class OpenGraphIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getDefaultPresets()
+    protected function getDefaultPresets(): array
     {
         return [
             [

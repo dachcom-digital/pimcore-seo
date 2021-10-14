@@ -10,28 +10,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SchemaIntegrator implements IntegratorInterface
 {
-    /**
-     * @var array
-     */
-    protected $configuration;
+    protected array $configuration;
+    protected MetaDataProviderInterface $metaDataProvider;
 
-    /**
-     * @var MetaDataProviderInterface
-     */
-    protected $metaDataProvider;
-
-    /**
-     * @param MetaDataProviderInterface $metaDataProvider
-     */
     public function __construct(MetaDataProviderInterface $metaDataProvider)
     {
         $this->metaDataProvider = $metaDataProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBackendConfiguration($element)
+    public function getBackendConfiguration(mixed $element): array
     {
         $useLocalizedFields = $element instanceof DataObject;
         $hasDynamicallyAddedJsonLdData = false;
@@ -71,25 +58,19 @@ class SchemaIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPreviewParameter($element, ?string $template, array $data)
+    public function getPreviewParameter(mixed $element, ?string $template, array $data): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data): array
     {
         if (!is_array($data) || count($data) === 0) {
             return $data;
         }
 
         $schemaBlocksConfiguration = [];
-        $cleanData = function (array $schemaBlock) {
+        $cleanData = static function (array $schemaBlock) {
             $cleanData = json_encode($schemaBlock, JSON_PRETTY_PRINT);
 
             return sprintf('<script type="application/ld+json">%s</script>', $cleanData);
@@ -118,10 +99,7 @@ class SchemaIntegrator implements IntegratorInterface
         return $schemaBlocksConfiguration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
     {
         if (is_array($data) && count($data) === 0) {
             return null;
@@ -130,7 +108,7 @@ class SchemaIntegrator implements IntegratorInterface
         // assert identifier
         foreach ($data as $idx => $row) {
             if (!isset($row['identifier']) || empty($row['identifier'])) {
-                $data[$idx]['identifier'] = uniqid('si');
+                $data[$idx]['identifier'] = uniqid('si', true);
             }
         }
 
@@ -183,10 +161,7 @@ class SchemaIntegrator implements IntegratorInterface
         return $indexedData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         if (count($data) === 0) {
             return;
@@ -199,29 +174,17 @@ class SchemaIntegrator implements IntegratorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function configureOptions(OptionsResolver $resolver)
+    public static function configureOptions(OptionsResolver $resolver): void
     {
         // no options here.
     }
 
-    /**
-     * @param array  $schemaBlock
-     * @param string $locale
-     *
-     * @return array|null
-     */
-    protected function findLocaleAwareData(array $schemaBlock, $locale)
+    protected function findLocaleAwareData(array $schemaBlock, ?string $locale): ?array
     {
         if ($schemaBlock['localized'] === false) {
             return $schemaBlock['data'];
@@ -235,7 +198,7 @@ class SchemaIntegrator implements IntegratorInterface
             return null;
         }
 
-        $index = array_search($locale, array_column($schemaBlock['data'], 'locale'));
+        $index = array_search($locale, array_column($schemaBlock['data'], 'locale'), true);
         if ($index === false) {
             return null;
         }
@@ -248,12 +211,7 @@ class SchemaIntegrator implements IntegratorInterface
         return $value;
     }
 
-    /**
-     * @param string $data
-     *
-     * @return array|null
-     */
-    protected function validateSchemaBlock($data)
+    protected function validateSchemaBlock(mixed $data): ?array
     {
         $validatedJsonData = null;
 
@@ -279,14 +237,7 @@ class SchemaIntegrator implements IntegratorInterface
         return $validatedJsonData;
     }
 
-    /**
-     * @param string $jsonLdData
-     *
-     * @return bool|array
-     *
-     * @throws \Exception
-     */
-    protected function validateJsonLd(string $jsonLdData)
+    protected function validateJsonLd(string $jsonLdData): bool|array
     {
         $jsonLdData = preg_replace(
             '/[ \t\n]+/',
@@ -310,12 +261,12 @@ class SchemaIntegrator implements IntegratorInterface
             $json = $jsonScripts->item(0)->nodeValue;
         }
 
-        $data = json_decode(trim($json), true);
-
-        if ($data === null) {
+        try {
+            $data = json_decode(trim($json), true, 512, JSON_THROW_ON_ERROR);
+        } catch(\Throwable $e) {
             return false;
         }
 
-        return $data;
+        return $data ?? false;
     }
 }

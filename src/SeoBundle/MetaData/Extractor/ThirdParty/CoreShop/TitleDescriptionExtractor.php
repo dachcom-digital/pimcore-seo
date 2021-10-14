@@ -7,18 +7,12 @@ use SeoBundle\Model\SeoMetaDataInterface;
 
 final class TitleDescriptionExtractor implements ExtractorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($object)
+    public function supports(mixed $element): bool
     {
-        return $object instanceof \CoreShop\Component\SEO\Model\SEOAwareInterface;
+        return $element instanceof \CoreShop\Component\SEO\Model\SEOAwareInterface;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetadata($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetadata(mixed $element, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         if (method_exists($element, 'getMetaTitle') && !empty($element->getMetaTitle($locale))) {
             $seoMetadata->setTitle($element->getMetaTitle($locale));

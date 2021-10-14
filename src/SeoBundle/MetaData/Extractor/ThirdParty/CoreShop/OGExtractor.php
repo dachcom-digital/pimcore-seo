@@ -8,18 +8,12 @@ use SeoBundle\Model\SeoMetaDataInterface;
 
 final class OGExtractor implements ExtractorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($object)
+    public function supports(mixed $element): bool
     {
-        return $object instanceof \CoreShop\Component\SEO\Model\SEOOpenGraphAwareInterface;
+        return $element instanceof \CoreShop\Component\SEO\Model\SEOOpenGraphAwareInterface;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetadata($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetadata(mixed $element, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         if (method_exists($element, 'getMetaTitle') && !empty($element->getOGTitle($locale))) {
             $seoMetadata->addExtraProperty('og:title', $element->getOGTitle($locale));

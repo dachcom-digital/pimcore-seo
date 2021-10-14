@@ -9,35 +9,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class QueuedIndexDataCommand extends Command
 {
-    /**
-     * @var QueueDataProcessorInterface
-     */
-    protected $dataProcessor;
+    protected static $defaultName = 'seo:check-index-queue';
+    protected static $defaultDescription = 'For internal use only';
 
-    /**
-     * @param QueueDataProcessorInterface $dataProcessor
-     */
+    protected QueueDataProcessorInterface $dataProcessor;
+
     public function __construct(QueueDataProcessorInterface $dataProcessor)
     {
         parent::__construct();
         $this->dataProcessor = $dataProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    protected function configure(): void
     {
-        $this
-            ->setHidden(true)
-            ->setName('seo:check-index-queue')
-            ->setDescription('For internal use only');
+        $this->setHidden(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->dataProcessor->process([]);
 

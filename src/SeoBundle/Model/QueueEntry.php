@@ -4,170 +4,91 @@ namespace SeoBundle\Model;
 
 class QueueEntry implements QueueEntryInterface
 {
-    /**
-     * @var string
-     */
-    protected $uuid;
+    protected string $uuid;
+    protected string $type;
+    protected string $dataType;
+    protected int $dataId;
+    protected string $dataUrl;
+    protected string $worker;
+    protected string $resourceProcessor;
+    protected \DateTime $creationDate;
 
-    /**
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @var string
-     */
-    protected $dataType;
-
-    /**
-     * @var int
-     */
-    protected $dataId;
-
-    /**
-     * @var string
-     */
-    protected $dataUrl;
-
-    /**
-     * @var string
-     */
-    protected $worker;
-
-    /**
-     * @var string
-     */
-    protected $resourceProcessor;
-
-    /**
-     * @var \DateTime
-     */
-    protected $creationDate;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUuid(string $uuid)
+    public function setUuid(string $uuid): void
     {
         $this->uuid = $uuid;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getUuid()
+    public function getUuid(): string
     {
         return $this->uuid;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataId($dataId)
+    public function setDataId($dataId): void
     {
         $this->dataId = $dataId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataId()
+    public function getDataId(): int
     {
         return $this->dataId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataType(string $dataType)
+    public function setDataType(string $dataType): void
     {
         $this->dataType = $dataType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataType()
+    public function getDataType(): string
     {
         return $this->dataType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setDataUrl(string $dataUrl)
+    public function setDataUrl(string $dataUrl): void
     {
         $this->dataUrl = $dataUrl;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataUrl()
+    public function getDataUrl(): string
     {
         return $this->dataUrl;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setWorker(string $worker)
+    public function setWorker(string $worker): void
     {
         $this->worker = $worker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getWorker()
+    public function getWorker(): string
     {
         return $this->worker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setResourceProcessor(string $resourceProcessor)
+    public function setResourceProcessor(string $resourceProcessor): void
     {
         $this->resourceProcessor = $resourceProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getResourceProcessor()
+    public function getResourceProcessor(): string
     {
         return $this->resourceProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setCreationDate(\DateTime $date)
+    public function setCreationDate(\DateTime $date): void
     {
         $this->creationDate = $date;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCreationDate()
+    public function getCreationDate(): \DateTime
     {
         return $this->creationDate;
     }

@@ -8,40 +8,15 @@ use SeoBundle\Worker\WorkerResponseInterface;
 
 interface ResourceProcessorInterface
 {
-    /**
-     * @param string $workerIdentifier
-     *
-     * @return bool
-     */
-    public function supportsWorker(string $workerIdentifier);
+    public function supportsWorker(string $workerIdentifier): bool;
+
+    public function supportsResource(mixed $resource): bool;
+
+    public function generateQueueContext(mixed $resource): mixed;
+
+    public function processQueueEntry(QueueEntryInterface $queueEntry, string $workerIdentifier, array $context, mixed $resource): ?QueueEntryInterface;
 
     /**
-     * @param object $resource
-     *
-     * @return bool
-     */
-    public function supportsResource($resource);
-
-    /**
-     * @param object $resource
-     *
-     * @return mixed
-     */
-    public function generateQueueContext($resource);
-
-    /**
-     * @param QueueEntryInterface $queueEntry
-     * @param string              $workerIdentifier
-     * @param array               $context
-     * @param mixed               $resource
-     *
-     * @return QueueEntryInterface|null
-     */
-    public function processQueueEntry(QueueEntryInterface $queueEntry, string $workerIdentifier, array $context, $resource);
-
-    /**
-     * @param WorkerResponseInterface $workerResponse
-     *
      * @throws \Exception
      * @throws WorkerResponseInterceptException
      */

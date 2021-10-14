@@ -13,12 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class MetaDataIntegratorPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Exception
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $integratorConfiguration = $container->getParameter('seo.meta_data_integrator.configuration');
 
@@ -35,14 +30,7 @@ final class MetaDataIntegratorPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param string     $identifier
-     * @param array      $integratorConfiguration
-     * @param Definition $definition
-     *
-     * @throws \Exception
-     */
-    public function setDefinitionConfiguration(string $identifier, array $integratorConfiguration, Definition $definition)
+    public function setDefinitionConfiguration(string $identifier, array $integratorConfiguration, Definition $definition): void
     {
         $integratorConfig = null;
         foreach ($integratorConfiguration['enabled_integrator'] as $enabledIntegrator) {

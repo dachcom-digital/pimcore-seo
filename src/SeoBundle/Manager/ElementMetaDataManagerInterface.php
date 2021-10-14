@@ -6,54 +6,20 @@ use SeoBundle\Model\ElementMetaDataInterface;
 
 interface ElementMetaDataManagerInterface
 {
-    /**
-     * @return array
-     */
-    public function getMetaDataIntegratorConfiguration();
+    public function getMetaDataIntegratorConfiguration(): array;
+
+    public function getMetaDataIntegratorBackendConfiguration(mixed $correspondingElement): array;
 
     /**
-     * @param mixed $correspondingElement
-     *
-     * @return array
+     * @return array<int, ElementMetaDataInterface>
      */
-    public function getMetaDataIntegratorBackendConfiguration($correspondingElement);
+    public function getElementData(string $elementType, int $elementId): array;
 
-    /**
-     * @param string $elementType
-     * @param int    $elementId
-     *
-     * @return ElementMetaDataInterface[]
-     */
-    public function getElementData(string $elementType, int $elementId);
+    public function getElementDataForBackend(string $elementType, int $elementId): array;
 
-    /**
-     * @param string $elementType
-     * @param int    $elementId
-     *
-     * @return array
-     */
-    public function getElementDataForBackend(string $elementType, int $elementId);
+    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data): void;
 
-    /**
-     * @param string $elementType
-     * @param int    $elementId
-     * @param string $integratorName
-     * @param array  $data
-     */
-    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data);
+    public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data): array;
 
-    /**
-     * @param string      $elementType
-     * @param int         $elementId
-     * @param string      $integratorName
-     * @param string|null $template
-     * @param array       $data
-     */
-    public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data);
-
-    /**
-     * @param string $elementType
-     * @param int    $elementId
-     */
-    public function deleteElementData(string $elementType, int $elementId);
+    public function deleteElementData(string $elementType, int $elementId): void;
 }

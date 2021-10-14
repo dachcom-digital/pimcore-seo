@@ -4,3 +4,7 @@ doctrine:
         entity_managers:
             default:
                 auto_mapping: true
+
+doctrine_migrations:
+    migrations_paths:
+        'SeoBundle\Migrations': '@SeoBundle/Migrations'

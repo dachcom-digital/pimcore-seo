@@ -5,42 +5,28 @@ namespace SeoBundle\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SeoBundle\Model\QueueEntry;
+use SeoBundle\Model\QueueEntryInterface;
 
 class QueueEntryRepository implements QueueEntryRepositoryInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
+    protected EntityRepository $repository;
 
-    /**
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(QueueEntry::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findAll(array $orderBy = null)
+    public function findAll(?array $orderBy = null): array
     {
         return $this->repository->findBy([], $orderBy);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findAllForWorker(string $workerName, array $orderBy = null)
+    public function findAllForWorker(string $workerName, ?array $orderBy = null): array
     {
         return $this->repository->findBy(['worker' => $workerName], $orderBy);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function findAtLeastOneForWorker(string $workerName)
+    public function findAtLeastOneForWorker(string $workerName): ?QueueEntryInterface
     {
         return $this->repository->findOneBy(['worker' => $workerName]);
     }

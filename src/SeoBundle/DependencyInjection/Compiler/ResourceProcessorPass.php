@@ -10,10 +10,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class ResourceProcessorPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $i = 0;
         $services = [];

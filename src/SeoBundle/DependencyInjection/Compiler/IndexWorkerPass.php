@@ -12,12 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class IndexWorkerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Exception
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(IndexWorkerRegistry::class);
 
@@ -35,14 +30,7 @@ final class IndexWorkerPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param string     $identifier
-     * @param array      $workerConfiguration
-     * @param Definition $definition
-     *
-     * @throws \Exception
-     */
-    public function setDefinitionConfiguration(string $identifier, array $workerConfiguration, Definition $definition)
+    public function setDefinitionConfiguration(string $identifier, array $workerConfiguration, Definition $definition): void
     {
         $options = new OptionsResolver();
         /** @var IndexWorkerInterface $class */

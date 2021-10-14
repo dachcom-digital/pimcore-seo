@@ -6,24 +6,15 @@ use SeoBundle\Worker\IndexWorkerInterface;
 
 interface IndexWorkerRegistryInterface
 {
-    /**
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function has($identifier);
+    public function has(string $identifier): bool;
 
     /**
-     * @param string $identifier
-     *
-     * @return IndexWorkerInterface
-     *
      * @throws \Exception
      */
-    public function get($identifier);
+    public function get(string $identifier): IndexWorkerInterface;
 
     /**
-     * @return IndexWorkerInterface[]
+     * @return array<int, IndexWorkerInterface>
      */
-    public function getAll();
+    public function getAll(): array;
 }

@@ -11,19 +11,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GoogleIndexWorker implements IndexWorkerInterface
 {
-    const TMP_STORE_MINUTE_QUOTA_KEY = 'google_index_worker_minute_quota';
+    public const TMP_STORE_MINUTE_QUOTA_KEY = 'google_index_worker_minute_quota';
+    public const TMP_STORE_DAILY_QUOTA_KEY = 'google_index_worker_daily_quota';
 
-    const TMP_STORE_DAILY_QUOTA_KEY = 'google_index_worker_daily_quota';
+    protected array $configuration;
 
-    /**
-     * @var array
-     */
-    protected $configuration;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function canProcess()
+    public function canProcess(): string|bool
     {
         $dailyQuota = TmpStore::get(self::TMP_STORE_DAILY_QUOTA_KEY);
 
@@ -67,7 +60,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
      *  - Push requests per day:    200
      *  - Push request per minute:  600
      */
-    public function process(array $queueEntries, array $resultProcessingCallBack)
+    public function process(array $queueEntries, array $resultCallBack): void
     {
         $client = $this->getClient();
 
@@ -110,7 +103,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
             }
 
             $results = $batch->execute();
-            $this->parseResults($results, $entriesBlock, $resultProcessingCallBack);
+            $this->parseResults($results, $entriesBlock, $resultCallBack);
 
             // throttle batch requests
             sleep(1);
@@ -125,24 +118,16 @@ class GoogleIndexWorker implements IndexWorkerInterface
      * Daily quotas are refreshed at midnight Pacific Standard Time.
      *
      * @see https://developers.google.com/analytics/devguides/config/mgmt/v3/limits-quotas
-     *
-     * @return int
      */
-    protected function generateLifeTimeExceed()
+    protected function generateLifeTimeExceed(): int
     {
         $quoteLifetime = Carbon::now('PST')->endOfDay();
         $localeQuoteLifeTime = Carbon::createFromTimestamp($quoteLifetime->getTimestamp(), CarbonTimeZone::create());
-        $diffInSecondsFromNow = $localeQuoteLifeTime->diffInRealSeconds(Carbon::now());
 
-        return $diffInSecondsFromNow;
+        return $localeQuoteLifeTime->diffInRealSeconds(Carbon::now());
     }
 
-    /**
-     * @param array $results
-     * @param array $processedQueueEntries
-     * @param array $callable
-     */
-    protected function parseResults(array $results, array $processedQueueEntries, array $callable)
+    protected function parseResults(array $results, array $processedQueueEntries, array $callable): void
     {
         foreach ($results as $queueEntryResponseId => $result) {
             $queueEntryId = str_replace('response-', '', $queueEntryResponseId);
@@ -150,15 +135,9 @@ class GoogleIndexWorker implements IndexWorkerInterface
         }
     }
 
-    /**
-     * @param mixed  $result
-     * @param string $queueEntryId
-     * @param array  $processedQueueEntries
-     * @param array  $callable
-     */
-    protected function parseResult($result, string $queueEntryId, array $processedQueueEntries, array $callable)
+    protected function parseResult(mixed $result, string $queueEntryId, array $processedQueueEntries, array $callable): void
     {
-        $linkedQueueEntry = array_reduce($processedQueueEntries, function ($result, QueueEntryInterface $item) use ($queueEntryId) {
+        $linkedQueueEntry = array_reduce($processedQueueEntries, static function ($result, QueueEntryInterface $item) use ($queueEntryId) {
             return $item->getUuid() === $queueEntryId ? $item : $result;
         });
 
@@ -174,13 +153,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
         call_user_func_array($callable, [$workerResponse]);
     }
 
-    /**
-     * @param \Google_Service_Exception $response
-     * @param QueueEntryInterface       $linkedQueueEntry
-     *
-     * @return WorkerResponse
-     */
-    protected function buildErrorResponse(\Google_Service_Exception $response, QueueEntryInterface $linkedQueueEntry)
+    protected function buildErrorResponse(\Google_Service_Exception $response, QueueEntryInterface $linkedQueueEntry): WorkerResponse
     {
         $formattedMessages = [];
         $formattedStatus = (int) $response->getCode();
@@ -189,18 +162,12 @@ class GoogleIndexWorker implements IndexWorkerInterface
             $formattedMessages[] = $error['message'];
         }
 
-        $formattedMessage = join(', ', $formattedMessages);
+        $formattedMessage = implode(', ', $formattedMessages);
 
         return new WorkerResponse($formattedStatus, $formattedMessage, false, $linkedQueueEntry, $response);
     }
 
-    /**
-     * @param \Google_Service_Indexing_PublishUrlNotificationResponse $response
-     * @param QueueEntryInterface                                     $linkedQueueEntry
-     *
-     * @return WorkerResponse
-     */
-    protected function buildSuccessResponse(\Google_Service_Indexing_PublishUrlNotificationResponse $response, QueueEntryInterface $linkedQueueEntry)
+    protected function buildSuccessResponse(\Google_Service_Indexing_PublishUrlNotificationResponse $response, QueueEntryInterface $linkedQueueEntry): WorkerResponse
     {
         $formattedMessageMeta = [];
 
@@ -215,34 +182,27 @@ class GoogleIndexWorker implements IndexWorkerInterface
             $formattedMessageMeta[] = sprintf('Latest Remove Info: %s %s', $latestRemoveInfo->getType(), $latestRemoveInfo->getNotifyTime());
         }
 
-        $formattedMessage = sprintf('Url "%s" successfully submitted to index. %s', $notificationMetaData->getUrl(), join(', ', $formattedMessageMeta));
+        $formattedMessage = sprintf('Url "%s" successfully submitted to index. %s', $notificationMetaData->getUrl(), implode(', ', $formattedMessageMeta));
 
         return new WorkerResponse(200, $formattedMessage, true, $linkedQueueEntry, $response);
     }
 
-    /**
-     * @param mixed               $response
-     * @param QueueEntryInterface $linkedQueueEntry
-     *
-     * @return WorkerResponse
-     */
-    protected function buildUnknownResponse($response, QueueEntryInterface $linkedQueueEntry)
+    protected function buildUnknownResponse(mixed $response, QueueEntryInterface $linkedQueueEntry): WorkerResponse
     {
         return new WorkerResponse(500, 'Unknown Error', true, $linkedQueueEntry, $response);
     }
 
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    protected function getUrlType(string $type)
+    protected function getUrlType(string $type): string
     {
         if ($type === IndexWorkerInterface::TYPE_UPDATE) {
             return 'URL_UPDATED';
-        } elseif ($type === IndexWorkerInterface::TYPE_ADD) {
+        }
+
+        if ($type === IndexWorkerInterface::TYPE_ADD) {
             return 'URL_UPDATED';
-        } elseif ($type === IndexWorkerInterface::TYPE_DELETE) {
+        }
+
+        if ($type === IndexWorkerInterface::TYPE_DELETE) {
             return 'URL_DELETED';
         }
 
@@ -250,11 +210,9 @@ class GoogleIndexWorker implements IndexWorkerInterface
     }
 
     /**
-     * @return \Google_Client
-     *
-     * @throws \Google_Exception
+     * @throws \Google\Exception
      */
-    protected function getClient()
+    protected function getClient(): \Google_Client
     {
         $configPath = sprintf('%s/%s', PIMCORE_PROJECT_ROOT, ltrim($this->configuration['auth_config'], '/'));
 
@@ -266,18 +224,12 @@ class GoogleIndexWorker implements IndexWorkerInterface
         return $client;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function configureOptions(OptionsResolver $resolver)
+    public static function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'push_requests_per_day'    => 200,

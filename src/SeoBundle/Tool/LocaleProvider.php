@@ -9,23 +9,14 @@ use Pimcore\Tool;
 
 class LocaleProvider implements LocaleProviderInterface
 {
-    /**
-     * @var TokenStorageUserResolver
-     */
-    protected $userResolver;
+    protected TokenStorageUserResolver $userResolver;
 
-    /**
-     * @param TokenStorageUserResolver $userResolver
-     */
     public function __construct(TokenStorageUserResolver $userResolver)
     {
         $this->userResolver = $userResolver;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getAllowedLocalesForObject(?DataObject\AbstractObject $object)
+    public function getAllowedLocalesForObject(?DataObject\AbstractObject $object): array
     {
         $user = $this->userResolver->getUser();
         if (!$user instanceof User) {
@@ -50,13 +41,7 @@ class LocaleProvider implements LocaleProviderInterface
         return $this->sortLocalesByUserDefinition($user, array_keys($allowedEdit));
     }
 
-    /**
-     * @param User  $user
-     * @param array $locales
-     *
-     * @return array
-     */
-    protected function sortLocalesByUserDefinition(User $user, array $locales)
+    protected function sortLocalesByUserDefinition(User $user, array $locales): array
     {
         $contentLanguages = $user->getContentLanguages();
 
@@ -66,9 +51,9 @@ class LocaleProvider implements LocaleProviderInterface
 
         $orderIdKeys = array_flip($contentLanguages);
 
-        usort($locales, function ($l1, $l2) use ($orderIdKeys) {
+        usort($locales, static function ($l1, $l2) use ($orderIdKeys) {
 
-            if (!isset($orderIdKeys[$l1]) || !isset($orderIdKeys[$l2])) {
+            if (!isset($orderIdKeys[$l1], $orderIdKeys[$l2])) {
                 return 0;
             }
 

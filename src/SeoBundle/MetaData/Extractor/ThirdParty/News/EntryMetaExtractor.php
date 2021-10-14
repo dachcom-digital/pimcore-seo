@@ -9,31 +9,19 @@ use SeoBundle\Model\SeoMetaDataInterface;
 
 final class EntryMetaExtractor implements ExtractorInterface
 {
-    /**
-     * @var HeadMetaGeneratorInterface
-     */
-    private $headMetaGenerator;
+    private HeadMetaGeneratorInterface $headMetaGenerator;
 
-    /**
-     * @param HeadMetaGeneratorInterface $headMetaGenerator
-     */
     public function __construct(HeadMetaGeneratorInterface $headMetaGenerator)
     {
         $this->headMetaGenerator = $headMetaGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($object)
+    public function supports(mixed $element): bool
     {
-        return $object instanceof EntryInterface;
+        return $element instanceof EntryInterface;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetadata($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetadata(mixed $element, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         $seoMetadata->setMetaDescription($this->headMetaGenerator->generateDescription($element));
         $seoMetadata->setTitle($this->headMetaGenerator->generateTitle($element));

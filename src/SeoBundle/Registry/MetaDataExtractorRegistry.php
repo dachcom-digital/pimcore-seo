@@ -6,16 +6,9 @@ use SeoBundle\MetaData\Extractor\ExtractorInterface;
 
 class MetaDataExtractorRegistry implements MetaDataExtractorRegistryInterface
 {
-    /**
-     * @var array
-     */
-    protected $services;
+    protected array $services = [];
 
-    /**
-     * @param ExtractorInterface $service
-     * @param string             $identifier
-     */
-    public function register($service, string $identifier)
+    public function register(mixed $service, string $identifier): void
     {
         if (!in_array(ExtractorInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -26,18 +19,12 @@ class MetaDataExtractorRegistry implements MetaDataExtractorRegistryInterface
         $this->services[$identifier] = $service;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($identifier)
+    public function has($identifier): bool
     {
         return isset($this->services[$identifier]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($identifier)
+    public function get($identifier): ExtractorInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" Meta Data Extractor does not exist');
@@ -46,11 +33,8 @@ class MetaDataExtractorRegistry implements MetaDataExtractorRegistryInterface
         return $this->services[$identifier];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAll()
+    public function getAll(): array
     {
-        return is_array($this->services) ? $this->services : [];
+        return $this->services;
     }
 }

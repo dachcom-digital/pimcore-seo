@@ -2,18 +2,16 @@
 
 namespace SeoBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @return TreeBuilder
-     */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('seo');
+        $treeBuilder = new TreeBuilder('seo');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->createIndexProviderConfigurationNode());
         $rootNode->append($this->createMetaDataConfigurationNode());
@@ -22,10 +20,10 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    private function createIndexProviderConfigurationNode()
+    private function createIndexProviderConfigurationNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('index_provider_configuration');
-        $node = $treeBuilder->root('index_provider_configuration');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()
@@ -49,10 +47,10 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createMetaDataConfigurationNode()
+    private function createMetaDataConfigurationNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('meta_data_configuration');
-        $node = $treeBuilder->root('meta_data_configuration');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()
@@ -115,10 +113,10 @@ class Configuration implements ConfigurationInterface
         return $node;
     }
 
-    private function createPersistenceNode()
+    private function createPersistenceNode(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder('persistence');
-        $node = $treeBuilder->root('persistence');
+        $node = $treeBuilder->getRootNode();
 
         $node
             ->addDefaultsIfNotSet()

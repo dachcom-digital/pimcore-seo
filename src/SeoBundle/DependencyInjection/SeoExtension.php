@@ -10,13 +10,7 @@ use Symfony\Component\Config\FileLocator;
 
 class SeoExtension extends Extension
 {
-    /**
-     * @param array            $configs
-     * @param ContainerBuilder $container
-     *
-     * @throws \Exception
-     */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -43,14 +37,7 @@ class SeoExtension extends Extension
         $this->checkThirdPartyExtractors($container, $loader, $config['meta_data_configuration']['meta_data_provider']['third_party']);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param YamlFileLoader   $loader
-     * @param array            $thirdPartyOptions
-     *
-     * @throws \Exception
-     */
-    protected function checkThirdPartyExtractors(ContainerBuilder $container, YamlFileLoader $loader, array $thirdPartyOptions)
+    protected function checkThirdPartyExtractors(ContainerBuilder $container, YamlFileLoader $loader, array $thirdPartyOptions): void
     {
         $bundles = $container->getParameter('kernel.bundles');
 

@@ -10,20 +10,9 @@ class QueueDataProcessor implements QueueDataProcessorInterface
 {
     protected const LOCK_KEY = 'process_index';
 
-    /**
-     * @var QueueManagerInterface
-     */
-    protected $queueManager;
+    protected QueueManagerInterface $queueManager;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @param QueueManagerInterface $queueManager
-     * @param LoggerInterface       $logger
-     */
     public function __construct(
         QueueManagerInterface $queueManager,
         LoggerInterface $logger
@@ -32,10 +21,7 @@ class QueueDataProcessor implements QueueDataProcessorInterface
         $this->logger = $logger;
     }
 
-    /**
-     * @param array $options
-     */
-    public function process(array $options)
+    public function process(array $options): void
     {
         if ($this->isLocked(self::LOCK_KEY)) {
             return;
@@ -52,18 +38,12 @@ class QueueDataProcessor implements QueueDataProcessorInterface
         $this->unlock(self::LOCK_KEY);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isLocked(string $token)
+    public function isLocked(string $token): bool
     {
         return $this->getLockToken($token) instanceof TmpStore;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLockMessage(string $token)
+    public function getLockMessage(string $token): string
     {
         if (!$this->isLocked($token)) {
             return 'not-locked';
@@ -83,10 +63,7 @@ class QueueDataProcessor implements QueueDataProcessorInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function lock(string $token, string $executor, $lifeTime = 14400)
+    protected function lock(string $token, string $executor, $lifeTime = 14400): void
     {
         if ($this->isLocked($token)) {
             return;
@@ -95,31 +72,17 @@ class QueueDataProcessor implements QueueDataProcessorInterface
         TmpStore::add($this->getNamespacedToken($token), $executor, null, $lifeTime);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function unlock(string $token)
+    protected function unlock(string $token): void
     {
         TmpStore::delete($this->getNamespacedToken($token));
     }
 
-    /**
-     * @param string $token
-     *
-     * @return TmpStore|null
-     */
-    protected function getLockToken(string $token)
+    protected function getLockToken(string $token): ?TmpStore
     {
         return TmpStore::get($this->getNamespacedToken($token));
     }
 
-    /**
-     * @param string $token
-     * @param string $namespace
-     *
-     * @return string
-     */
-    protected function getNamespacedToken(string $token, string $namespace = 'seo')
+    protected function getNamespacedToken(string $token, string $namespace = 'seo'): string
     {
         return sprintf('%s_%s', $namespace, $token);
     }

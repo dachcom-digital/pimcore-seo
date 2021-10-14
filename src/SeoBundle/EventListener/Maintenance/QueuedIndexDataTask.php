@@ -7,23 +7,14 @@ use SeoBundle\Queue\QueueDataProcessorInterface;
 
 class QueuedIndexDataTask implements TaskInterface
 {
-    /**
-     * @var QueueDataProcessorInterface
-     */
-    protected $dataProcessor;
+    protected QueueDataProcessorInterface $dataProcessor;
 
-    /**
-     * @param QueueDataProcessorInterface $dataProcessor
-     */
     public function __construct(QueueDataProcessorInterface $dataProcessor)
     {
         $this->dataProcessor = $dataProcessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function execute()
+    public function execute(): void
     {
         $this->dataProcessor->process([]);
     }

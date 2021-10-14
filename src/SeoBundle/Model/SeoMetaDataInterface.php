@@ -7,120 +7,59 @@ use SeoBundle\Middleware\MiddlewareInterface;
 interface SeoMetaDataInterface
 {
     /**
-     * @param string $middlewareAdapterName
-     *
-     * @return MiddlewareInterface
-     *
      * @throws \Exception
      */
-    public function getMiddleware(string $middlewareAdapterName);
+    public function getMiddleware(string $middlewareAdapterName): MiddlewareInterface;
 
-    /**
-     * @param string $metaDescription
-     */
-    public function setMetaDescription($metaDescription);
+    public function setMetaDescription(string $metaDescription): void;
 
-    /**
-     * @return string
-     */
-    public function getMetaDescription();
+    public function getMetaDescription(): string;
 
-    /**
-     * @param string $originalUrl
-     */
-    public function setOriginalUrl($originalUrl);
+    public function setOriginalUrl(string $originalUrl): void;
 
-    /**
-     * @return string
-     */
-    public function getOriginalUrl();
+    public function getOriginalUrl(): string;
 
-    /**
-     * @param string $title
-     */
-    public function setTitle($title);
+    public function setTitle(string $title): void;
 
-    /**
-     * @return string
-     */
-    public function getTitle();
+    public function getTitle(): string;
 
-    /**
-     * @param array|\Traversable $extraProperties
-     */
-    public function setExtraProperties($extraProperties);
+    public function setExtraProperties(array|\Traversable $extraProperties): void;
 
-    /**
-     * @param array|\Traversable $extraNames
-     */
-    public function setExtraNames($extraNames);
+    public function setExtraNames(array|\Traversable $extraNames): void;
 
-    /**
-     * @param array|\Traversable $extraHttp
-     */
-    public function setExtraHttp($extraHttp);
+    public function setExtraHttp(array|\Traversable $extraHttp): void;
 
-    /**
-     * @return array
-     */
-    public function getExtraProperties();
+    public function getExtraProperties(): array;
 
-    /**
-     * @return array
-     */
-    public function getExtraNames();
+    public function getExtraNames(): array;
 
-    /**
-     * @return array
-     */
-    public function getExtraHttp();
+    public function getExtraHttp(): array;
 
-    /**
-     * @param string $key
-     * @param string $value
-     */
-    public function addExtraProperty($key, $value);
+    public function addExtraProperty(string $key, string $value);
 
-    /**
-     * @param string $key
-     * @param string $value
-     */
-    public function addExtraName($key, $value);
+    public function addExtraName(string $key, string $value);
 
-    /**
-     * @param string $key
-     * @param string $value
-     */
-    public function addExtraHttp($key, $value);
+    public function addExtraHttp(string $key, string $value);
 
-    /**
-     * @return array
-     */
-    public function getSchema();
+    public function getSchema(): array;
 
-    /**
-     * @param array $schemaJsonLd
-     */
-    public function addSchema(array $schemaJsonLd);
-
-    /**
-     * @return array
-     *
-     * @internal Do not use this method!
-     *
-     * @deprecated
-     */
-    public function getRaw();
+    public function addSchema(array $schemaJsonLd): void;
 
     /**
      * Do not use this method!
      * It's required to allow a seamless migration from old pimcore installations.
      *
-     * @param string $value
-     *
+     * @internal
      * @deprecated
+     */
+    public function getRaw(): array;
+
+    /**
+     * Do not use this method!
+     * It's required to allow a seamless migration from old pimcore installations.
      *
      * @internal
+     * @deprecated
      */
-    public function addRaw(string $value);
+    public function addRaw(string $value): void;
 }

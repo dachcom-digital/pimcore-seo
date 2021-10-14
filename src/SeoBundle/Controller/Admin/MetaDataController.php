@@ -13,20 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MetaDataController extends AdminController
 {
-    /**
-     * @var ElementMetaDataManagerInterface
-     */
-    protected $elementMetaDataManager;
+    protected ElementMetaDataManagerInterface $elementMetaDataManager;
+    protected LocaleProviderInterface $localeProvider;
 
-    /**
-     * @var LocaleProviderInterface
-     */
-    protected $localeProvider;
-
-    /**
-     * @param ElementMetaDataManagerInterface $elementMetaDataManager
-     * @param LocaleProviderInterface         $localeProvider
-     */
     public function __construct(
         ElementMetaDataManagerInterface $elementMetaDataManager,
         LocaleProviderInterface $localeProvider
@@ -35,10 +24,7 @@ class MetaDataController extends AdminController
         $this->localeProvider = $localeProvider;
     }
 
-    /**
-     * @return string
-     */
-    public function getMetaDataDefinitionsAction()
+    public function getMetaDataDefinitionsAction(): JsonResponse
     {
         return $this->json([
             'configuration' => $this->elementMetaDataManager->getMetaDataIntegratorConfiguration()
@@ -46,13 +32,9 @@ class MetaDataController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
-    public function getElementMetaDataConfigurationAction(Request $request)
+    public function getElementMetaDataConfigurationAction(Request $request): JsonResponse
     {
         $element = null;
         $availableLocales = null;
@@ -79,17 +61,13 @@ class MetaDataController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
      * @throws \Exception
      */
-    public function setElementMetaDataConfigurationAction(Request $request)
+    public function setElementMetaDataConfigurationAction(Request $request): JsonResponse
     {
         $elementId = (int) $request->request->get('elementId', 0);
         $elementType = $request->request->get('elementType');
-        $integratorValues = json_decode($request->request->get('integratorValues'), true);
+        $integratorValues = json_decode($request->request->get('integratorValues'), true, 512, JSON_THROW_ON_ERROR);
 
         if (!is_array($integratorValues)) {
             return $this->adminJson(['success' => true]);
@@ -106,18 +84,16 @@ class MetaDataController extends AdminController
     }
 
     /**
-     * @param Request $request
-     *
-     * @return Response
+     * @throws \Exception
      */
-    public function generateMetaDataPreviewAction(Request $request)
+    public function generateMetaDataPreviewAction(Request $request): Response
     {
         $elementId = (int) $request->query->get('elementId', 0);
         $elementType = $request->query->get('elementType', '');
 
         $template = $request->query->get('template', 'none');
         $integratorName = $request->query->get('integratorName');
-        $data = json_decode($request->query->get('data', ''), true);
+        $data = json_decode($request->query->get('data', ''), true, 512, JSON_THROW_ON_ERROR);
 
         if (empty($data)) {
             $data = [];

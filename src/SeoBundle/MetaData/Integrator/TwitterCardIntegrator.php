@@ -11,51 +11,31 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TwitterCardIntegrator implements IntegratorInterface
 {
-    /**
-     * @var array
-     */
-    protected $configuration;
+    protected array $configuration;
+    protected UrlGeneratorInterface $urlGenerator;
 
-    /**
-     * @var UrlGeneratorInterface
-     */
-    protected $urlGenerator;
-
-    /**
-     * @param UrlGeneratorInterface $urlGenerator
-     */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBackendConfiguration($element)
+    public function getBackendConfiguration(mixed $element): array
     {
-        $useLocalizedFields = $element instanceof DataObject;
-
         return [
             'hasLivePreview'       => true,
             'livePreviewTemplates' => [],
             'properties'           => $this->configuration['properties'],
             'types'                => $this->configuration['types'],
-            'useLocalizedFields'   => $useLocalizedFields,
+            'useLocalizedFields'   => $element instanceof DataObject,
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPreviewParameter($element, ?string $template, array $data)
+    public function getPreviewParameter(mixed $element, ?string $template, array $data): array
     {
-        if (null === $url = $this->urlGenerator->getCurrentSchemeAndHost()) {
-            $url = 'http://localhost';
-        }
+        $url = $this->urlGenerator->getCurrentSchemeAndHost();
 
-        $title = isset($data['title']) ? $data['title'] : 'This is a title';
-        $description = isset($data['description']) ? $data['description'] : 'This is a very long description which should be not too long.';
+        $title = $data['title'] ?? 'This is a title';
+        $description = $data['description'] ?? 'This is a very long description which should be not too long.';
 
         $imagePath = 'bundles/seo/img/integrator/demoImage.jpg';
         if (isset($data['image']) && is_array($data['image'])) {
@@ -65,7 +45,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         }
 
         return [
-            'path'   => '@SeoBundle/Resources/views/preview/twitterCard/preview.html.twig',
+            'path'   => '@Seo/preview/twitterCard/preview.html.twig',
             'params' => [
                 'title'       => $title,
                 'description' => $description,
@@ -75,10 +55,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforeBackend(string $elementType, int $elementId, array $data)
+    public function validateBeforeBackend(string $elementType, int $elementId, array $data): array
     {
         foreach ($data as &$twitterItem) {
             if ($twitterItem['name'] === 'twitter:image' && isset($twitterItem['value']['thumbPath'])) {
@@ -89,10 +66,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null)
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
     {
         if ($elementType === 'object') {
             $arrayModifier = new ArrayHelper();
@@ -106,10 +80,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData(mixed $element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         if (count($data) === 0) {
             return;
@@ -126,14 +97,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         }
     }
 
-    /**
-     * @param string       $property
-     * @param array|string $value
-     * @param string       $locale
-     *
-     * @return string|null
-     */
-    protected function findLocaleAwareData(string $property, $value, $locale)
+    protected function findLocaleAwareData(string $property, mixed $value, ?string $locale): int|float|string|bool|null
     {
         if ($property === 'twitter:image') {
             return isset($value['id']) && is_numeric($value['id']) ? $this->getImagePath($value) : null;
@@ -143,15 +107,15 @@ class TwitterCardIntegrator implements IntegratorInterface
             return $value;
         }
 
-        if (empty($locale)) {
-            return $value;
-        }
-
         if (count($value) === 0) {
             return null;
         }
 
-        $index = array_search($locale, array_column($value, 'locale'));
+        if (empty($locale)) {
+            return null;
+        }
+
+        $index = array_search($locale, array_column($value, 'locale'), true);
         if ($index === false) {
             return null;
         }
@@ -165,16 +129,13 @@ class TwitterCardIntegrator implements IntegratorInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfiguration(array $configuration)
+    public function setConfiguration(array $configuration): void
     {
-        $defaultTypes = array_map(function ($value) {
+        $defaultTypes = array_map(static function ($value) {
             return [$value['name'], $value['tag']];
         }, $this->getDefaultTypes());
 
-        $defaultProperties = array_map(function ($value) {
+        $defaultProperties = array_map(static function ($value) {
             return [$value, $value];
         }, $this->getDefaultProperties());
 
@@ -184,10 +145,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         $this->configuration = $configuration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function configureOptions(OptionsResolver $resolver)
+    public static function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'twitter_image_thumbnail' => null,
@@ -200,12 +158,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         $resolver->setAllowedTypes('properties', ['array']);
     }
 
-    /**
-     * @param array $data
-     *
-     * @return string|null
-     */
-    protected function getImagePath(array $data)
+    protected function getImagePath(array $data): ?string
     {
         $asset = Asset::getById($data['id']);
 
@@ -216,10 +169,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         return $this->urlGenerator->generate($asset, ['thumbnail' => $this->configuration['twitter_image_thumbnail']]);
     }
 
-    /**
-     * @return array
-     */
-    protected function getDefaultTypes()
+    protected function getDefaultTypes(): array
     {
         return [
             [
@@ -241,10 +191,7 @@ class TwitterCardIntegrator implements IntegratorInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getDefaultProperties()
+    protected function getDefaultProperties(): array
     {
         return [
             'twitter:card',

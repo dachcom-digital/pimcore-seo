@@ -3,281 +3,163 @@
 namespace SeoBundle\Model;
 
 use SeoBundle\Middleware\MiddlewareDispatcherInterface;
+use SeoBundle\Middleware\MiddlewareInterface;
 
 class SeoMetaData implements SeoMetaDataInterface
 {
-    /**
-     * @var MiddlewareDispatcherInterface
-     */
-    private $middlewareDispatcher;
+    private MiddlewareDispatcherInterface $middlewareDispatcher;
+
+    private int $id;
+    private string $originalUrl;
+    private string $metaDescription = '';
+    private string $title = '';
+    private array $extraProperties = [];
+    private array $extraNames = [];
+    private array $extraHttp = [];
+    private array $schema = [];
 
     /**
-     * @param MiddlewareDispatcherInterface $middlewareDispatcher
+     * @deprecated
      */
+    private array $raw = [];
+
     public function __construct(MiddlewareDispatcherInterface $middlewareDispatcher)
     {
         $this->middlewareDispatcher = $middlewareDispatcher;
     }
 
-    /**
-     * @var string
-     */
-    private $id;
-
-    /**
-     * @var string
-     */
-    private $originalUrl;
-
-    /**
-     * @var string
-     */
-    private $metaDescription;
-
-    /**
-     * @var string
-     */
-    private $title;
-
-    /**
-     * @var array
-     */
-    private $extraProperties = [];
-
-    /**
-     * @var array
-     */
-    private $extraNames = [];
-
-    /**
-     * @var array
-     */
-    private $extraHttp = [];
-
-    /**
-     * @var array
-     */
-    private $schema = [];
-
-    /**
-     * @deprecated
-     *
-     * @var array
-     */
-    private $raw = [];
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMiddleware(string $middlewareAdapterName)
+    public function getMiddleware(string $middlewareAdapterName): MiddlewareInterface
     {
         return $this->middlewareDispatcher->buildMiddleware($middlewareAdapterName, $this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMetaDescription($metaDescription)
+    public function setMetaDescription($metaDescription): void
     {
         $this->metaDescription = $metaDescription;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMetaDescription()
+    public function getMetaDescription(): string
     {
         return $this->metaDescription;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setOriginalUrl($originalUrl)
+    public function setOriginalUrl(string $originalUrl): void
     {
         $this->originalUrl = $originalUrl;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOriginalUrl()
+    public function getOriginalUrl(): string
     {
         return $this->originalUrl;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setTitle($title)
+    public function setTitle($title): void
     {
         $this->title = $title;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtraProperties($extraProperties)
+    public function setExtraProperties(array|\Traversable $extraProperties): void
     {
         $this->extraProperties = $this->toArray($extraProperties);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtraProperties()
+    public function getExtraProperties(): array
     {
         return $this->extraProperties;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addExtraProperty($key, $value)
+    public function addExtraProperty($key, $value): void
     {
         $this->extraProperties[$key] = (string) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeExtraProperty($key)
+    public function removeExtraProperty($key): void
     {
         if (array_key_exists($key, $this->extraProperties)) {
             unset($this->extraProperties[$key]);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtraNames($extraNames)
+    public function setExtraNames(array|\Traversable $extraNames): void
     {
         $this->extraNames = $this->toArray($extraNames);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtraNames()
+    public function getExtraNames(): array
     {
         return $this->extraNames;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addExtraName($key, $value)
+    public function addExtraName(string $key, string $value): void
     {
-        $this->extraNames[$key] = (string) $value;
+        $this->extraNames[$key] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeExtraName($key)
+    public function removeExtraName(string $key): void
     {
         if (array_key_exists($key, $this->extraNames)) {
             unset($this->extraNames[$key]);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtraHttp($extraHttp)
+    public function setExtraHttp(array|\Traversable $extraHttp): void
     {
         $this->extraHttp = $this->toArray($extraHttp);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtraHttp()
+    public function getExtraHttp(): array
     {
         return $this->extraHttp;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addExtraHttp($key, $value)
+    public function addExtraHttp(string $key, string $value): void
     {
         $this->extraHttp[$key] = (string) $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function removeExtraHttp($key)
+    public function removeExtraHttp(string $key): void
     {
         if (array_key_exists($key, $this->extraHttp)) {
             unset($this->extraHttp[$key]);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSchema()
+    public function getSchema(): array
     {
         return $this->schema;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addSchema(array $schemaJsonLd)
+    public function addSchema(array $schemaJsonLd): void
     {
         $this->schema[] = $schemaJsonLd;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRaw()
+    public function getRaw(): array
     {
         return $this->raw;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addRaw(string $value)
+    public function addRaw(string $value): void
     {
         $this->raw[] = $value;
     }
 
-    /**
-     * @param mixed $data
-     *
-     * @return array
-     */
-    private function toArray($data)
+    private function toArray(mixed $data): array
     {
         if (is_array($data)) {
             return $data;

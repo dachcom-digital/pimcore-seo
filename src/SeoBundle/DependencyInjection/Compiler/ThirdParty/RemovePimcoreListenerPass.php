@@ -7,10 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class RemovePimcoreListenerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         // Remove pimcore default DocumentMetaDataListener. We take care about that now!
         $dataIntegratorConfiguration = $container->getParameter('seo.meta_data_integrator.configuration');

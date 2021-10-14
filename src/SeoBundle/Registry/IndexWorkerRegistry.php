@@ -6,16 +6,9 @@ use SeoBundle\Worker\IndexWorkerInterface;
 
 class IndexWorkerRegistry implements IndexWorkerRegistryInterface
 {
-    /**
-     * @var array
-     */
-    protected $services;
+    protected array $services = [];
 
-    /**
-     * @param IndexWorkerInterface $service
-     * @param string               $identifier
-     */
-    public function register($service, $identifier)
+    public function register(mixed $service, string $identifier): void
     {
         if (!in_array(IndexWorkerInterface::class, class_implements($service), true)) {
             throw new \InvalidArgumentException(
@@ -26,18 +19,12 @@ class IndexWorkerRegistry implements IndexWorkerRegistryInterface
         $this->services[$identifier] = $service;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function has($identifier)
+    public function has($identifier): bool
     {
         return isset($this->services[$identifier]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function get($identifier)
+    public function get($identifier): IndexWorkerInterface
     {
         if (!$this->has($identifier)) {
             throw new \Exception('"' . $identifier . '" Index Worker does not exist');
@@ -46,11 +33,8 @@ class IndexWorkerRegistry implements IndexWorkerRegistryInterface
         return $this->services[$identifier];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getAll()
+    public function getAll(): array
     {
-        return is_array($this->services) ? $this->services : [];
+        return $this->services;
     }
 }

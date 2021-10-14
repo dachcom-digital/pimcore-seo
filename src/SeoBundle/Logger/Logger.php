@@ -6,31 +6,19 @@ use Pimcore\Log\ApplicationLogger;
 
 class Logger implements LoggerInterface
 {
-    /**
-     * @var ApplicationLogger
-     */
-    protected $applicationLogger;
+    protected ApplicationLogger $applicationLogger;
 
-    /**
-     * @param ApplicationLogger $applicationLogger
-     */
     public function __construct(ApplicationLogger $applicationLogger)
     {
         $this->applicationLogger = $applicationLogger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function log($level, $message, array $context = [])
+    public function log(string $level, string $message, array $context = []): void
     {
         $this->getLogger()->log($level, $message, $context);
     }
 
-    /**
-     * @return ApplicationLogger
-     */
-    protected function getLogger()
+    protected function getLogger(): ApplicationLogger
     {
         return $this->applicationLogger::getInstance('seo-bundle', true);
     }

@@ -2,7 +2,7 @@
 Integrating a custom extractor is very easy.
 
 ```yaml
-AppBundle\MetaData\Extractor\DescriptionExtractor:
+App\MetaData\Extractor\DescriptionExtractor:
     tags:
         - {name: seo.meta_data.extractor, identifier: my_object_description }
 ```
@@ -10,25 +10,19 @@ AppBundle\MetaData\Extractor\DescriptionExtractor:
 ```php
 <?php
 
-namespace AppBundle\MetaData\Extractor;
+namespace App\MetaData\Extractor;
 
 use SeoBundle\MetaData\Extractor\ExtractorInterface;
 use SeoBundle\Model\SeoMetaDataInterface;
 
 class DescriptionExtractor implements ExtractorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($element)
+    public function supports(mixed $element): void
     {
         return $element instanceof MyObject;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata)
+    public function updateMetaData($element, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
         $seoMetadata->setMetaDescription($element->getDescription());
     }

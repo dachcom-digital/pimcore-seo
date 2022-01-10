@@ -5,9 +5,8 @@ For example, the [Schema Bundle](https://github.com/dachcom-digital/pimcore-sche
 ## Adding Middleware
 
 ```yaml
-# app/config/services.yml
+# config/services.yaml
 services:
-
     App\Seo\Middleware\MyCustomAdapter:
         tags:
             - { name: seo.meta_data.middleware.adapter, identifier: my_custom_adapter }

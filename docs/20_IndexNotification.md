@@ -12,7 +12,7 @@ seo:
         enabled_worker:
             -   worker_name: google_index
                 worker_config:
-                    auth_config: app/config/pimcore/google-api-private-key.json
+                    auth_config: config/pimcore/google-api-private-key.json
 ```
 
 ## Enable Pimcore Element Watcher

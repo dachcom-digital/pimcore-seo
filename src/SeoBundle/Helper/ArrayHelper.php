@@ -104,7 +104,7 @@ class ArrayHelper
 
         $cleanData = [];
         foreach ($field as $row) {
-            if ($row['value'] !== null) {
+            if (isset($row['value'])) {
                 $cleanData[] = $row;
             }
         }

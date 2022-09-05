@@ -52,6 +52,12 @@ class AutoMetaDataAttachListener implements EventSubscriberInterface
             return;
         }
 
+        // Since symfony/http-kernel 5.3, remove function_exists() once symfony/http-kernel 5.3 is no longer supported
+        if (method_exists($event, 'isMainRequest') && $event->isMainRequest()) {
+            return;
+        }
+
+        // Remove once symfony/http-kernel 5.3 is no longer supported, use isMainRequest()
         if ($event->isMasterRequest() === false) {
             return;
         }

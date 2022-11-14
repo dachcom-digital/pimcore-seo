@@ -52,7 +52,7 @@ class AutoMetaDataAttachListener implements EventSubscriberInterface
             return;
         }
 
-        if ($event->isMasterRequest() === false) {
+        if ($event->isMainRequest() === false) {
             return;
         }
 

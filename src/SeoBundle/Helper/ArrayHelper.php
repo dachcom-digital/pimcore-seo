@@ -6,20 +6,20 @@ class ArrayHelper
 {
     public function mergeLocaleAwareArrays(array $data, ?array $previousData, string $rowIdentifier = 'name', string $dataIdentifier = 'value'): ?array
     {
+        $cleanedRows = $this->cleanEmptyLocaleRows($data, $dataIdentifier);
+
         // nothing to merge
         if (!is_array($previousData) || count($previousData) === 0) {
-            return $this->cleanEmptyLocaleRows($data, $dataIdentifier);
+            return $cleanedRows;
         }
 
         $newData = [];
-        foreach ($data as $row) {
+        foreach ($cleanedRows as $row) {
 
             $previousRowIndex = array_search($row[$rowIdentifier], array_column($previousData, $rowIdentifier), true);
 
             if ($previousRowIndex === false) {
-                if (null !== $cleanRowValues = $this->cleanEmptyLocaleValues($row[$dataIdentifier])) {
-                    $newData[] = array_replace($row, [$dataIdentifier => $cleanRowValues]);;
-                }
+                $newData[] = $row;
                 continue;
             }
 
@@ -44,36 +44,52 @@ class ArrayHelper
 
     public function rebuildLocaleValueRow(array $values, array $rebuildRow): array
     {
+        // clean-up rebuild row
+        $allowedLocales = array_map(static function (array $row) {
+            return $row['locale'];
+        }, $values);
+
+        $cleanedRebuildRow = [];
+        foreach ($rebuildRow as $rebuildLine) {
+            $locale = $rebuildLine['locale'];
+
+            if (!in_array($locale, $allowedLocales, true)) {
+                continue;
+            }
+
+            if (!array_key_exists($locale, $cleanedRebuildRow)) {
+                $cleanedRebuildRow[$locale] = $rebuildLine;
+            }
+        }
+
+        $cleanedRebuildRow = array_values($cleanedRebuildRow);
+
         foreach ($values as $currentRow) {
 
             $locale = $currentRow['locale'];
             $value = $currentRow['value'];
 
-            $index = array_search($locale, array_column($rebuildRow, 'locale'), true);
+            $index = array_search($locale, array_column($cleanedRebuildRow, 'locale'), true);
 
             if ($index !== false) {
 
                 if ($value === null) {
-                    unset($rebuildRow[$index]);
+                    unset($cleanedRebuildRow[$index]);
                 } else {
-                    $rebuildRow[$index] = $currentRow;
+                    $cleanedRebuildRow[$index] = $currentRow;
                 }
 
             } elseif ($value !== null) {
-                $rebuildRow[] = $currentRow;
+                $cleanedRebuildRow[] = $currentRow;
             }
 
         }
 
-        return array_values($rebuildRow);
+        return array_values($cleanedRebuildRow);
     }
 
     public function cleanEmptyLocaleRows(array $field, string $dataIdentifier = 'value'): ?array
     {
-        if (!is_array($field)) {
-            return $field;
-        }
-
         $cleanData = [];
         foreach ($field as $row) {
 
@@ -98,10 +114,6 @@ class ArrayHelper
 
     public function cleanEmptyLocaleValues(array $field): ?array
     {
-        if (!is_array($field)) {
-            return $field;
-        }
-
         $cleanData = [];
         foreach ($field as $row) {
             if ($row['value'] !== null) {
@@ -118,6 +130,6 @@ class ArrayHelper
             return false;
         }
 
-        return array_keys($array) !== range(0, count($array) - 1);
+        return !array_is_list($array);
     }
 }

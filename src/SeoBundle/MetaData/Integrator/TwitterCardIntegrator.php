@@ -160,6 +160,10 @@ class TwitterCardIntegrator implements IntegratorInterface
 
     protected function getImagePath(array $data): ?string
     {
+        if (!array_key_exists('id', $data)) {
+            return null;
+        }
+
         $asset = Asset::getById($data['id']);
 
         if (!$asset instanceof Asset) {

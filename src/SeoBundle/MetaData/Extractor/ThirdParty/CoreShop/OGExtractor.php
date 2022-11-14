@@ -32,7 +32,7 @@ final class OGExtractor implements ExtractorInterface
         }
 
         if (method_exists($element, 'getImage') && !empty($element->getImage())) {
-            $ogImage = Tool::getHostUrl() . $element->getImage()->getThumbnail('seo');
+            $ogImage = Tool::getHostUrl() . $element->getImage()->getThumbnail('coreshop_seo');
             $seoMetadata->addExtraProperty('og:image', $ogImage);
         }
     }

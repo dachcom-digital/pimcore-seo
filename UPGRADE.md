@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 2.1.0
+- [BUGFIX] Fix Array Merge Process [#32](https://github.com/dachcom-digital/pimcore-seo/issues/32)
+
 ## Migrating from Version 1.x to Version 2.0.0
 
 ### Global Changes

@@ -159,6 +159,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $formattedStatus = (int) $response->getCode();
 
         foreach ($response->getErrors() as $error) {
+            /** @phpstan-ignore-next-line */
             $formattedMessages[] = $error['message'];
         }
 

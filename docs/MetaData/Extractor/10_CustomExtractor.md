@@ -17,7 +17,7 @@ use SeoBundle\Model\SeoMetaDataInterface;
 
 class DescriptionExtractor implements ExtractorInterface
 {
-    public function supports(mixed $element): void
+    public function supports(mixed $element): bool
     {
         return $element instanceof MyObject;
     }

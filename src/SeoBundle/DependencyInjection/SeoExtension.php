@@ -3,6 +3,7 @@
 namespace SeoBundle\DependencyInjection;
 
 use SeoBundle\Tool\Bundle;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -17,6 +18,8 @@ class SeoExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../Resources/config']));
         $loader->load('services.yml');
+
+        $this->validateConfiguration($config);
 
         $persistenceConfig = $config['persistence']['doctrine'];
         $entityManagerName = $persistenceConfig['entity_manager'];
@@ -35,6 +38,18 @@ class SeoExtension extends Extension
         $container->setParameter('seo.index.pimcore_element_watcher.enabled', $config['index_provider_configuration']['pimcore_element_watcher']['enabled']);
 
         $this->checkThirdPartyExtractors($container, $loader, $config['meta_data_configuration']['meta_data_provider']['third_party']);
+    }
+
+    protected function validateConfiguration(array $config): void
+    {
+        $enabledIntegrators = [];
+        foreach ($config['meta_data_configuration']['meta_data_integrator']['enabled_integrator'] as $dataIntegrator) {
+            if (in_array($dataIntegrator['integrator_name'], $enabledIntegrators, true)) {
+                throw new InvalidConfigurationException(sprintf('Meta data integrator "%s" already has been added', $dataIntegrator['integrator_name']));
+            }
+
+            $enabledIntegrators[] = $dataIntegrator['integrator_name'];
+        }
     }
 
     protected function checkThirdPartyExtractors(ContainerBuilder $container, YamlFileLoader $loader, array $thirdPartyOptions): void

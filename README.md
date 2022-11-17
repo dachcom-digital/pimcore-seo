@@ -24,17 +24,17 @@ The last SEO Bundle for pimcore you'll ever need!
 
 ### Release Plan
 
-| Release | Supported Pimcore Versions        | Supported Symfony Versions | Release Date | Maintained     | Branch     |
-|---------|-----------------------------------|----------------------------|--------------|----------------|------------|
-| **2.x** | `10.1` - `10.2`                   | `5.3`                      | 14.10.2020   | Feature Branch | master     |
-| **1.x** | `6.0` - `6.9`                     | `3.4`, `^4.4`              | 27.04.2020   | Unsupported    | 1.x        |
+| Release | Supported Pimcore Versions | Supported Symfony Versions | Release Date | Maintained     | Branch |
+|---------|----------------------------|----------------------------|--------------|----------------|--------|
+| **2.x** | `10.1` - `10.5`            | `5.3`                      | 14.10.2020   | Feature Branch | master |
+| **1.x** | `6.0` - `6.9`              | `3.4`, `^4.4`              | 27.04.2020   | Unsupported    | 1.x    |
 
 
 ## Installation
 
 ```json
 "require" : {
-    "dachcom-digital/seo" : "~2.0.0",
+    "dachcom-digital/seo" : "~2.1.0",
 }
 ```
 

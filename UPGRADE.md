@@ -6,6 +6,7 @@
 - [BUGFIX] Support CoreShop 3 Thumbnails [@dkarlovi](https://github.com/dachcom-digital/pimcore-seo/pull/30)
 - [IMPROVEMENT] Avoid duplicate integrator registration [#28](https://github.com/dachcom-digital/pimcore-seo/issues/28)
 - [IMPROVEMENT] Allow preview images with spaces [#35](https://github.com/dachcom-digital/pimcore-seo/issues/35)
+- [NEW FEATURE]  Add presets to html tag integrator [#37](https://github.com/dachcom-digital/pimcore-seo/issues/37)
 
 ## Migrating from Version 1.x to Version 2.0.0
 

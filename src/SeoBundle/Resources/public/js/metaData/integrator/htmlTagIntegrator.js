@@ -2,6 +2,7 @@ pimcore.registerNS('Seo.MetaData.Integrator.HtmlTagIntegrator');
 Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator.AbstractIntegrator, {
 
     fieldSetTitle: t('seo_bundle.integrator.html.title') + ' (&lt;meta .../&gt; &lt;link .../&gt; ...)',
+    addPresetButtonLabel: t('seo_bundle.integrator.property.add_preset'),
     iconClass: 'seo_integrator_icon_html_tags',
     htmlTagPanel: null,
 
@@ -30,52 +31,109 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
         }
 
         Ext.Array.each(this.data, function (htmlTagValue) {
-            this.addHtmlTagField(htmlTagValue);
+            var presetData = this.getPresetByValue(htmlTagValue);
+            this.addHtmlTagField(
+                htmlTagValue,
+                presetData !== null,
+                presetData !== null && presetData.hasOwnProperty('label') ? presetData.label : null
+            );
         }.bind(this));
     },
 
     getAddControl: function () {
 
         var items = [],
+            presetMenu = [],
+            configuration = this.getConfiguration(),
+            availablePresets = configuration.hasOwnProperty('presets') ? configuration.presets : [],
+            presetsOnlyMode = configuration.hasOwnProperty('presets_only_mode') ? configuration.presets_only_mode : false,
             user = pimcore.globalmanager.get('user');
 
-        if(user.isAllowed('seo_bundle_add_property') === false) {
+        if (user.isAllowed('seo_bundle_add_property') === false) {
             return [];
         }
 
-        items.push({
-            cls: 'pimcore_block_button_plus',
-            text: t('seo_bundle.integrator.html.add_field'),
-            iconCls: 'pimcore_icon_plus',
-            handler: this.addHtmlTagField.bind(this, null, null)
-        });
+        if (presetsOnlyMode === false) {
+            items.push({
+                cls: 'pimcore_block_button_plus',
+                text: t('seo_bundle.integrator.html.add_field'),
+                iconCls: 'pimcore_icon_plus',
+                handler: this.addHtmlTagField.bind(this, null, null, null)
+            });
+        }
 
-        items.push({
-            xtype: 'container',
-            flex: 1,
-            html: t('seo_bundle.integrator.html.caution_note'),
-            style: {
-                padding: '5px',
-                border: '1px solid #b32d2d',
-                background: '#e8acac',
-                margin: '0 0 10px 0',
-                color: 'black'
-            }
-        });
+        if (availablePresets.length > 0) {
+
+            Ext.Array.each(availablePresets, function (preset) {
+
+                var label = preset.hasOwnProperty('label') ? preset.label : ('Preset ' + index),
+                    icon = preset.hasOwnProperty('icon_class') && preset.icon_class !== null ? preset.icon_class : 'pimcore_icon_brick';
+
+                presetMenu.push({
+                    text: label,
+                    iconCls: icon,
+                    handler: this.addHtmlTagField.bind(this, preset.hasOwnProperty('value') ? preset.value : '#', true, label)
+                });
+
+            }.bind(this));
+
+            items.push({
+                cls: 'pimcore_block_button_plus',
+                text: this.addPresetButtonLabel,
+                iconCls: 'pimcore_icon_objectbricks',
+                menu: presetMenu
+            });
+        }
+
+        if (presetsOnlyMode === false) {
+            items.push({
+                xtype: 'container',
+                flex: 1,
+                html: t('seo_bundle.integrator.html.caution_note'),
+                style: {
+                    padding: '5px',
+                    border: '1px solid #b32d2d',
+                    background: '#e8acac',
+                    margin: '0 0 10px 0',
+                    color: 'black'
+                }
+            });
+        }
 
         return new Ext.Toolbar({
             items: items
         });
     },
 
-    addHtmlTagField: function (fieldValue) {
+    getPresetByValue: function (htmlTagValue) {
+
+        var presetData = null,
+            configuration = this.getConfiguration(),
+            availablePresets = configuration.hasOwnProperty('presets') ? configuration.presets : [];
+
+        if (availablePresets.length === 0) {
+            return null;
+        }
+
+        Ext.Array.each(availablePresets, function (preset) {
+            if (preset.hasOwnProperty('value') && preset.value === htmlTagValue) {
+                presetData = preset;
+                return false;
+            }
+
+        }.bind(this));
+
+        return presetData;
+    },
+
+    addHtmlTagField: function (fieldValue, disabled, tagName) {
 
         var itemFieldContainer,
             user = pimcore.globalmanager.get('user');
 
         itemFieldContainer = new Ext.form.FieldContainer({
             xtype: 'fieldcontainer',
-            width: 700,
+            width: 800,
             layout: 'hbox',
             style: {
                 marginTop: '5px',
@@ -85,10 +143,12 @@ Seo.MetaData.Integrator.HtmlTagIntegrator = Class.create(Seo.MetaData.Integrator
             items: [
                 {
                     xtype: 'textfield',
-                    fieldLabel: t('seo_bundle.integrator.html.tag'),
+                    labelWidth: 170,
+                    fieldLabel: Ext.isString(tagName) ? tagName : t('seo_bundle.integrator.html.tag'),
                     style: 'margin: 0 10px 0 0',
                     name: 'tags',
                     value: fieldValue,
+                    readOnly: disabled === true,
                     flex: 1,
                 },
                 {

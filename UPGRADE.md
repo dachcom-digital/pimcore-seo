@@ -8,6 +8,10 @@ Just click the "update" button or execute the migration command to finish the bu
 
 ***
 
+#### Version 1.2
+- Support Pimcore 6.9 only
+- Add presets to HTML tag integrator [#43](https://github.com/dachcom-digital/pimcore-seo/pull/43)
+
 #### Update from Version 1.1.0 to Version 1.1.1
 - **[ENHANCEMENT]** Improve Dependency Check [#20](https://github.com/dachcom-digital/pimcore-seo/issues/20)
 

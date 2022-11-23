@@ -2,8 +2,8 @@
 
 namespace SeoBundle\MetaData;
 
-use Pimcore\Templating\Helper\HeadMeta;
-use Pimcore\Templating\Helper\HeadTitle;
+use Pimcore\Twig\Extension\Templating\HeadMeta;
+use Pimcore\Twig\Extension\Templating\HeadTitle;
 use SeoBundle\MetaData\Extractor\ExtractorInterface;
 use SeoBundle\Middleware\MiddlewareDispatcherInterface;
 use SeoBundle\Registry\MetaDataExtractorRegistryInterface;

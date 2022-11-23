@@ -20,7 +20,9 @@ class HtmlTagIntegrator implements IntegratorInterface
         return [
             'hasLivePreview'       => false,
             'livePreviewTemplates' => [],
-            'useLocalizedFields'   => false
+            'useLocalizedFields'   => false,
+            'presets'              => $this->configuration['presets'],
+            'presets_only_mode'    => $this->configuration['presets_only_mode'],
         ];
     }
 
@@ -102,6 +104,13 @@ class HtmlTagIntegrator implements IntegratorInterface
      */
     public static function configureOptions(OptionsResolver $resolver)
     {
-        // no options here.
+        $resolver->setDefaults([
+            'presets_only_mode' => false,
+            'presets'           => [],
+        ]);
+
+        $resolver->setRequired(['presets_only_mode']);
+        $resolver->setAllowedTypes('presets_only_mode', ['bool']);
+        $resolver->setAllowedTypes('presets', ['array']);
     }
 }

@@ -1,8 +1,8 @@
 # Pimcore SEO Bundle
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/seo.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/seo)
-[![Tests](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-seo/Codeception/master?style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3ACodeception+branch%3Amaster)
-[![PhpStan](https://img.shields.io/github/workflow/status/dachcom-digital/pimcore-seo/PHP%20Stan/master?style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
+[![Tests](https://img.shields.io/github/actions/workflow/status/dachcom-digital/pimcore-seo/.github/workflows/codeception.yml?branch=master&style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3ACodeception+branch%3Amaster)
+[![PhpStan](https://img.shields.io/github/actions/workflow/status/dachcom-digital/pimcore-seo/.github/workflows/php-stan.yml?branch=master&style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
 
 The last SEO Bundle for pimcore you'll ever need!
 
@@ -26,7 +26,7 @@ The last SEO Bundle for pimcore you'll ever need!
 
 | Release | Supported Pimcore Versions | Supported Symfony Versions | Release Date | Maintained     | Branch |
 |---------|----------------------------|----------------------------|--------------|----------------|--------|
-| **2.x** | `10.1` - `10.5`            | `5.3`                      | 14.10.2020   | Feature Branch | master |
+| **2.x** | `10.1` - `10.5`            | `5.4`                      | 14.10.2020   | Feature Branch | master |
 | **1.x** | `6.0` - `6.9`              | `3.4`, `^4.4`              | 27.04.2020   | Unsupported    | 1.x    |
 
 

@@ -250,7 +250,9 @@ class SchemaIntegrator implements IntegratorInterface
         $dom->formatOutput = false;
 
         libxml_use_internal_errors(1);
-        $dom->loadHTML($jsonLdData);
+
+        $dom->loadHTML(sprintf('%s%s', '<?xml encoding="UTF-8">', $jsonLdData));
+
         $xpath = new \DOMXPath($dom);
         $jsonScripts = $xpath->query('//script[@type="application/ld+json"]');
 

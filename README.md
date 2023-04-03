@@ -34,7 +34,7 @@ The last SEO Bundle for pimcore you'll ever need!
 
 ```json
 "require" : {
-    "dachcom-digital/seo" : "~2.1.0",
+    "dachcom-digital/seo" : "~2.2.0",
 }
 ```
 

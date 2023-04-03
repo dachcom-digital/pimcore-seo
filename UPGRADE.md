@@ -2,6 +2,7 @@
 
 ## 2.2.0
 - [BUGFIX] fix encoding in schema json validation process [#45](https://github.com/dachcom-digital/pimcore-seo/issues/45)
+- [IMPROVEMENT] Respect Pimcore fallback languages [#44](https://github.com/dachcom-digital/pimcore-seo/issues/44)
 
 ## 2.1.0
 - [BUGFIX] Fix Array Merge Process [#32](https://github.com/dachcom-digital/pimcore-seo/issues/32)

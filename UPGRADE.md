@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 2.2.0
+- [BUGFIX] fix encoding in schema json validation process [#45](https://github.com/dachcom-digital/pimcore-seo/issues/45)
+
 ## 2.1.0
 - [BUGFIX] Fix Array Merge Process [#32](https://github.com/dachcom-digital/pimcore-seo/issues/32)
 - [BUGFIX] Avoid triggering deprecation message on isMasterRequest() [#36](https://github.com/dachcom-digital/pimcore-seo/pull/36)

@@ -8,7 +8,7 @@ use SeoBundle\Helper\ArrayHelper;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TitleDescriptionIntegrator implements IntegratorInterface
+class TitleDescriptionIntegrator extends AbstractIntegrator implements IntegratorInterface
 {
     protected array $configuration;
 
@@ -96,46 +96,15 @@ class TitleDescriptionIntegrator implements IntegratorInterface
 
     public function updateMetaData(mixed $element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
     {
-        if (!empty($data['description'])) {
-            if (null !== $value = $this->findLocaleAwareData($data['description'], $locale)) {
-                $seoMetadata->setMetaDescription($value);
-            }
+        if (null !== $value = $this->findLocaleAwareData($data['description'] ?? null, $locale)) {
+            $seoMetadata->setMetaDescription($value);
         }
 
-        if (!empty($data['title'])) {
-            if (null !== $value = $this->findLocaleAwareData($data['title'], $locale)) {
-                $seoMetadata->setTitle($value);
-            }
+        if (null !== $value = $this->findLocaleAwareData($data['title'] ?? null, $locale)) {
+            $seoMetadata->setTitle($value);
         }
     }
 
-    protected function findLocaleAwareData(mixed $value, ?string $locale): int|float|string|bool|null
-    {
-        if (!is_array($value)) {
-            return $value;
-        }
-
-        if (count($value) === 0) {
-            return null;
-        }
-
-        if (empty($locale)) {
-            return null;
-        }
-
-        $index = array_search($locale, array_column($value, 'locale'), true);
-        if ($index === false) {
-            return null;
-        }
-
-        $value = $value[$index]['value'];
-
-        if (empty($value) || !is_scalar($value)) {
-            return null;
-        }
-
-        return $value;
-    }
 
     public function setConfiguration(array $configuration): void
     {

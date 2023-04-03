@@ -8,7 +8,7 @@ use SeoBundle\MetaData\MetaDataProviderInterface;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SchemaIntegrator implements IntegratorInterface
+class SchemaIntegrator extends AbstractIntegrator implements IntegratorInterface
 {
     protected array $configuration;
     protected MetaDataProviderInterface $metaDataProvider;
@@ -107,7 +107,7 @@ class SchemaIntegrator implements IntegratorInterface
 
         // assert identifier
         foreach ($data as $idx => $row) {
-            if (!isset($row['identifier']) || empty($row['identifier'])) {
+            if (empty($row['identifier'])) {
                 $data[$idx]['identifier'] = uniqid('si', true);
             }
         }
@@ -168,53 +168,23 @@ class SchemaIntegrator implements IntegratorInterface
         }
 
         foreach ($data as $schemaBlock) {
-            if (null !== $value = $this->findLocaleAwareData($schemaBlock, $locale)) {
-                $seoMetadata->addSchema($value);
+
+            if ($schemaBlock['localized'] === false) {
+                $value = $schemaBlock['data'];
+            } else {
+                $value = count($schemaBlock['data']) === 0 ? null : $this->findLocaleAwareData($schemaBlock['data'], $locale, 'array');
             }
+
+            if ($value === null) {
+                continue;
+            }
+
+            $seoMetadata->addSchema($value);
         }
-    }
-
-    public function setConfiguration(array $configuration): void
-    {
-        $this->configuration = $configuration;
-    }
-
-    public static function configureOptions(OptionsResolver $resolver): void
-    {
-        // no options here.
-    }
-
-    protected function findLocaleAwareData(array $schemaBlock, ?string $locale): ?array
-    {
-        if ($schemaBlock['localized'] === false) {
-            return $schemaBlock['data'];
-        }
-
-        if (empty($locale)) {
-            return null;
-        }
-
-        if (count($schemaBlock['data']) === 0) {
-            return null;
-        }
-
-        $index = array_search($locale, array_column($schemaBlock['data'], 'locale'), true);
-        if ($index === false) {
-            return null;
-        }
-
-        $value = $schemaBlock['data'][$index]['value'];
-        if (empty($value) || !is_array($value)) {
-            return null;
-        }
-
-        return $value;
     }
 
     protected function validateSchemaBlock(mixed $data): ?array
     {
-        $validatedJsonData = null;
-
         // already validated
         if (is_array($data)) {
             return $data;
@@ -270,5 +240,15 @@ class SchemaIntegrator implements IntegratorInterface
         }
 
         return $data ?? false;
+    }
+
+    public function setConfiguration(array $configuration): void
+    {
+        $this->configuration = $configuration;
+    }
+
+    public static function configureOptions(OptionsResolver $resolver): void
+    {
+        // no options here.
     }
 }

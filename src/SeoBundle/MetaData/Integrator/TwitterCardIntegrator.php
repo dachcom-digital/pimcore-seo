@@ -9,7 +9,7 @@ use SeoBundle\Model\SeoMetaDataInterface;
 use SeoBundle\Tool\UrlGeneratorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TwitterCardIntegrator implements IntegratorInterface
+class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInterface
 {
     protected array $configuration;
     protected UrlGeneratorInterface $urlGenerator;
@@ -87,46 +87,26 @@ class TwitterCardIntegrator implements IntegratorInterface
         }
 
         foreach ($data as $twitterItem) {
-            if (!isset($twitterItem['value']) || empty($twitterItem['value']) || empty($twitterItem['name'])) {
+
+            if (empty($twitterItem['value']) || empty($twitterItem['name'])) {
                 continue;
             }
 
-            if (null !== $value = $this->findLocaleAwareData($twitterItem['name'], $twitterItem['value'], $locale)) {
-                $seoMetadata->addExtraName($twitterItem['name'], $value);
+            $propertyName = $twitterItem['name'];
+            $propertyValue = $twitterItem['value'];
+
+            if ($propertyName === 'twitter:image') {
+                $value = isset($propertyValue['id']) && is_numeric($propertyValue['id']) ? $this->getImagePath($propertyValue) : null;
+            } else {
+                $value = $this->findLocaleAwareData($propertyValue, $locale);
             }
+
+            if ($value === null) {
+                continue;
+            }
+
+            $seoMetadata->addExtraName($propertyName, $value);
         }
-    }
-
-    protected function findLocaleAwareData(string $property, mixed $value, ?string $locale): int|float|string|bool|null
-    {
-        if ($property === 'twitter:image') {
-            return isset($value['id']) && is_numeric($value['id']) ? $this->getImagePath($value) : null;
-        }
-
-        if (!is_array($value)) {
-            return $value;
-        }
-
-        if (count($value) === 0) {
-            return null;
-        }
-
-        if (empty($locale)) {
-            return null;
-        }
-
-        $index = array_search($locale, array_column($value, 'locale'), true);
-        if ($index === false) {
-            return null;
-        }
-
-        $value = $value[$index]['value'];
-
-        if (empty($value) || !is_scalar($value)) {
-            return null;
-        }
-
-        return $value;
     }
 
     public function setConfiguration(array $configuration): void

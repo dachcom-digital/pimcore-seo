@@ -9,7 +9,7 @@ use SeoBundle\Model\SeoMetaDataInterface;
 use SeoBundle\Tool\UrlGeneratorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OpenGraphIntegrator implements IntegratorInterface
+class OpenGraphIntegrator extends AbstractIntegrator implements IntegratorInterface
 {
     protected array $configuration;
     protected UrlGeneratorInterface $urlGenerator;
@@ -97,51 +97,32 @@ class OpenGraphIntegrator implements IntegratorInterface
 
         $addedItems = 0;
         foreach ($data as $ogItem) {
-            if (!isset($ogItem['value']) || empty($ogItem['value']) || empty($ogItem['property'])) {
+
+            if (empty($ogItem['value']) || empty($ogItem['property'])) {
                 continue;
             }
 
-            if (null !== $value = $this->findLocaleAwareData($ogItem['property'], $ogItem['value'], $locale)) {
-                $addedItems++;
-                $seoMetadata->addExtraProperty($ogItem['property'], $value);
+            $propertyName = $ogItem['property'];
+            $propertyValue = $ogItem['value'];
+
+            if ($propertyName === 'og:image') {
+                $value = isset($propertyValue['id']) && is_numeric($propertyValue['id']) ? $this->getImagePath($propertyValue) : null;
+            } else {
+                $value = $this->findLocaleAwareData($propertyValue, $locale);
             }
+
+            if ($value === null) {
+                continue;
+            }
+
+            $addedItems++;
+            $seoMetadata->addExtraProperty($propertyName, $value);
+
         }
 
         if ($addedItems > 0 && null !== $elementUrl = $this->urlGenerator->generate($element)) {
             $seoMetadata->addExtraProperty('og:url', $elementUrl);
         }
-    }
-
-    protected function findLocaleAwareData(string $property, mixed $value, ?string $locale): int|float|string|bool|null
-    {
-        if ($property === 'og:image') {
-            return isset($value['id']) && is_numeric($value['id']) ? $this->getImagePath($value) : null;
-        }
-
-        if (!is_array($value)) {
-            return $value;
-        }
-
-        if (count($value) === 0) {
-            return null;
-        }
-
-        if (empty($locale)) {
-            return null;
-        }
-
-        $index = array_search($locale, array_column($value, 'locale'), true);
-        if ($index === false) {
-            return null;
-        }
-
-        $value = $value[$index]['value'];
-
-        if (empty($value) || !is_scalar($value)) {
-            return null;
-        }
-
-        return $value;
     }
 
     public function setConfiguration(array $configuration): void

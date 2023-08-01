@@ -4,10 +4,12 @@ SeoBundle\Model\QueueEntry:
     fields:
         uuid:
             column: uuid
-            id: true
-            type: string
-            generator:
-                strategy: UUID
+            id:
+                type: uuid
+                generator:
+                    strategy: CUSTOM
+                customIdGenerator:
+                    class: Ramsey\Uuid\Doctrine\UuidGenerator
         type:
             column: '`type`'
             nullable: false

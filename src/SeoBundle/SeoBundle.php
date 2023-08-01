@@ -2,22 +2,23 @@
 
 namespace SeoBundle;
 
-use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemoveNewsMetaDataListenerPass;
-use SeoBundle\Tool\Install;
+use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use SeoBundle\DependencyInjection\Compiler\IndexWorkerPass;
 use SeoBundle\DependencyInjection\Compiler\MetaDataExtractorPass;
 use SeoBundle\DependencyInjection\Compiler\MetaDataIntegratorPass;
 use SeoBundle\DependencyInjection\Compiler\MetaMiddlewareAdapterPass;
-use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemovePimcoreListenerPass;
-use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemoveCoreShopExtractorListenerPass;
 use SeoBundle\DependencyInjection\Compiler\ResourceProcessorPass;
-use SeoBundle\DependencyInjection\Compiler\IndexWorkerPass;
-use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
-use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
+use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemoveCoreShopExtractorListenerPass;
+use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemoveNewsMetaDataListenerPass;
+use SeoBundle\DependencyInjection\Compiler\ThirdParty\RemovePimcoreListenerPass;
+use SeoBundle\Tool\Install;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 
-class SeoBundle extends AbstractPimcoreBundle
+class SeoBundle extends AbstractPimcoreBundle implements PimcoreBundleAdminClassicInterface
 {
     use PackageVersionTrait;
 
@@ -101,5 +102,15 @@ class SeoBundle extends AbstractPimcoreBundle
             $this->getPath(),
             'model'
         );
+    }
+
+    public function getEditmodeJsPaths(): array
+    {
+        return [];
+    }
+
+    public function getEditmodeCssPaths(): array
+    {
+        return [];
     }
 }

@@ -2,11 +2,10 @@
 
 namespace SeoBundle\Tool;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
-use Pimcore\Db\Connection;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 class Install extends SettingsStoreAwareInstaller
@@ -39,7 +38,6 @@ class Install extends SettingsStoreAwareInstaller
 
     protected function installDbStructure(): void
     {
-        /** @var Connection $db */
         $db = \Pimcore\Db::get();
         $db->query(file_get_contents($this->getInstallSourcesPath() . '/sql/install.sql'));
     }

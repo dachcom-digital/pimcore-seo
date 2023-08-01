@@ -2,7 +2,7 @@
 
 namespace SeoBundle\Logger;
 
-use Pimcore\Log\ApplicationLogger;
+use Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger;
 
 class Logger implements LoggerInterface
 {

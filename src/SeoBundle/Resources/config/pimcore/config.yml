@@ -4,6 +4,9 @@ doctrine:
         entity_managers:
             default:
                 auto_mapping: true
+    dbal:
+        types:
+            uuid: Ramsey\Uuid\Doctrine\UuidType
 
 doctrine_migrations:
     migrations_paths:

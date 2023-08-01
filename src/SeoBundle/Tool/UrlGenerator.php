@@ -70,16 +70,15 @@ class UrlGenerator implements UrlGeneratorInterface
             return null;
         }
 
-        if (!isset($options['thumbnail']) || empty($options['thumbnail'])) {
+        if (empty($options['thumbnail'])) {
             return null;
         }
 
         $thumbnail = $asset->getThumbnail($options['thumbnail']);
-        if (!$thumbnail instanceof Asset\Image\Thumbnail) {
-            return null;
-        }
 
-        $imagePath = $thumbnail->getPath(false);
+        $imagePath = $thumbnail->getPath([
+            'deferredAllowed' => false
+        ]);
 
         if (str_contains($imagePath, 'http')) {
             return $imagePath;

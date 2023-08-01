@@ -2,16 +2,16 @@
 
 namespace SeoBundle\Controller\Admin;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use SeoBundle\Manager\ElementMetaDataManagerInterface;
 use SeoBundle\Tool\LocaleProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class MetaDataController extends AdminController
+class MetaDataController extends AdminAbstractController
 {
     protected ElementMetaDataManagerInterface $elementMetaDataManager;
     protected LocaleProviderInterface $localeProvider;

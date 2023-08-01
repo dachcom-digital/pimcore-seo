@@ -2,9 +2,9 @@
 
 namespace SeoBundle\Tool;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\User;
+use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Tool;
 
 class LocaleProvider implements LocaleProviderInterface

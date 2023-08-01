@@ -1,6 +1,6 @@
 pimcore.registerNS('pimcore.plugin.Seo');
 
-pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
+pimcore.plugin.Seo = Class.create({
 
     ready: false,
     configuration: null,
@@ -11,7 +11,11 @@ pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
     },
 
     initialize: function () {
-        pimcore.plugin.broker.registerPlugin(this);
+        document.addEventListener(pimcore.events.pimcoreReady, this.pimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.postOpenObject, this.postOpenObject.bind(this));
+        document.addEventListener(pimcore.events.postOpenDocument, this.postOpenDocument.bind(this));
+        document.addEventListener(pimcore.events.postSaveDocument, this.postSaveDocument.bind(this));
+        document.addEventListener(pimcore.events.postSaveObject, this.postSaveObject.bind(this));
 
         if (!String.prototype.format) {
             String.prototype.format = function () {
@@ -44,7 +48,8 @@ pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
         });
     },
 
-    postOpenDocument: function (doc) {
+    postOpenDocument: function (e) {
+        let doc = e.detail.document
 
         if (this.ready) {
             this.processElement(doc, 'page');
@@ -53,7 +58,8 @@ pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
         }
     },
 
-    postOpenObject: function (obj) {
+    postOpenObject: function (e) {
+        let obj = e.detail.object;
 
         if (this.ready) {
             this.processElement(obj, 'object');
@@ -98,10 +104,9 @@ pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
     },
 
     processElement: function (obj, type) {
-
         if (type === 'object'
             && this.configuration.objects.enabled === true
-            && this.configuration.objects.data_classes.indexOf(obj.data.general.o_className) !== -1) {
+            && this.configuration.objects.data_classes.indexOf(obj.data.general.className) !== -1) {
             obj.seoPanel = new Seo.MetaData.ObjectMetaDataPanel(obj, this.configuration);
             obj.seoPanel.setup(type);
         } else if (type === 'page'
@@ -114,4 +119,4 @@ pimcore.plugin.Seo = Class.create(pimcore.plugin.admin, {
 
 });
 
-new pimcore.plugin.Seo();
+new pimcore.plugin.Seo()

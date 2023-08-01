@@ -13,15 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MetaDataController extends AdminAbstractController
 {
-    protected ElementMetaDataManagerInterface $elementMetaDataManager;
-    protected LocaleProviderInterface $localeProvider;
-
     public function __construct(
-        ElementMetaDataManagerInterface $elementMetaDataManager,
-        LocaleProviderInterface $localeProvider
-    ) {
-        $this->elementMetaDataManager = $elementMetaDataManager;
-        $this->localeProvider = $localeProvider;
+        protected ElementMetaDataManagerInterface $elementMetaDataManager,
+        protected LocaleProviderInterface         $localeProvider
+    )
+    {
     }
 
     public function getMetaDataDefinitionsAction(): JsonResponse
@@ -39,7 +35,7 @@ class MetaDataController extends AdminAbstractController
         $element = null;
         $availableLocales = null;
 
-        $elementId = (int) $request->query->get('elementId', 0);
+        $elementId = (int)$request->query->get('elementId', 0);
         $elementType = $request->query->get('elementType');
 
         if ($elementType === 'object') {
@@ -53,10 +49,10 @@ class MetaDataController extends AdminAbstractController
         $data = $this->elementMetaDataManager->getElementDataForBackend($elementType, $elementId);
 
         return $this->adminJson([
-            'success'          => true,
-            'data'             => $data,
+            'success' => true,
+            'data' => $data,
             'availableLocales' => $availableLocales,
-            'configuration'    => $configuration,
+            'configuration' => $configuration,
         ]);
     }
 
@@ -65,7 +61,7 @@ class MetaDataController extends AdminAbstractController
      */
     public function setElementMetaDataConfigurationAction(Request $request): JsonResponse
     {
-        $elementId = (int) $request->request->get('elementId', 0);
+        $elementId = (int)$request->request->get('elementId', 0);
         $elementType = $request->request->get('elementType');
         $integratorValues = json_decode($request->request->get('integratorValues'), true, 512, JSON_THROW_ON_ERROR);
 
@@ -88,7 +84,7 @@ class MetaDataController extends AdminAbstractController
      */
     public function generateMetaDataPreviewAction(Request $request): Response
     {
-        $elementId = (int) $request->query->get('elementId', 0);
+        $elementId = (int)$request->query->get('elementId', 0);
         $elementType = $request->query->get('elementType', '');
 
         $template = $request->query->get('template', 'none');

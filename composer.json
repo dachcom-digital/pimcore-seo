@@ -34,7 +34,7 @@
     }
   },
   "require": {
-    "pimcore/pimcore": "^10.1 || ^11.0",
+    "pimcore/pimcore": "^11.0",
     "google/apiclient": "^2.0",
     "doctrine/orm": "^2.10",
     "ramsey/uuid-doctrine": "^2.0"

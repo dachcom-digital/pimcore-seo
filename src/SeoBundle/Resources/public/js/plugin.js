@@ -68,14 +68,16 @@ pimcore.plugin.Seo = Class.create({
         }
     },
 
-    postSaveDocument: function (doc, type, task, only) {
+    postSaveDocument: function (e) {
+        let doc = e.detail.document;
 
         if (doc.hasOwnProperty('seoPanel')) {
             doc.seoPanel.save();
         }
     },
 
-    postSaveObject: function (obj, task, only) {
+    postSaveObject: function (e) {
+        let obj = e.detail.object;
 
         if (obj.hasOwnProperty('seoPanel')) {
             obj.seoPanel.save();

@@ -102,7 +102,7 @@ class SeoCore {
 
         if (type === 'object'
             && this.configuration.objects.enabled === true
-            && this.configuration.objects.data_classes.indexOf(obj.data.general.o_className) !== -1) {
+            && this.configuration.objects.data_classes.indexOf(obj.data.general.className) !== -1) {
             obj.seoPanel = new Seo.MetaData.ObjectMetaDataPanel(obj, this.configuration);
             obj.seoPanel.setup(type);
         } else if (type === 'page'

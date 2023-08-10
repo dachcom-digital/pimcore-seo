@@ -1,0 +1,12 @@
+actor: FunctionalTester
+modules:
+    enabled:
+        - \Dachcom\Codeception\Support\Helper\PimcoreCore:
+                connect_db: true
+                rebootable_client: true
+        - \Dachcom\Codeception\Support\Helper\PimcoreBundleCore:
+                run_installer: true
+        - \Dachcom\Codeception\Support\Helper\Browser\PhpBrowser:
+                depends: \Dachcom\Codeception\Support\Helper\PimcoreCore
+        - \Dachcom\Codeception\Support\Helper\PimcoreBackend
+        - \Dachcom\Codeception\Support\Helper\PimcoreUser

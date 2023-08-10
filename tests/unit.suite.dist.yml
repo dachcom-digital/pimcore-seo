@@ -1,8 +1,0 @@
-actor: UnitTester
-modules:
-    enabled:
-        - \Dachcom\Codeception\Helper\PimcoreCore:
-            connect_db: true
-        - \Dachcom\Codeception\Helper\PimcoreBundleCore:
-            run_installer: true
-        - \Dachcom\Codeception\Helper\Unit

@@ -1,0 +1,18 @@
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    seo.application_logger.seo_logger:
+        public: true
+        class: Pimcore\Bundle\ApplicationLoggerBundle\ApplicationLogger
+        calls:
+            - [addWriter, ['@Pimcore\Bundle\ApplicationLoggerBundle\Handler\ApplicationLoggerDb']]
+            - [setComponent, ['seo-bundle']]
+
+    SeoBundle\Logger\LoggerInterface: '@SeoBundle\Logger\Logger'
+    SeoBundle\Logger\Logger:
+        arguments:
+            - '@seo.application_logger.seo_logger'

@@ -12,9 +12,7 @@ class QueuedIndexDataCommand extends Command
     protected static $defaultName = 'seo:check-index-queue';
     protected static $defaultDescription = 'For internal use only';
 
-    protected QueueDataProcessorInterface $dataProcessor;
-
-    public function __construct(QueueDataProcessorInterface $dataProcessor)
+    public function __construct(protected QueueDataProcessorInterface $dataProcessor)
     {
         parent::__construct();
         $this->dataProcessor = $dataProcessor;

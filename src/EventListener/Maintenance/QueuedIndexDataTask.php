@@ -7,11 +7,8 @@ use SeoBundle\Queue\QueueDataProcessorInterface;
 
 class QueuedIndexDataTask implements TaskInterface
 {
-    protected QueueDataProcessorInterface $dataProcessor;
-
-    public function __construct(QueueDataProcessorInterface $dataProcessor)
+    public function __construct(protected QueueDataProcessorInterface $dataProcessor)
     {
-        $this->dataProcessor = $dataProcessor;
     }
 
     public function execute(): void

@@ -6,5 +6,5 @@ interface XliffAwareIntegratorInterface
 {
     public function validateBeforeXliffExport(string $elementType, int $elementId, array $data, string $locale): array;
 
-    //public function validateBeforeXliffImport(string $elementType, int $elementId, array $data, $previousData = null): ?array;
+    public function validateBeforeXliffImport(string $elementType, int $elementId, array $data, string $locale): ?array;
 }

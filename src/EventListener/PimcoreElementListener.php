@@ -15,13 +15,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PimcoreElementListener implements EventSubscriberInterface
 {
-    protected bool $enabled;
-    protected QueueManagerInterface $queueManager;
-
-    public function __construct(bool $enabled, QueueManagerInterface $queueManager)
-    {
-        $this->enabled = $enabled;
-        $this->queueManager = $queueManager;
+    public function __construct(
+        protected bool $enabled,
+        protected QueueManagerInterface $queueManager
+    ) {
     }
 
     public static function getSubscribedEvents(): array

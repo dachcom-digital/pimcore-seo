@@ -11,11 +11,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ElementMetaDataListener implements EventSubscriberInterface
 {
-    protected ElementMetaDataManagerInterface $elementMetaDataManager;
-
-    public function __construct(ElementMetaDataManagerInterface $elementMetaDataManager)
+    public function __construct(protected ElementMetaDataManagerInterface $elementMetaDataManager)
     {
-        $this->elementMetaDataManager = $elementMetaDataManager;
     }
 
     public static function getSubscribedEvents(): array

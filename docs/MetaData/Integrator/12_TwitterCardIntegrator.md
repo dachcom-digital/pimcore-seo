@@ -30,5 +30,5 @@ seo:
                         types:
                             - ['my_type', 'my_type']
                         properties:
-                            - ['twitter:definition', 'twitter:definition']
+                            - ['twitter:definition', 'twitter:definition', true] # 3. argument: allow export to xliff translation
 ```

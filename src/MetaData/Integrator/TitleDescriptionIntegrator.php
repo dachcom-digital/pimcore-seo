@@ -8,7 +8,7 @@ use SeoBundle\Helper\ArrayHelper;
 use SeoBundle\Model\SeoMetaDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TitleDescriptionIntegrator extends AbstractIntegrator implements IntegratorInterface
+class TitleDescriptionIntegrator extends AbstractIntegrator implements IntegratorInterface, XliffAwareIntegratorInterface
 {
     protected array $configuration;
 
@@ -52,10 +52,38 @@ class TitleDescriptionIntegrator extends AbstractIntegrator implements Integrato
         return $data;
     }
 
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
+    public function validateBeforeXliffExport(string $elementType, int $elementId, array $data, string $locale): array
+    {
+        $transformedData = $this->validateBeforeBackend($elementType, $elementId, $data);
+
+        $exportData = [];
+        foreach ($transformedData as $fieldName => $fieldData) {
+            $exportData[$fieldName] = $this->findData($fieldData, $locale);
+        }
+
+        return $exportData;
+    }
+
+    public function validateBeforeXliffImport(string $elementType, int $elementId, array $data, string $locale): ?array
+    {
+        $parsedData = [];
+
+        foreach ($data as $property => $value) {
+            $parsedData[$property] = $elementType === 'object' ? [
+                [
+                    'locale' => $locale,
+                    'value'  => $value
+                ]
+            ] : $value;
+        }
+
+        return $parsedData;
+    }
+
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null, bool $merge = false): ?array
     {
         if ($elementType === 'object') {
-            $data = $this->mergeStorageAndEditModeLocaleAwareData($data, $previousData);
+            $data = $this->mergeStorageAndEditModeLocaleAwareData($data, $previousData, $merge);
         }
 
         if (empty($data['title']) && empty($data['description'])) {
@@ -65,7 +93,7 @@ class TitleDescriptionIntegrator extends AbstractIntegrator implements Integrato
         return $data;
     }
 
-    protected function mergeStorageAndEditModeLocaleAwareData(array $data, ?array $previousData): array
+    protected function mergeStorageAndEditModeLocaleAwareData(array $data, ?array $previousData, bool $mergeWithPrevious = false): array
     {
         $arrayModifier = new ArrayHelper();
 
@@ -77,7 +105,7 @@ class TitleDescriptionIntegrator extends AbstractIntegrator implements Integrato
             ];
         }
 
-        $newData = [];
+        $newData = $mergeWithPrevious ? $previousData : [];
 
         foreach (['title', 'description'] as $type) {
 
@@ -88,7 +116,7 @@ class TitleDescriptionIntegrator extends AbstractIntegrator implements Integrato
                 continue;
             }
 
-            $newData[$type] = $arrayModifier->rebuildLocaleValueRow($data[$type], $rebuildRow);
+            $newData[$type] = $arrayModifier->rebuildLocaleValueRow($data[$type], $rebuildRow, $mergeWithPrevious);
         }
 
         return $newData;
@@ -104,7 +132,6 @@ class TitleDescriptionIntegrator extends AbstractIntegrator implements Integrato
             $seoMetadata->setTitle($value);
         }
     }
-
 
     public function setConfiguration(array $configuration): void
     {

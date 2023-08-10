@@ -17,7 +17,11 @@ interface ElementMetaDataManagerInterface
 
     public function getElementDataForBackend(string $elementType, int $elementId): array;
 
-    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data): void;
+    public function getElementDataForXliffExport(string $elementType, int $elementId, string $locale): array;
+
+    public function saveElementDataFromXliffImport(string $elementType, int $elementId, array $rawData, string $locale): void;
+
+    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data, bool $merge = false): void;
 
     public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data): array;
 

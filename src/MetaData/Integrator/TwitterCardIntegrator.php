@@ -9,14 +9,12 @@ use SeoBundle\Model\SeoMetaDataInterface;
 use SeoBundle\Tool\UrlGeneratorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInterface
+class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInterface, XliffAwareIntegratorInterface
 {
     protected array $configuration;
-    protected UrlGeneratorInterface $urlGenerator;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(protected UrlGeneratorInterface $urlGenerator)
     {
-        $this->urlGenerator = $urlGenerator;
     }
 
     public function getBackendConfiguration(mixed $element): array
@@ -66,18 +64,66 @@ class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInte
         return $data;
     }
 
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
+    public function validateBeforeXliffExport(string $elementType, int $elementId, array $data, string $locale): array
     {
-        if ($elementType === 'object') {
-            $arrayModifier = new ArrayHelper();
-            $data = $arrayModifier->mergeLocaleAwareArrays($data, $previousData, 'name');
+        $transformedData = $this->validateBeforeBackend($elementType, $elementId, $data);
+
+        $exportData = [];
+
+        foreach ($transformedData as $fieldData) {
+
+            $fieldName = $fieldData['name'];
+            $propertyIndex = array_search($fieldName, array_column($this->configuration['properties'], 0), true);
+
+            if ($propertyIndex === false) {
+                continue;
+            }
+
+            $propertyDefinition = $this->configuration['properties'][$propertyIndex];
+            if ($propertyDefinition[2] === false) {
+                continue;
+            }
+
+            $exportData[$fieldName] = $this->findData($fieldData['value'], $locale);
         }
 
-        if (is_array($data) && count($data) === 0) {
+        return $exportData;
+    }
+
+    public function validateBeforeXliffImport(string $elementType, int $elementId, array $data, string $locale): ?array
+    {
+        $parsedData = [];
+
+        foreach ($data as $property => $value) {
+            $parsedData[] = [
+                'name'  => $property,
+                'value' => $elementType === 'object' ? [
+                    [
+                        'locale' => $locale,
+                        'value'  => $value
+                    ]
+                ] : $value
+            ];
+        }
+
+        return $parsedData;
+    }
+
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null, bool $merge = false): ?array
+    {
+        $arrayModifier = new ArrayHelper();
+
+        if ($elementType === 'object') {
+            $newData = $arrayModifier->mergeLocaleAwareArrays($data, $previousData, 'name', 'value', $merge);
+        } else {
+            $newData = $arrayModifier->mergeNonLocaleAwareArrays($data, $previousData, 'name', $merge);
+        }
+
+        if (is_array($newData) && count($newData) === 0) {
             return null;
         }
 
-        return $data;
+        return $newData;
     }
 
     public function updateMetaData(mixed $element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
@@ -115,12 +161,17 @@ class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInte
             return [$value['name'], $value['tag']];
         }, $this->getDefaultTypes());
 
-        $defaultProperties = array_map(static function ($value) {
-            return [$value, $value];
-        }, $this->getDefaultProperties());
+        $defaultProperties = $this->getDefaultProperties();
+        $defaultProperties = array_map(static function ($translatable, $key) {
+            return [$key, $key, $translatable];
+        }, $defaultProperties, array_keys($defaultProperties));
+
+        $additionalProperties = array_map(static function (array $row) {
+            return count($row) === 2 ? [$row[0], $row[1], false] : $row;
+        }, $configuration['properties']);
 
         $configuration['types'] = array_merge($defaultTypes, $configuration['types']);
-        $configuration['properties'] = array_merge($defaultProperties, $configuration['properties']);
+        $configuration['properties'] = array_merge($defaultProperties, $additionalProperties);
 
         $this->configuration = $configuration;
     }
@@ -178,28 +229,28 @@ class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInte
     protected function getDefaultProperties(): array
     {
         return [
-            'twitter:card',
-            'twitter:title',
-            'twitter:description',
-            'twitter:image',
-            'twitter:image:alt',
-            'twitter:site',
-            'twitter:site:id',
-            'twitter:creator',
-            'twitter:creator:id',
-            'twitter:player',
-            'twitter:player:width',
-            'twitter:player:height',
-            'twitter:player:stream',
-            'twitter:app:name:iphone',
-            'twitter:app:id:iphone',
-            'twitter:app:url:iphone',
-            'twitter:app:name:ipad',
-            'twitter:app:id:ipad',
-            'twitter:app:url:ipad',
-            'twitter:app:name:googleplay',
-            'twitter:app:id:googleplay',
-            'twitter:app:url:googleplay'
+            'twitter:card'                => false,
+            'twitter:title'               => true,
+            'twitter:description'         => true,
+            'twitter:image'               => false,
+            'twitter:image:alt'           => true,
+            'twitter:site'                => true,
+            'twitter:site:id'             => true,
+            'twitter:creator'             => true,
+            'twitter:creator:id'          => true,
+            'twitter:player'              => false,
+            'twitter:player:width'        => false,
+            'twitter:player:height'       => false,
+            'twitter:player:stream'       => true,
+            'twitter:app:name:iphone'     => true,
+            'twitter:app:id:iphone'       => true,
+            'twitter:app:url:iphone'      => true,
+            'twitter:app:name:ipad'       => true,
+            'twitter:app:id:ipad'         => true,
+            'twitter:app:url:ipad'        => true,
+            'twitter:app:name:googleplay' => true,
+            'twitter:app:id:googleplay'   => true,
+            'twitter:app:url:googleplay'  => true
         ];
     }
 }

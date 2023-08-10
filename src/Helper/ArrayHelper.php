@@ -4,17 +4,20 @@ namespace SeoBundle\Helper;
 
 class ArrayHelper
 {
-    public function mergeLocaleAwareArrays(array $data, ?array $previousData, string $rowIdentifier = 'name', string $dataIdentifier = 'value'): ?array
-    {
-        $cleanedRows = $this->cleanEmptyLocaleRows($data, $dataIdentifier);
+    public function mergeNonLocaleAwareArrays(
+        array $data,
+        ?array $previousData,
+        string $rowIdentifier = 'name',
+        bool $mergeWithPrevious = false
+    ): ?array {
 
-        // nothing to merge
-        if (!is_array($previousData) || count($previousData) === 0) {
-            return $cleanedRows;
+        if ($mergeWithPrevious === false) {
+            return $data;
         }
 
-        $newData = [];
-        foreach ($cleanedRows as $row) {
+        $newData = $previousData;
+
+        foreach ($data as $row) {
 
             $previousRowIndex = array_search($row[$rowIdentifier], array_column($previousData, $rowIdentifier), true);
 
@@ -23,26 +26,70 @@ class ArrayHelper
                 continue;
             }
 
-            $rebuildRow = $previousData[$previousRowIndex][$dataIdentifier];
-            $currentValue = $row[$dataIdentifier];
-
-            // it's not a localized field value
-            if (!is_array($currentValue) || $this->isAssocArray($currentValue)) {
-                $newData[] = $row;
-                continue;
-            }
-
-            $row[$dataIdentifier] = $this->rebuildLocaleValueRow($currentValue, $rebuildRow);
-
-            if (count($row[$dataIdentifier]) > 0) {
-                $newData[] = $row;
-            }
+            $newData[$previousRowIndex] = $row;
         }
 
         return $newData;
     }
 
-    public function rebuildLocaleValueRow(array $values, array $rebuildRow): array
+    public function mergeLocaleAwareArrays(
+        array $data,
+        ?array $previousData,
+        string $rowIdentifier = 'name',
+        string $dataIdentifier = 'value',
+        bool $mergeWithPrevious = false
+    ): ?array {
+
+        $cleanedRows = $this->cleanEmptyLocaleRows($data, $dataIdentifier);
+
+        // nothing to merge
+        if (!is_array($previousData) || count($previousData) === 0) {
+            return $cleanedRows;
+        }
+
+        $newData = $mergeWithPrevious ? $previousData : [];
+
+        $newDataIndex = 0;
+
+        if ($cleanedRows === null) {
+            return null;
+        }
+
+        foreach ($cleanedRows as $row) {
+
+            $previousRowIndex = array_search($row[$rowIdentifier], array_column($previousData, $rowIdentifier), true);
+
+            if ($previousRowIndex === false) {
+                $newData[$newDataIndex] = $row;
+                $newDataIndex++;
+                continue;
+            }
+
+            $dataIndex = $mergeWithPrevious ? $previousRowIndex : $newDataIndex;
+
+            $rebuildRow = $previousData[$previousRowIndex][$dataIdentifier];
+            $currentValue = $row[$dataIdentifier];
+
+            // it's not a localized field value
+            if (!is_array($currentValue) || $this->isAssocArray($currentValue)) {
+                $newData[$dataIndex] = $row;
+                $newDataIndex++;
+                continue;
+            }
+
+            $row[$dataIdentifier] = $this->rebuildLocaleValueRow($currentValue, $rebuildRow, $mergeWithPrevious);
+
+            if (count($row[$dataIdentifier]) > 0) {
+                $newData[$dataIndex] = $row;
+            }
+
+            $newDataIndex++;
+        }
+
+        return $newData;
+    }
+
+    public function rebuildLocaleValueRow(array $values, array $rebuildRow, bool $mergeWithPrevious = false): array
     {
         // clean-up rebuild row
         $allowedLocales = array_map(static function (array $row) {
@@ -53,7 +100,7 @@ class ArrayHelper
         foreach ($rebuildRow as $rebuildLine) {
             $locale = $rebuildLine['locale'];
 
-            if (!in_array($locale, $allowedLocales, true)) {
+            if ($mergeWithPrevious === false && !in_array($locale, $allowedLocales, true)) {
                 continue;
             }
 

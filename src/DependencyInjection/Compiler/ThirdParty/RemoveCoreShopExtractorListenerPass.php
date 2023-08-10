@@ -2,7 +2,6 @@
 
 namespace SeoBundle\DependencyInjection\Compiler\ThirdParty;
 
-use SeoBundle\Tool\Bundle;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -10,7 +9,7 @@ final class RemoveCoreShopExtractorListenerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container): void
     {
-        if (Bundle::hasBundle('CoreShopSEOBundle', $container->getParameter('kernel.bundles')) === false) {
+        if (!in_array('core_shop_seo', $container->getParameter('seo.third_party.enabled'), true)) {
             return;
         }
 

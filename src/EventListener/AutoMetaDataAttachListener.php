@@ -13,24 +13,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AutoMetaDataAttachListener implements EventSubscriberInterface
 {
-    protected array $configuration;
-    protected MetaDataProviderInterface $metaDataProvider;
-    protected RequestHelper $requestHelper;
-    protected PimcoreContextResolver $pimcoreContextResolver;
-    protected DocumentResolver $documentResolverService;
-
     public function __construct(
-        array $configuration,
-        MetaDataProviderInterface $metaDataProvider,
-        RequestHelper $requestHelper,
-        PimcoreContextResolver $contextResolver,
-        DocumentResolver $documentResolverService
+        protected array $configuration,
+        protected MetaDataProviderInterface $metaDataProvider,
+        protected RequestHelper $requestHelper,
+        protected PimcoreContextResolver $pimcoreContextResolver,
+        protected DocumentResolver $documentResolverService
     ) {
-        $this->configuration = $configuration;
-        $this->metaDataProvider = $metaDataProvider;
-        $this->requestHelper = $requestHelper;
-        $this->pimcoreContextResolver = $contextResolver;
-        $this->documentResolverService = $documentResolverService;
     }
 
     public static function getSubscribedEvents(): array

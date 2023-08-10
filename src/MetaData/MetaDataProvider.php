@@ -11,21 +11,12 @@ use SeoBundle\Model\SeoMetaData;
 
 class MetaDataProvider implements MetaDataProviderInterface
 {
-    protected HeadMeta $headMeta;
-    protected HeadTitle $headTitle;
-    protected MetaDataExtractorRegistryInterface $extractorRegistry;
-    protected MiddlewareDispatcherInterface $middlewareDispatcher;
-
     public function __construct(
-        HeadMeta $headMeta,
-        HeadTitle $headTitle,
-        MetaDataExtractorRegistryInterface $extractorRegistry,
-        MiddlewareDispatcherInterface $middlewareDispatcher
+        protected HeadMeta $headMeta,
+        protected HeadTitle $headTitle,
+        protected MetaDataExtractorRegistryInterface $extractorRegistry,
+        protected MiddlewareDispatcherInterface $middlewareDispatcher
     ) {
-        $this->headMeta = $headMeta;
-        $this->headTitle = $headTitle;
-        $this->extractorRegistry = $extractorRegistry;
-        $this->middlewareDispatcher = $middlewareDispatcher;
     }
 
     public function updateSeoElement($element, ?string $locale): void

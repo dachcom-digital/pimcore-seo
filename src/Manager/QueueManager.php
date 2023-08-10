@@ -14,27 +14,14 @@ use SeoBundle\Exception\WorkerResponseInterceptException;
 
 class QueueManager implements QueueManagerInterface
 {
-    protected array $enabledWorker;
-    protected EntityManagerInterface $entityManager;
-    protected QueueEntryRepositoryInterface $queueEntryRepository;
-    protected ResourceProcessorRegistryInterface $resourceProcessorRegistry;
-    protected IndexWorkerRegistryInterface $indexWorkerRegistry;
-    protected LoggerInterface $logger;
-
     public function __construct(
-        array $enabledWorker,
-        EntityManagerInterface $entityManager,
-        QueueEntryRepositoryInterface $queueEntryRepository,
-        ResourceProcessorRegistryInterface $resourceProcessorRegistry,
-        IndexWorkerRegistryInterface $indexWorkerRegistry,
-        LoggerInterface $logger
+        protected array $enabledWorker,
+        protected EntityManagerInterface $entityManager,
+        protected QueueEntryRepositoryInterface $queueEntryRepository,
+        protected ResourceProcessorRegistryInterface $resourceProcessorRegistry,
+        protected IndexWorkerRegistryInterface $indexWorkerRegistry,
+        protected LoggerInterface $logger
     ) {
-        $this->enabledWorker = $enabledWorker;
-        $this->entityManager = $entityManager;
-        $this->queueEntryRepository = $queueEntryRepository;
-        $this->resourceProcessorRegistry = $resourceProcessorRegistry;
-        $this->indexWorkerRegistry = $indexWorkerRegistry;
-        $this->logger = $logger;
     }
 
     public function addToQueue(string $processType, mixed $resource): void

@@ -2,6 +2,7 @@ bundles:
     - { namespace: \Pimcore\Bundle\AdminBundle\PimcoreAdminBundle, priority: 60 }
     - { namespace: \Pimcore\Bundle\SeoBundle\PimcoreSeoBundle, priority: 0, execute_installer: true }
     - { namespace: \Pimcore\Bundle\ApplicationLoggerBundle\PimcoreApplicationLoggerBundle, priority: 0, execute_installer: true }
+    - { namespace: \Pimcore\Bundle\XliffBundle\PimcoreXliffBundle, priority: 0, execute_installer: true }
     - { namespace: \SeoBundle\SeoBundle }
 setup_files:
     - { path: app/config.yaml, dest: ./config/ }

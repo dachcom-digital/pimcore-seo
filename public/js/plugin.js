@@ -62,6 +62,10 @@ class SeoCore {
 
         const document = ev.detail.document;
 
+        if (ev.detail.task === 'autoSave' || ev.detail.task === 'version') {
+            return;
+        }
+
         if (document.hasOwnProperty('seoPanel')) {
             document.seoPanel.save();
         }
@@ -70,6 +74,10 @@ class SeoCore {
     postSaveObject(ev) {
 
         const object = ev.detail.object;
+
+        if (ev.detail.task === 'autoSave' || ev.detail.task === 'version') {
+            return;
+        }
 
         if (object.hasOwnProperty('seoPanel')) {
             object.seoPanel.save();

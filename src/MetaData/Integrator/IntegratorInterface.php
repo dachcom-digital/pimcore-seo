@@ -15,7 +15,7 @@ interface IntegratorInterface
 
     public function validateBeforeBackend(string $elementType, int $elementId, array $data): array;
 
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null): ?array;
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null, bool $merge = false): ?array;
 
     public function getPreviewParameter(mixed $element, ?string $template, array $data): array;
 

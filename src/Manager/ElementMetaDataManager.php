@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Page;
+use SeoBundle\MetaData\Integrator\XliffAwareIntegratorInterface;
 use SeoBundle\Model\ElementMetaData;
 use SeoBundle\Model\ElementMetaDataInterface;
 use SeoBundle\Registry\MetaDataIntegratorRegistryInterface;
@@ -13,21 +14,12 @@ use SeoBundle\Repository\ElementMetaDataRepositoryInterface;
 
 class ElementMetaDataManager implements ElementMetaDataManagerInterface
 {
-    protected array $integratorConfiguration;
-    protected EntityManagerInterface $entityManager;
-    protected MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry;
-    protected ElementMetaDataRepositoryInterface $elementMetaDataRepository;
-
     public function __construct(
-        array $integratorConfiguration,
-        EntityManagerInterface $entityManager,
-        MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry,
-        ElementMetaDataRepositoryInterface $elementMetaDataRepository
+        protected array $integratorConfiguration,
+        protected EntityManagerInterface $entityManager,
+        protected MetaDataIntegratorRegistryInterface $metaDataIntegratorRegistry,
+        protected ElementMetaDataRepositoryInterface $elementMetaDataRepository
     ) {
-        $this->integratorConfiguration = $integratorConfiguration;
-        $this->entityManager = $entityManager;
-        $this->metaDataIntegratorRegistry = $metaDataIntegratorRegistry;
-        $this->elementMetaDataRepository = $elementMetaDataRepository;
     }
 
     public function getMetaDataIntegratorConfiguration(): array
@@ -55,6 +47,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
 
         // BC Reason: If old document metadata is available, use it!
         // @todo: make this decision configurable? We don't need this within fresh installations!
+
         return $this->checkForLegacyData($elementValues, $elementType, $elementId);
     }
 
@@ -70,10 +63,58 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
 
         // BC Reason: If old document metadata is available, use it!
         // @todo: make this decision configurable? We don't need this within fresh installations!
+
         return $this->checkForLegacyBackendData($parsedData, $elementType, $elementId);
     }
 
-    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data): void
+    public function getElementDataForXliffExport(string $elementType, int $elementId, string $locale): array
+    {
+        $parsedData = [];
+        $data = $this->getElementData($elementType, $elementId);
+
+        foreach ($data as $element) {
+
+            $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($element->getIntegrator());
+            if (!$metaDataIntegrator instanceof XliffAwareIntegratorInterface) {
+                continue;
+            }
+
+            $parsedData[$element->getIntegrator()] = $metaDataIntegrator->validateBeforeXliffExport(
+                $elementType,
+                $elementId,
+                $element->getData(),
+                $locale
+            );
+        }
+
+        return $parsedData;
+    }
+
+    public function saveElementDataFromXliffImport(string $elementType, int $elementId, array $rawData, string $locale): void
+    {
+        $integratorValues = [];
+
+        foreach ($rawData as $integrator => $integratorRawData) {
+
+            if (!is_array($integratorRawData)) {
+                continue;
+            }
+
+            $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($integrator);
+            if (!$metaDataIntegrator instanceof XliffAwareIntegratorInterface) {
+                continue;
+            }
+
+            $integratorValues[$integrator] = $metaDataIntegrator->validateBeforeXliffImport($elementType, $elementId, $integratorRawData, $locale);
+        }
+
+        foreach ($integratorValues as $integratorName => $integratorData) {
+            $sanitizedData = is_array($integratorData) ? $integratorData : [];
+            $this->saveElementData($elementType, $elementId, $integratorName, $sanitizedData, true);
+        }
+    }
+
+    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data, bool $merge = false): void
     {
         $elementMetaData = $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName);
 
@@ -85,7 +126,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         }
 
         $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($integratorName);
-        $sanitizedData = $metaDataIntegrator->validateBeforePersist($elementType, $elementId, $data, $elementMetaData->getData());
+        $sanitizedData = $metaDataIntegrator->validateBeforePersist($elementType, $elementId, $data, $elementMetaData->getData(), $merge);
 
         // remove empty meta data
         if ($sanitizedData === null) {

@@ -2,14 +2,14 @@
 
 namespace SeoBundle\DependencyInjection;
 
-use SeoBundle\Tool\Bundle;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 
-class SeoExtension extends Extension
+class SeoExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -36,11 +36,50 @@ class SeoExtension extends Extension
         $container->setParameter('seo.meta_data_provider.configuration', $config['meta_data_configuration']['meta_data_provider']);
         $container->setParameter('seo.meta_data_integrator.configuration', $config['meta_data_configuration']['meta_data_integrator']);
         $container->setParameter('seo.index.pimcore_element_watcher.enabled', $config['index_provider_configuration']['pimcore_element_watcher']['enabled']);
-
-        $this->checkThirdPartyExtractors($container, $loader, $config['meta_data_configuration']['meta_data_provider']['third_party']);
     }
 
-    protected function validateConfiguration(array $config): void
+    public function prepend(ContainerBuilder $container): void
+    {
+        $configs = $container->getExtensionConfig($this->getAlias());
+
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
+
+        $enabledThirdPartyConfigs = [];
+
+        $xliffBundleEnabled = $container->hasExtension('pimcore_xliff');
+        $newsBundleEnabled = $container->hasExtension('news');
+        $coreShopSeoBundleEnabled = $container->hasExtension('core_shop_seo');
+
+        foreach ($configs as $config) {
+
+            $thirdPartyConfig = $config['meta_data_configuration']['meta_data_provider']['third_party'] ?? null;
+
+            if ($thirdPartyConfig === null) {
+                continue;
+            }
+
+            if ($coreShopSeoBundleEnabled && ($thirdPartyConfig['coreshop']['disable_default_extractors'] ?? false) === false) {
+                $enabledThirdPartyConfigs['core_shop_seo'] = 'services/extractors/coreshop.yaml';
+            }
+
+            if ($newsBundleEnabled && ($thirdPartyConfig['news']['disable_default_extractors'] ?? false) === false) {
+                $enabledThirdPartyConfigs['dachcom_news'] = 'services/extractors/news.yaml';
+            }
+        }
+
+        if ($xliffBundleEnabled) {
+            $enabledThirdPartyConfigs['pimcore_xliff'] = 'services/xliff_bundle/services.yaml';
+        }
+
+        foreach ($enabledThirdPartyConfigs as $enabledThirdPartyConfig) {
+            $loader->load($enabledThirdPartyConfig);
+        }
+
+        $container->setParameter('seo.third_party.enabled', array_keys($enabledThirdPartyConfigs));
+
+    }
+
+    private function validateConfiguration(array $config): void
     {
         $enabledIntegrators = [];
         foreach ($config['meta_data_configuration']['meta_data_integrator']['enabled_integrator'] as $dataIntegrator) {
@@ -49,19 +88,6 @@ class SeoExtension extends Extension
             }
 
             $enabledIntegrators[] = $dataIntegrator['integrator_name'];
-        }
-    }
-
-    protected function checkThirdPartyExtractors(ContainerBuilder $container, YamlFileLoader $loader, array $thirdPartyOptions): void
-    {
-        $bundles = $container->getParameter('kernel.bundles');
-
-        if (Bundle::hasBundle('CoreShopSEOBundle', $bundles) === true && $thirdPartyOptions['coreshop']['disable_default_extractors'] === false) {
-            $loader->load('services/extractors/coreshop.yaml');
-        }
-
-        if (Bundle::hasDachcomBundle('NewsBundle', $bundles) === true && $thirdPartyOptions['news']['disable_default_extractors'] === false) {
-            $loader->load('services/extractors/news.yaml');
         }
     }
 }

@@ -9,14 +9,12 @@ use SeoBundle\Model\SeoMetaDataInterface;
 use SeoBundle\Tool\UrlGeneratorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OpenGraphIntegrator extends AbstractIntegrator implements IntegratorInterface
+class OpenGraphIntegrator extends AbstractIntegrator implements IntegratorInterface, XliffAwareIntegratorInterface
 {
     protected array $configuration;
-    protected UrlGeneratorInterface $urlGenerator;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(protected UrlGeneratorInterface $urlGenerator)
     {
-        $this->urlGenerator = $urlGenerator;
     }
 
     public function getBackendConfiguration($element): array
@@ -75,18 +73,66 @@ class OpenGraphIntegrator extends AbstractIntegrator implements IntegratorInterf
         return $data;
     }
 
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
+    public function validateBeforeXliffExport(string $elementType, int $elementId, array $data, string $locale): array
     {
-        if ($elementType === 'object') {
-            $arrayModifier = new ArrayHelper();
-            $data = $arrayModifier->mergeLocaleAwareArrays($data, $previousData, 'property');
+        $transformedData = $this->validateBeforeBackend($elementType, $elementId, $data);
+
+        $exportData = [];
+
+        foreach ($transformedData as $fieldData) {
+
+            $fieldName = $fieldData['property'];
+            $propertyIndex = array_search($fieldName, array_column($this->configuration['properties'], 0), true);
+
+            if ($propertyIndex === false) {
+                continue;
+            }
+
+            $propertyDefinition = $this->configuration['properties'][$propertyIndex];
+            if ($propertyDefinition[2] === false) {
+                continue;
+            }
+
+            $exportData[$fieldName] = $this->findData($fieldData['value'], $locale);
         }
 
-        if (is_array($data) && count($data) === 0) {
+        return $exportData;
+    }
+
+    public function validateBeforeXliffImport(string $elementType, int $elementId, array $data, string $locale): ?array
+    {
+        $parsedData = [];
+
+        foreach ($data as $property => $value) {
+            $parsedData[] = [
+                'property' => $property,
+                'value'    => $elementType === 'object' ? [
+                    [
+                        'locale' => $locale,
+                        'value'  => $value
+                    ]
+                ] : $value
+            ];
+        }
+
+        return $parsedData;
+    }
+
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null, bool $merge = false): ?array
+    {
+        $arrayModifier = new ArrayHelper();
+
+        if ($elementType === 'object') {
+            $newData = $arrayModifier->mergeLocaleAwareArrays($data, $previousData, 'property', 'value', $merge);
+        } else {
+            $newData = $arrayModifier->mergeNonLocaleAwareArrays($data, $previousData, 'property', $merge);
+        }
+
+        if (is_array($newData) && count($newData) === 0) {
             return null;
         }
 
-        return $data;
+        return $newData;
     }
 
     public function updateMetaData($element, array $data, ?string $locale, SeoMetaDataInterface $seoMetadata): void
@@ -131,15 +177,20 @@ class OpenGraphIntegrator extends AbstractIntegrator implements IntegratorInterf
             return [$value['name'], $value['tag']];
         }, $this->getDefaultTypes());
 
-        $defaultProperties = array_map(static function ($value) {
-            return [$value, $value];
-        }, $this->getDefaultProperties());
-
         $defaultPresets = $this->getDefaultPresets();
+        $defaultProperties = $this->getDefaultProperties();
+
+        $defaultProperties = array_map(static function ($translatable, $key) {
+            return [$key, $key, $translatable];
+        }, $defaultProperties, array_keys($defaultProperties));
+
+        $additionalProperties = array_map(static function (array $row) {
+            return count($row) === 2 ? [$row[0], $row[1], false] : $row;
+        }, $configuration['properties']);
 
         $configuration['presets'] = array_merge($defaultPresets, $configuration['presets']);
         $configuration['types'] = array_merge($defaultTypes, $configuration['types']);
-        $configuration['properties'] = array_merge($defaultProperties, $configuration['properties']);
+        $configuration['properties'] = array_merge($defaultProperties, $additionalProperties);
 
         $this->configuration = $configuration;
     }
@@ -192,11 +243,11 @@ class OpenGraphIntegrator extends AbstractIntegrator implements IntegratorInterf
     protected function getDefaultProperties(): array
     {
         return [
-            'og:type',
-            'og:title',
-            'og:description',
-            'og:image',
-            'og:image.alt',
+            'og:type'        => false,
+            'og:title'       => true,
+            'og:description' => true,
+            'og:image'       => false,
+            'og:image.alt'   => true,
         ];
     }
 

@@ -64,7 +64,7 @@ Seo.MetaData.Integrator.PropertyIntegratorItem = Class.create({
             user = pimcore.globalmanager.get('user');
 
         propertyTypeStore = new Ext.data.ArrayStore({
-            fields: ['label', 'key'],
+            fields: ['label', 'key', 'xliffExportAware'],
             data: configuration.hasOwnProperty('properties') ? configuration.properties : []
         });
 

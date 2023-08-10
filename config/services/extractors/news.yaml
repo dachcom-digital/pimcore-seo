@@ -7,4 +7,4 @@ services:
 
     SeoBundle\MetaData\Extractor\ThirdParty\News\EntryMetaExtractor:
         tags:
-            - {name: seo.meta_data.extractor, identifier: news_entry_meta, priority: 10 }
+            - { name: seo.meta_data.extractor, identifier: news_entry_meta, priority: 10 }

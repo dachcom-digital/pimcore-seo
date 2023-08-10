@@ -30,7 +30,7 @@ class HtmlTagIntegrator implements IntegratorInterface
         return $data;
     }
 
-    public function validateBeforePersist(string $elementType, int $elementId, array $data, $previousData = null): ?array
+    public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null, bool $merge = false): ?array
     {
         if (is_array($data) && count($data) === 0) {
             return null;

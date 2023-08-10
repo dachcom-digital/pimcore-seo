@@ -47,6 +47,7 @@ class SeoExtension extends Extension implements PrependExtensionInterface
         $enabledThirdPartyConfigs = [];
 
         $xliffBundleEnabled = $container->hasExtension('pimcore_xliff');
+        $pimcoreSeoBundleEnabled = $container->hasExtension('pimcore_seo');
         $newsBundleEnabled = $container->hasExtension('news');
         $coreShopSeoBundleEnabled = $container->hasExtension('core_shop_seo');
 
@@ -59,16 +60,20 @@ class SeoExtension extends Extension implements PrependExtensionInterface
             }
 
             if ($coreShopSeoBundleEnabled && ($thirdPartyConfig['coreshop']['disable_default_extractors'] ?? false) === false) {
-                $enabledThirdPartyConfigs['core_shop_seo'] = 'services/extractors/coreshop.yaml';
+                $enabledThirdPartyConfigs['core_shop_seo'] = 'services/third_party/coreshop.yaml';
             }
 
             if ($newsBundleEnabled && ($thirdPartyConfig['news']['disable_default_extractors'] ?? false) === false) {
-                $enabledThirdPartyConfigs['dachcom_news'] = 'services/extractors/news.yaml';
+                $enabledThirdPartyConfigs['dachcom_news'] = 'services/third_party/news.yaml';
             }
         }
 
         if ($xliffBundleEnabled) {
-            $enabledThirdPartyConfigs['pimcore_xliff'] = 'services/xliff_bundle/services.yaml';
+            $enabledThirdPartyConfigs['pimcore_xliff'] = 'services/third_party/pimcore_xliff.yaml';
+        }
+
+        if ($pimcoreSeoBundleEnabled) {
+            $enabledThirdPartyConfigs['pimcore_seo'] = 'services/third_party/pimcore_seo.yaml';
         }
 
         foreach ($enabledThirdPartyConfigs as $enabledThirdPartyConfig) {

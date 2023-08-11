@@ -44,6 +44,6 @@
         "symplify/easy-coding-standard": "^9.0"
     },
     "suggest": {
-        "dachcom-digital/schema": "^2.0"
+        "dachcom-digital/schema": "^3.0"
     }
 }

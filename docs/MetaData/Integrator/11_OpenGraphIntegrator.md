@@ -35,7 +35,7 @@ seo:
                         types:
                             - ['my_type', 'my_type']
                         properties:
-                            - ['og:test', 'og:test']
+                            - ['og:test', 'og:test', true] # 3. argument: allow export to xliff translation
                         presets:
                             -   label: 'My Preset'
                                 icon_class: 'pimcore_icon_user'

@@ -1,0 +1,41 @@
+SeoBundle\Model\QueueEntry:
+    type: entity
+    table: seo_queue_entry
+    id:
+        uuid:
+            unique: true
+            column: uuid
+            type: uuid
+            generator:
+                strategy: CUSTOM
+            customIdGenerator:
+                class: Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator
+    fields:
+        type:
+            column: '`type`'
+            nullable: false
+            type: string
+        dataType:
+            column: data_type
+            nullable: false
+            type: string
+        dataId:
+            column: data_id
+            type: integer
+            nullable: false
+        dataUrl:
+            column: data_url
+            nullable: false
+            type: text
+        worker:
+            column: worker
+            nullable: false
+            type: string
+        resourceProcessor:
+            column: resource_processor
+            nullable: false
+            type: string
+        creationDate:
+            column: creation_date
+            type: datetime
+            nullable: false

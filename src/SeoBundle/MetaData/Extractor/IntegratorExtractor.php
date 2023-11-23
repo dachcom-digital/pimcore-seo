@@ -55,7 +55,7 @@ class IntegratorExtractor implements ExtractorInterface
             $elementType = 'document';
         }
 
-        if ($elementType === null) {
+        if ($elementType === null || !elementId) {
             return;
         }
 

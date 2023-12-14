@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 2.2.1
+- [BUGFIX] Skip meta data update when elementId is missing [@NiklasBr](https://github.com/dachcom-digital/pimcore-seo/pull/58)
+
 ## 2.2.0
 - [BUGFIX] fix encoding in schema json validation process [#45](https://github.com/dachcom-digital/pimcore-seo/issues/45)
 - [IMPROVEMENT] Respect Pimcore fallback languages [#44](https://github.com/dachcom-digital/pimcore-seo/issues/44)

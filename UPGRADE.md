@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.0.1
+- Skip meta data update when elementId is missing [@NiklasBr](https://github.com/dachcom-digital/pimcore-seo/pull/58)
+
 ## Migrating from Version 2.x to Version 3.0.0
 - Execute: `bin/console doctrine:migrations:migrate --prefix 'SeoBundle\Migrations'`
 

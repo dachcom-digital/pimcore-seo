@@ -31,6 +31,7 @@
         }
     },
     "require": {
+        "ext-dom": "*",
         "pimcore/pimcore": "^11.0",
         "google/apiclient": "^2.0",
         "doctrine/orm": "^2.7"

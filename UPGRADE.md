@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## 3.0.2
+- Fix og:image URL for CoreShop third party og tag [@breakone ](https://github.com/dachcom-digital/pimcore-seo/pull/61)
+- FAdd ext-dom to composer.json [@NiklasBr](https://github.com/dachcom-digital/pimcore-seo/pull/51)
+
 ## 3.0.1
 - Skip meta data update when elementId is missing [@NiklasBr](https://github.com/dachcom-digital/pimcore-seo/pull/58)
 

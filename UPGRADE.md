@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.0.3
+- Fix Symfony Console deprecation in QueuedIndexDataCommand [@NiklasBr](https://github.com/dachcom-digital/pimcore-seo/pull/63)
+
 ## 3.0.2
 - Fix og:image URL for CoreShop third party og tag [@breakone ](https://github.com/dachcom-digital/pimcore-seo/pull/61)
 - FAdd ext-dom to composer.json [@NiklasBr](https://github.com/dachcom-digital/pimcore-seo/pull/51)

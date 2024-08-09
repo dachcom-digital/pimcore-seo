@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.1.1
+- **[BUGFIX]** Fix installer script
+
 ## 3.1.0
 - **[NEW FEATURE]** Add Release Type to allow draft/public states [@64](https://github.com/dachcom-digital/pimcore-seo/issues/64)
 

@@ -3,7 +3,6 @@
 namespace SeoBundle\Repository;
 
 use Doctrine\ORM\QueryBuilder;
-use SeoBundle\Model\ElementMetaData;
 use SeoBundle\Model\ElementMetaDataInterface;
 
 interface ElementMetaDataRepositoryInterface
@@ -13,7 +12,7 @@ interface ElementMetaDataRepositoryInterface
     /**
      * @return array<int, ElementMetaDataInterface>
      */
-    public function findAll(string $elementType, int $elementId, ?string $releaseType = ElementMetaData::RELEASE_TYPE_PUBLIC): array;
+    public function findAll(string $elementType, int $elementId, ?string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): array;
 
-    public function findByIntegrator(string $elementType, int $elementId, string $integrator, string $releaseType = ElementMetaData::RELEASE_TYPE_PUBLIC): ?ElementMetaDataInterface;
+    public function findByIntegrator(string $elementType, int $elementId, string $integrator, string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): ?ElementMetaDataInterface;
 }

@@ -2,7 +2,6 @@
 
 namespace SeoBundle\Manager;
 
-use SeoBundle\Model\ElementMetaData;
 use SeoBundle\Model\ElementMetaDataInterface;
 
 interface ElementMetaDataManagerInterface
@@ -33,5 +32,5 @@ interface ElementMetaDataManagerInterface
 
     public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data): array;
 
-    public function deleteElementData(string $elementType, int $elementId, ?string $releaseType = ElementMetaData::RELEASE_TYPE_PUBLIC): void;
+    public function deleteElementData(string $elementType, int $elementId, ?string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): void;
 }

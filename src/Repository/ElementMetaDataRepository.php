@@ -22,7 +22,7 @@ class ElementMetaDataRepository implements ElementMetaDataRepositoryInterface
         return $this->repository->createQueryBuilder('e');
     }
 
-    public function findAll(string $elementType, int $elementId, ?string $releaseType = ElementMetaData::RELEASE_TYPE_PUBLIC): array
+    public function findAll(string $elementType, int $elementId, ?string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): array
     {
         $conditions = [
             'elementType' => $elementType,
@@ -40,7 +40,7 @@ class ElementMetaDataRepository implements ElementMetaDataRepositoryInterface
         string $elementType,
         int $elementId,
         string $integrator,
-        string $releaseType = ElementMetaData::RELEASE_TYPE_PUBLIC
+        string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
     ): ?ElementMetaDataInterface {
         return $this->repository->findOneBy([
             'elementType' => $elementType,

@@ -199,7 +199,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return $metaDataIntegrator->getPreviewParameter($element, $template, $data);
     }
 
-    public function deleteElementData(string $elementType, int $elementId, ?string $releaseType = ElementMetaData::RELEASE_TYPE_PUBLIC): void
+    public function deleteElementData(string $elementType, int $elementId, ?string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): void
     {
         $elementData = $this->elementMetaDataRepository->findAll($elementType, $elementId, $releaseType);
 
@@ -217,7 +217,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     /**
      * @return array<int, ElementMetaDataInterface>
      */
-    protected function checkForLegacyData(array $elements, string $elementType, int $elementId, string $releaseType = ElementMetaData::RELEASE_TYPE_PUBLIC): array
+    protected function checkForLegacyData(array $elements, string $elementType, int $elementId, string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): array
     {
         // as soon we have configured seo elements,
         // we'll never check the document again. It's all about performance.

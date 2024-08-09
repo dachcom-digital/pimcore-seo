@@ -152,6 +152,22 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
 
         // remove empty meta data
         if ($sanitizedData === null) {
+
+            if ($releaseType === ElementMetaDataInterface::RELEASE_TYPE_DRAFT) {
+
+                // if draft, we still persist an empty element
+                // to determinate reset when publish state is incoming
+
+                if (
+                    $elementMetaData->getId() > 0 ||
+                    $this->elementMetaDataExistsWithReleaseType($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_PUBLIC, $integratorName)
+                ) {
+                    $this->persistElementMetaData($elementMetaData, []);
+                }
+
+                return;
+            }
+
             if ($elementMetaData->getId() > 0) {
                 $this->entityManager->remove($elementMetaData);
                 $this->entityManager->flush();
@@ -160,46 +176,14 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
             return;
         }
 
-        $elementMetaData->setData($sanitizedData);
+        $this->persistElementMetaData($elementMetaData, $sanitizedData);
+    }
 
+    private function persistElementMetaData(ElementMetaDataInterface $elementMetaData, array $data): void
+    {
+        $elementMetaData->setData($data);
         $this->entityManager->persist($elementMetaData);
         $this->entityManager->flush();
-    }
-
-    private function determinateElementMetaEntity(
-        string $elementType,
-        int $elementId,
-        string $integratorName,
-        string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
-    ): ?ElementMetaDataInterface {
-
-        $hasDraft = $this->elementMetaDataExistsWithReleaseType($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
-
-        if ($releaseType === ElementMetaDataInterface::RELEASE_TYPE_PUBLIC && $hasDraft === true) {
-
-            // delete draft
-            $this->deleteElementData($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
-
-            return $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName, $releaseType);
-        }
-
-        return $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName, $releaseType);
-    }
-
-    private function elementMetaDataExistsWithReleaseType(string $elementType, int $elementId, string $releaseType): bool
-    {
-        $qb = $this->elementMetaDataRepository->getQueryBuilder();
-
-        return $qb
-                ->select('COUNT(e.id)')
-                ->andWhere('e.elementType = :elementType')
-                ->andWhere('e.elementId = :elementId')
-                ->andWhere('e.releaseType = :releaseType')
-                ->setParameter('elementType', $elementType)
-                ->setParameter('elementId', $elementId)
-                ->setParameter('releaseType', $releaseType)
-                ->getQuery()
-                ->getSingleScalarResult() > 0;
     }
 
     public function generatePreviewDataForElement(string $elementType, int $elementId, string $integratorName, ?string $template, array $data): array
@@ -323,4 +307,49 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
             'hasTitleDescriptionIntegrator' => $hasTitleDescriptionIntegrator !== false
         ];
     }
+
+    private function determinateElementMetaEntity(
+        string $elementType,
+        int $elementId,
+        string $integratorName,
+        string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
+    ): ?ElementMetaDataInterface {
+
+        $hasDraft = $this->elementMetaDataExistsWithReleaseType($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
+
+        if ($releaseType === ElementMetaDataInterface::RELEASE_TYPE_PUBLIC && $hasDraft === true) {
+
+            // delete draft
+            $this->deleteElementData($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
+
+            return $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName, $releaseType);
+        }
+
+        return $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName, $releaseType);
+    }
+
+    private function elementMetaDataExistsWithReleaseType(string $elementType, int $elementId, string $releaseType, ?string $integratorName = null): bool
+    {
+        $qb = $this->elementMetaDataRepository->getQueryBuilder();
+
+        $qb
+            ->select('COUNT(e.id)')
+            ->andWhere('e.elementType = :elementType')
+            ->andWhere('e.elementId = :elementId')
+            ->andWhere('e.releaseType = :releaseType')
+            ->setParameter('elementType', $elementType)
+            ->setParameter('elementId', $elementId)
+            ->setParameter('releaseType', $releaseType);
+
+        if ($integratorName !== null) {
+            $qb
+                ->andWhere('e.integrator = :integratorName')
+                ->setParameter('integratorName', $integratorName);
+        }
+
+        return $qb
+                ->getQuery()
+                ->getSingleScalarResult() > 0;
+    }
+
 }

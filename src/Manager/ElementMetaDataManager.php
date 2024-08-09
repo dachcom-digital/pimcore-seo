@@ -41,22 +41,33 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return $configuration;
     }
 
-    public function getElementData(string $elementType, int $elementId): array
+    public function getElementData(string $elementType, int $elementId, bool $allowDraftReleaseType = false): array
     {
-        $elementValues = $this->elementMetaDataRepository->findAll($elementType, $elementId);
+        $fetchingReleaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC;
+        if ($allowDraftReleaseType === true && $this->elementMetaDataExistsWithReleaseType($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT)) {
+            $fetchingReleaseType = ElementMetaDataInterface::RELEASE_TYPE_DRAFT;
+        }
+
+        $elementValues = $this->elementMetaDataRepository->findAll($elementType, $elementId, $fetchingReleaseType);
 
         // BC Reason: If old document metadata is available, use it!
         // @todo: make this decision configurable? We don't need this within fresh installations!
 
-        return $this->checkForLegacyData($elementValues, $elementType, $elementId);
+        return $this->checkForLegacyData($elementValues, $elementType, $elementId, $fetchingReleaseType);
     }
 
     public function getElementDataForBackend(string $elementType, int $elementId): array
     {
+        $isDraft = false;
         $parsedData = [];
-        $data = $this->getElementData($elementType, $elementId);
+        $data = $this->getElementData($elementType, $elementId, true);
 
         foreach ($data as $element) {
+
+            if ($element->getReleaseType() === ElementMetaDataInterface::RELEASE_TYPE_DRAFT) {
+                $isDraft = true;
+            }
+
             $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($element->getIntegrator());
             $parsedData[$element->getIntegrator()] = $metaDataIntegrator->validateBeforeBackend($elementType, $elementId, $element->getData());
         }
@@ -64,7 +75,10 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         // BC Reason: If old document metadata is available, use it!
         // @todo: make this decision configurable? We don't need this within fresh installations!
 
-        return $this->checkForLegacyBackendData($parsedData, $elementType, $elementId);
+        return [
+            'isDraft' => $isDraft,
+            'data'    => $this->checkForLegacyBackendData($parsedData, $elementType, $elementId)
+        ];
     }
 
     public function getElementDataForXliffExport(string $elementType, int $elementId, string $locale): array
@@ -114,15 +128,23 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         }
     }
 
-    public function saveElementData(string $elementType, int $elementId, string $integratorName, array $data, bool $merge = false): void
-    {
-        $elementMetaData = $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName);
+    public function saveElementData(
+        string $elementType,
+        int $elementId,
+        string $integratorName,
+        array $data,
+        bool $merge = false,
+        string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
+    ): void {
+
+        $elementMetaData = $this->determinateElementMetaEntity($elementType, $elementId, $integratorName, $releaseType);
 
         if (!$elementMetaData instanceof ElementMetaDataInterface) {
             $elementMetaData = new ElementMetaData();
             $elementMetaData->setElementType($elementType);
             $elementMetaData->setElementId($elementId);
             $elementMetaData->setIntegrator($integratorName);
+            $elementMetaData->setReleaseType($releaseType);
         }
 
         $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($integratorName);
@@ -130,6 +152,22 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
 
         // remove empty meta data
         if ($sanitizedData === null) {
+
+            if ($releaseType === ElementMetaDataInterface::RELEASE_TYPE_DRAFT) {
+
+                // if draft, we still persist an empty element
+                // to determinate reset when publish state is incoming
+
+                if (
+                    $elementMetaData->getId() > 0 ||
+                    $this->elementMetaDataExistsWithReleaseType($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_PUBLIC, $integratorName)
+                ) {
+                    $this->persistElementMetaData($elementMetaData, []);
+                }
+
+                return;
+            }
+
             if ($elementMetaData->getId() > 0) {
                 $this->entityManager->remove($elementMetaData);
                 $this->entityManager->flush();
@@ -138,8 +176,12 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
             return;
         }
 
-        $elementMetaData->setData($sanitizedData);
+        $this->persistElementMetaData($elementMetaData, $sanitizedData);
+    }
 
+    private function persistElementMetaData(ElementMetaDataInterface $elementMetaData, array $data): void
+    {
+        $elementMetaData->setData($data);
         $this->entityManager->persist($elementMetaData);
         $this->entityManager->flush();
     }
@@ -157,9 +199,9 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return $metaDataIntegrator->getPreviewParameter($element, $template, $data);
     }
 
-    public function deleteElementData(string $elementType, int $elementId): void
+    public function deleteElementData(string $elementType, int $elementId, ?string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): void
     {
-        $elementData = $this->elementMetaDataRepository->findAll($elementType, $elementId);
+        $elementData = $this->elementMetaDataRepository->findAll($elementType, $elementId, $releaseType);
 
         if (count($elementData) === 0) {
             return;
@@ -175,7 +217,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
     /**
      * @return array<int, ElementMetaDataInterface>
      */
-    protected function checkForLegacyData(array $elements, string $elementType, int $elementId): array
+    protected function checkForLegacyData(array $elements, string $elementType, int $elementId, string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): array
     {
         // as soon we have configured seo elements,
         // we'll never check the document again. It's all about performance.
@@ -197,6 +239,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
             $legacyTitleDescription->setElementType($elementType);
             $legacyTitleDescription->setElementId($elementId);
             $legacyTitleDescription->setIntegrator('title_description');
+            $legacyTitleDescription->setReleaseType($releaseType);
             $legacyTitleDescription->setData(['title' => $legacyData['title'], 'description' => $legacyData['description']]);
             $elements[] = $legacyTitleDescription;
         }
@@ -264,4 +307,49 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
             'hasTitleDescriptionIntegrator' => $hasTitleDescriptionIntegrator !== false
         ];
     }
+
+    private function determinateElementMetaEntity(
+        string $elementType,
+        int $elementId,
+        string $integratorName,
+        string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
+    ): ?ElementMetaDataInterface {
+
+        $hasDraft = $this->elementMetaDataExistsWithReleaseType($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
+
+        if ($releaseType === ElementMetaDataInterface::RELEASE_TYPE_PUBLIC && $hasDraft === true) {
+
+            // delete draft
+            $this->deleteElementData($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
+
+            return $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName, $releaseType);
+        }
+
+        return $this->elementMetaDataRepository->findByIntegrator($elementType, $elementId, $integratorName, $releaseType);
+    }
+
+    private function elementMetaDataExistsWithReleaseType(string $elementType, int $elementId, string $releaseType, ?string $integratorName = null): bool
+    {
+        $qb = $this->elementMetaDataRepository->getQueryBuilder();
+
+        $qb
+            ->select('COUNT(e.id)')
+            ->andWhere('e.elementType = :elementType')
+            ->andWhere('e.elementId = :elementId')
+            ->andWhere('e.releaseType = :releaseType')
+            ->setParameter('elementType', $elementType)
+            ->setParameter('elementId', $elementId)
+            ->setParameter('releaseType', $releaseType);
+
+        if ($integratorName !== null) {
+            $qb
+                ->andWhere('e.integrator = :integratorName')
+                ->setParameter('integratorName', $integratorName);
+        }
+
+        return $qb
+                ->getQuery()
+                ->getSingleScalarResult() > 0;
+    }
+
 }

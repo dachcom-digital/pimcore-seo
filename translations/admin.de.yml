@@ -1,4 +1,5 @@
 seo_bundle.panel_title: 'SEO'
+seo_bundle.panel.draft_note: 'Unveröffentlichte Version!'
 seo_bundle.panel.error_fetch_data: 'Fehler beim Abrufen der SEO-Metadaten.'
 seo_bundle.panel.error_save_data: 'Fehler beim Speichern der SEO-Metadaten.'
 seo_bundle.panel.default_pimcore_disabled: 'Der Standard-SEO-Bereich wurde deaktiviert. Verwenden Sie stattdessen das "SEO"-Panel.'

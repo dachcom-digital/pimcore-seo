@@ -25,11 +25,11 @@ class ElementMetaDataListener implements EventSubscriberInterface
 
     public function handleDocumentDeletion(DocumentEvent $event): void
     {
-        $this->elementMetaDataManager->deleteElementData('document', $event->getDocument()->getId());
+        $this->elementMetaDataManager->deleteElementData('document', $event->getDocument()->getId(), null);
     }
 
     public function handleObjectDeletion(DataObjectEvent $event): void
     {
-        $this->elementMetaDataManager->deleteElementData('object', $event->getObject()->getId());
+        $this->elementMetaDataManager->deleteElementData('object', $event->getObject()->getId(), null);
     }
 }

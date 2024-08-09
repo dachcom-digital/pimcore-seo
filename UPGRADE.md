@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.1.0
+- **[NEW FEATURE]** Add Release Type to allow draft/public states [@64](https://github.com/dachcom-digital/pimcore-seo/issues/64)
+
 ## 3.0.3
 - Fix Symfony Console deprecation in QueuedIndexDataCommand [@NiklasBr](https://github.com/dachcom-digital/pimcore-seo/pull/63)
 

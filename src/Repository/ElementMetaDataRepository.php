@@ -4,6 +4,7 @@ namespace SeoBundle\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use SeoBundle\Model\ElementMetaData;
 use SeoBundle\Model\ElementMetaDataInterface;
 
@@ -16,20 +17,36 @@ class ElementMetaDataRepository implements ElementMetaDataRepositoryInterface
         $this->repository = $entityManager->getRepository(ElementMetaData::class);
     }
 
-    public function findAll(string $elementType, int $elementId): array
+    public function getQueryBuilder(): QueryBuilder
     {
-        return $this->repository->findBy([
-            'elementType' => $elementType,
-            'elementId'   => $elementId
-        ]);
+        return $this->repository->createQueryBuilder('e');
     }
 
-    public function findByIntegrator(string $elementType, int $elementId, string $integrator): ?ElementMetaDataInterface
+    public function findAll(string $elementType, int $elementId, ?string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC): array
     {
+        $conditions = [
+            'elementType' => $elementType,
+            'elementId'   => $elementId
+        ];
+
+        if ($releaseType !== null) {
+            $conditions['releaseType'] = $releaseType;
+        }
+
+        return $this->repository->findBy($conditions);
+    }
+
+    public function findByIntegrator(
+        string $elementType,
+        int $elementId,
+        string $integrator,
+        string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
+    ): ?ElementMetaDataInterface {
         return $this->repository->findOneBy([
             'elementType' => $elementType,
             'elementId'   => $elementId,
-            'integrator'  => $integrator
+            'integrator'  => $integrator,
+            'releaseType' => $releaseType,
         ]);
     }
 }

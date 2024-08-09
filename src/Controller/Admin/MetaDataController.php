@@ -6,6 +6,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use SeoBundle\Manager\ElementMetaDataManagerInterface;
+use SeoBundle\Model\ElementMetaDataInterface;
 use SeoBundle\Tool\LocaleProviderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,14 +46,18 @@ class MetaDataController extends AdminAbstractController
         }
 
         $configuration = $this->elementMetaDataManager->getMetaDataIntegratorBackendConfiguration($element);
-        $data = $this->elementMetaDataManager->getElementDataForBackend($elementType, $elementId);
+        $elementBackendData = $this->elementMetaDataManager->getElementDataForBackend($elementType, $elementId);
 
-        return $this->adminJson([
-            'success'          => true,
-            'data'             => $data,
-            'availableLocales' => $availableLocales,
-            'configuration'    => $configuration,
-        ]);
+        return $this->adminJson(
+            array_merge(
+                [
+                    'success'          => true,
+                    'availableLocales' => $availableLocales,
+                    'configuration'    => $configuration,
+                ],
+                $elementBackendData
+            )
+        );
     }
 
     /**
@@ -62,6 +67,7 @@ class MetaDataController extends AdminAbstractController
     {
         $elementId = (int) $request->request->get('elementId', 0);
         $elementType = $request->request->get('elementType');
+        $task = $request->request->get('task', 'publish');
         $integratorValues = json_decode($request->request->get('integratorValues'), true, 512, JSON_THROW_ON_ERROR);
 
         if (!is_array($integratorValues)) {
@@ -70,7 +76,8 @@ class MetaDataController extends AdminAbstractController
 
         foreach ($integratorValues as $integratorName => $integratorData) {
             $sanitizedData = is_array($integratorData) ? $integratorData : [];
-            $this->elementMetaDataManager->saveElementData($elementType, $elementId, $integratorName, $sanitizedData);
+            $releaseType = $task === 'publish' ? ElementMetaDataInterface::RELEASE_TYPE_PUBLIC : ElementMetaDataInterface::RELEASE_TYPE_DRAFT;
+            $this->elementMetaDataManager->saveElementData($elementType, $elementId, $integratorName, $sanitizedData, false, $releaseType);
         }
 
         return $this->adminJson([

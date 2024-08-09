@@ -9,6 +9,7 @@ class ElementMetaData implements ElementMetaDataInterface
     protected int $elementId;
     protected string $integrator;
     protected array $data = [];
+    protected string $releaseType;
 
     public function setId(int $id): void
     {
@@ -58,5 +59,15 @@ class ElementMetaData implements ElementMetaDataInterface
     public function getData(): array
     {
         return $this->data;
+    }
+
+    public function getReleaseType(): string
+    {
+        return $this->releaseType;
+    }
+
+    public function setReleaseType(string $releaseType): void
+    {
+        $this->releaseType = $releaseType;
     }
 }

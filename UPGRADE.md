@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.1.2
+- **[BUGFIX]** Improve Migrations
+
 ## 3.1.1
 - **[BUGFIX]** Fix installer script
 

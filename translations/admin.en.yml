@@ -1,4 +1,5 @@
 seo_bundle.panel_title: 'SEO'
+seo_bundle.panel.draft_note: 'Unpublished Version!'
 seo_bundle.panel.error_fetch_data: 'Error while fetching seo metadata.'
 seo_bundle.panel.error_save_data: 'Error while saving seo metadata.'
 seo_bundle.panel.default_pimcore_disabled: 'The default SEO Section has been disabled. Use the "SEO" Panel instead.'

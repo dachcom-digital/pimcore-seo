@@ -62,12 +62,12 @@ class SeoCore {
 
         const document = ev.detail.document;
 
-        if (ev.detail.task === 'autoSave' || ev.detail.task === 'version') {
+        if (ev.detail.task === 'autoSave') {
             return;
         }
 
         if (document.hasOwnProperty('seoPanel')) {
-            document.seoPanel.save();
+            document.seoPanel.save(ev.detail.task);
         }
     }
 
@@ -75,12 +75,12 @@ class SeoCore {
 
         const object = ev.detail.object;
 
-        if (ev.detail.task === 'autoSave' || ev.detail.task === 'version') {
+        if (ev.detail.task === 'autoSave') {
             return;
         }
 
         if (object.hasOwnProperty('seoPanel')) {
-            object.seoPanel.save();
+            object.seoPanel.save(ev.detail.task);
         }
     }
 

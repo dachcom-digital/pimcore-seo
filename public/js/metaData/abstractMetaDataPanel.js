@@ -5,6 +5,7 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
     element: null,
     integrator: [],
 
+    draftNode: null,
     layout: null,
     tabPanel: null,
     renderAsTab: false,
@@ -67,7 +68,24 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
                     return;
                 }
 
+                this.draftNode = new Ext.form.FieldContainer({
+                    xtype: 'container',
+                    flex: 1,
+                    hidden: resp.isDraft === false,
+                    html: t('seo_bundle.panel.draft_note'),
+                    style: {
+                        padding: '5px',
+                        border: '1px solid #6428b4',
+                        background: '#6428b45c',
+                        margin: '0 0 10px 0',
+                        color: 'black'
+                    }
+                });
+
+                this.layout.insert(0, this.draftNode)
+
                 this.buildMetaDataIntegrator(resp.data, resp.configuration, resp.availableLocales);
+
             }.bind(this),
             failure: function () {
                 Ext.Msg.alert(t('error'), t('seo_bundle.panel.error_fetch_data'));
@@ -99,14 +117,17 @@ Seo.MetaData.AbstractMetaDataPanel = Class.create({
         }
     },
 
-    save: function () {
+    save: function (task) {
 
         var integratorValues = this.getIntegratorValues();
+
+        this.draftNode.setHidden(task === 'publish');
 
         Ext.Ajax.request({
             url: '/admin/seo/meta-data/set-element-meta-data-configuration',
             method: 'POST',
             params: {
+                task: task,
                 integratorValues: Ext.encode(integratorValues),
                 elementType: this.getElementType(),
                 elementId: this.getElementId()

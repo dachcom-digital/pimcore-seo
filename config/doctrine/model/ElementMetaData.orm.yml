@@ -24,6 +24,12 @@ SeoBundle\Model\ElementMetaData:
             column: data
             nullable: false
             type: array
+        releaseType:
+            column: release_type
+            nullable: false
+            type: string
+            options:
+                default: 'public'
     uniqueConstraints:
         element_type_id_integrator:
-            columns: [element_type, element_id, integrator]
+            columns: [element_type, element_id, integrator, release_type]

@@ -215,11 +215,14 @@ class GoogleIndexWorker implements IndexWorkerInterface
      */
     protected function getClient(): \Google_Client
     {
-        $configPath = sprintf('%s/%s', PIMCORE_PROJECT_ROOT, ltrim($this->configuration['auth_config'], '/'));
-
         $client = new \Google_Client();
         $client->setScopes(\Google_Service_Indexing::INDEXING);
-        $client->setAuthConfig($configPath);
+
+        if ($this->configuration['auth_config']) {
+            $configPath = sprintf('%s/%s', PIMCORE_PROJECT_ROOT, ltrim($this->configuration['auth_config'], '/'));
+            $client->setAuthConfig($configPath);
+        }
+
         $client->setUseBatch(true);
 
         return $client;
@@ -240,7 +243,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
 
         $resolver->setAllowedTypes('push_requests_per_day', 'int');
         $resolver->setAllowedTypes('push_requests_per_minute', 'int');
-        $resolver->setAllowedTypes('auth_config', 'string');
+        $resolver->setAllowedTypes('auth_config', ['string', 'null']);
         $resolver->setRequired(['push_requests_per_day', 'push_requests_per_minute', 'auth_config']);
     }
 }

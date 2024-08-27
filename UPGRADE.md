@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## 3.1.3
+- **[ENHANCEMENT]** Allow no auth_config for Google Index Worker [@dpfaffenbauer](https://github.com/dachcom-digital/pimcore-seo/pull/69)
+- **[BUGFIX]** Fix Migration and Installer
+
 ## 3.1.2
 - **[BUGFIX]** Improve Migrations
 

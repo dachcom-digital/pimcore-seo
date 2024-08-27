@@ -6,6 +6,7 @@ use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission;
+use SeoBundle\Migrations\Version20240827080929;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 class Install extends SettingsStoreAwareInstaller
@@ -34,6 +35,11 @@ class Install extends SettingsStoreAwareInstaller
         $this->installPermissions();
 
         parent::install();
+    }
+
+    public function getLastMigrationVersionClassName(): ?string
+    {
+        return Version20240827080929::class;
     }
 
     protected function installDbStructure(): void

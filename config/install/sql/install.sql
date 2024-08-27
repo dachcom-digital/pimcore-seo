@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `seo_element_meta_data` (
   `data` longtext NOT NULL COMMENT '(DC2Type:array)',
   `release_type` varchar(255) default 'public' not null,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `element_type_id_integrator` (`element_type`,`element_id`,`integrator`)
+  UNIQUE KEY `element_type_id_integrator` (`element_type`,`element_id`,`integrator`, `release_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE IF NOT EXISTS `seo_queue_entry` (

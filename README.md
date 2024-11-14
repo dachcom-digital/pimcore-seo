@@ -74,8 +74,11 @@ This Bundle needs some preparation. Please check out the [Setup && Overview](doc
 - Use [dachcom-digital/jobs](https://github.com/dachcom-digital/pimcore-jobs) to push job data via google index!
 - Use [dachcom-digital/schema](https://github.com/dachcom-digital/pimcore-schema) to generate schema blocks via PHP API with ease!
 
-## Copyright and license
-Copyright: [DACHCOM.DIGITAL](http://dachcom-digital.ch)  
+## License
+**DACHCOM.DIGITAL AG**, Löwenhofstrasse 15, 9424 Rheineck, Schweiz  
+[dachcom.com](https://www.dachcom.com), dcdi@dachcom.ch  
+Copyright © 2024 DACHCOM.DIGITAL. All rights reserved.  
+
 For licensing details please visit [LICENSE.md](LICENSE.md)  
 
 ## Upgrade Info

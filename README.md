@@ -1,5 +1,6 @@
 # Pimcore SEO Bundle
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Software License](https://img.shields.io/badge/license-DCL-white.svg?style=flat-square&color=%23ff5c5c)](LICENSE.md)
 [![Latest Release](https://img.shields.io/packagist/v/dachcom-digital/seo.svg?style=flat-square)](https://packagist.org/packages/dachcom-digital/seo)
 [![Tests](https://img.shields.io/github/actions/workflow/status/dachcom-digital/pimcore-seo/.github/workflows/codeception.yml?branch=master&style=flat-square&logo=github&label=codeception)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3ACodeception+branch%3Amaster)
 [![PhpStan](https://img.shields.io/github/actions/workflow/status/dachcom-digital/pimcore-seo/.github/workflows/php-stan.yml?branch=master&style=flat-square&logo=github&label=phpstan%20level%204)](https://github.com/dachcom-digital/pimcore-seo/actions?query=workflow%3A"PHP+Stan"+branch%3Amaster)
@@ -35,7 +36,7 @@ The last SEO Bundle for pimcore you'll ever need!
 
 ```json
 "require" : {
-    "dachcom-digital/seo" : "~3.1.0",
+    "dachcom-digital/seo" : "~3.2.0",
 }
 ```
 
@@ -74,12 +75,12 @@ This Bundle needs some preparation. Please check out the [Setup && Overview](doc
 - Use [dachcom-digital/jobs](https://github.com/dachcom-digital/pimcore-jobs) to push job data via google index!
 - Use [dachcom-digital/schema](https://github.com/dachcom-digital/pimcore-schema) to generate schema blocks via PHP API with ease!
 
+## Upgrade Info
+Before updating, please [check our upgrade notes!](UPGRADE.md)
+
 ## License
 **DACHCOM.DIGITAL AG**, Löwenhofstrasse 15, 9424 Rheineck, Schweiz  
 [dachcom.com](https://www.dachcom.com), dcdi@dachcom.ch  
 Copyright © 2024 DACHCOM.DIGITAL. All rights reserved.  
 
 For licensing details please visit [LICENSE.md](LICENSE.md)  
-
-## Upgrade Info
-Before updating, please [check our upgrade notes!](UPGRADE.md)

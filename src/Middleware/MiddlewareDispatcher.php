@@ -40,10 +40,6 @@ class MiddlewareDispatcher implements MiddlewareDispatcherInterface
 
     public function registerTask(callable $callback, string $identifier): void
     {
-        if (!is_callable($callback)) {
-            return;
-        }
-
         $this->tasks[] = [
             'identifier' => $identifier,
             'callback'   => $callback

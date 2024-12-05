@@ -34,10 +34,6 @@ class XliffListener implements EventSubscriberInterface
         $attributeSet = $event->getAttributeSet();
         $element = $attributeSet->getTranslationItem()->getElement();
 
-        if (!$element instanceof ElementInterface) {
-            return;
-        }
-
         $sourceLanguage = $attributeSet->getSourceLanguage();
         $elementType = $this->determinateType($element);
 
@@ -65,7 +61,7 @@ class XliffListener implements EventSubscriberInterface
         $attributeSet = $event->getAttributeSet();
         $element = $attributeSet->getTranslationItem()->getElement();
 
-        if (!$element instanceof ElementInterface || $attributeSet->isEmpty()) {
+        if ($attributeSet->isEmpty()) {
             return;
         }
 

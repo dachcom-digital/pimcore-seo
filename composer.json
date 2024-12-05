@@ -1,7 +1,10 @@
 {
     "name": "dachcom-digital/seo",
     "type": "pimcore-bundle",
-    "license": "GPL-3.0-or-later",
+    "license": [
+        "GPL-3.0-or-later",
+        "proprietary"
+    ],
     "description": "Pimcore SEO Enrichment Bundle",
     "keywords": ["pimcore", "seo"],
     "homepage": "https://github.com/dachcom-digital/pimcore-seo",
@@ -33,16 +36,16 @@
     "require": {
         "ext-dom": "*",
         "pimcore/pimcore": "^11.0",
-        "google/apiclient": "^2.0",
+        "google/apiclient": "^2.12",
         "doctrine/orm": "^2.7"
     },
     "require-dev": {
         "codeception/codeception": "^5.0",
         "codeception/module-symfony": "^3.1",
         "codeception/module-webdriver": "^4.0",
-        "phpstan/phpstan": "^1.0",
-        "phpstan/phpstan-symfony": "^1.0",
-        "symplify/easy-coding-standard": "^9.0"
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
+        "symplify/easy-coding-standard": "~12.2.0"
     },
     "suggest": {
         "dachcom-digital/schema": "^3.0"

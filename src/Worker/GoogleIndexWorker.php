@@ -4,6 +4,12 @@ namespace SeoBundle\Worker;
 
 use Carbon\Carbon;
 use Carbon\CarbonTimeZone;
+use Google\Client;
+use Google\Http\Batch;
+use Google\Service\Exception;
+use Google\Service\Indexing;
+use Google\Service\Indexing\PublishUrlNotificationResponse;
+use Google\Service\Indexing\UrlNotification;
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Http\Message\RequestInterface;
 use SeoBundle\Model\QueueEntryInterface;
@@ -64,8 +70,8 @@ class GoogleIndexWorker implements IndexWorkerInterface
     {
         $client = $this->getClient();
 
-        $batch = new \Google_Http_Batch($client, false, 'https://indexing.googleapis.com');
-        $service = new \Google_Service_Indexing($client);
+        $batch = new Batch($client, false, 'https://indexing.googleapis.com');
+        $service = new Indexing($client);
 
         $dailyQuota = TmpStore::get(self::TMP_STORE_DAILY_QUOTA_KEY);
 
@@ -90,7 +96,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
                     break;
                 }
 
-                $postBody = new \Google_Service_Indexing_UrlNotification();
+                $postBody = new UrlNotification();
                 $postBody->setType($this->getUrlType($queueEntry->getType()));
                 $postBody->setUrl($queueEntry->getDataUrl());
 
@@ -141,9 +147,9 @@ class GoogleIndexWorker implements IndexWorkerInterface
             return $item->getUuid() === $queueEntryId ? $item : $result;
         });
 
-        if ($result instanceof \Google_Service_Exception) {
+        if ($result instanceof Exception) {
             $workerResponse = $this->buildErrorResponse($result, $linkedQueueEntry);
-        } elseif ($result instanceof \Google_Service_Indexing_PublishUrlNotificationResponse) {
+        } elseif ($result instanceof PublishUrlNotificationResponse) {
             $workerResponse = $this->buildSuccessResponse($result, $linkedQueueEntry);
         } else {
             $workerResponse = $this->buildUnknownResponse($result, $linkedQueueEntry);
@@ -153,7 +159,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
         call_user_func_array($callable, [$workerResponse]);
     }
 
-    protected function buildErrorResponse(\Google_Service_Exception $response, QueueEntryInterface $linkedQueueEntry): WorkerResponse
+    protected function buildErrorResponse(Exception $response, QueueEntryInterface $linkedQueueEntry): WorkerResponse
     {
         $formattedMessages = [];
         $formattedStatus = (int) $response->getCode();
@@ -168,7 +174,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
         return new WorkerResponse($formattedStatus, $formattedMessage, false, $linkedQueueEntry, $response);
     }
 
-    protected function buildSuccessResponse(\Google_Service_Indexing_PublishUrlNotificationResponse $response, QueueEntryInterface $linkedQueueEntry): WorkerResponse
+    protected function buildSuccessResponse(PublishUrlNotificationResponse $response, QueueEntryInterface $linkedQueueEntry): WorkerResponse
     {
         $formattedMessageMeta = [];
 
@@ -176,10 +182,13 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $latestUpdateInfo = $notificationMetaData->getLatestUpdate();
         $latestRemoveInfo = $notificationMetaData->getLatestRemove();
 
-        if ($latestUpdateInfo instanceof \Google_Service_Indexing_UrlNotification) {
+        /** @phpstan-ignore-next-line */
+        if ($latestUpdateInfo instanceof UrlNotification) {
             $formattedMessageMeta[] = sprintf('Latest Update Info: %s %s', $latestUpdateInfo->getType(), $latestUpdateInfo->getNotifyTime());
         }
-        if ($latestRemoveInfo instanceof \Google_Service_Indexing_UrlNotification) {
+
+        /** @phpstan-ignore-next-line */
+        if ($latestRemoveInfo instanceof UrlNotification) {
             $formattedMessageMeta[] = sprintf('Latest Remove Info: %s %s', $latestRemoveInfo->getType(), $latestRemoveInfo->getNotifyTime());
         }
 
@@ -213,10 +222,10 @@ class GoogleIndexWorker implements IndexWorkerInterface
     /**
      * @throws \Google\Exception
      */
-    protected function getClient(): \Google_Client
+    protected function getClient(): Client
     {
-        $client = new \Google_Client();
-        $client->setScopes(\Google_Service_Indexing::INDEXING);
+        $client = new Client();
+        $client->setScopes(Indexing::INDEXING);
 
         if ($this->configuration['auth_config']) {
             $configPath = sprintf('%s/%s', PIMCORE_PROJECT_ROOT, ltrim($this->configuration['auth_config'], '/'));

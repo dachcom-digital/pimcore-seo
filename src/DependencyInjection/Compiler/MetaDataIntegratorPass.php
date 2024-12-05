@@ -46,9 +46,11 @@ final class MetaDataIntegratorPass implements CompilerPassInterface
         }
 
         $options = new OptionsResolver();
-        /** @var IntegratorInterface $class */
         $class = $definition->getClass();
-        $class::configureOptions($options);
+
+        if (is_string($class) && is_subclass_of($class, IntegratorInterface::class)) {
+            $class::configureOptions($options);
+        }
 
         try {
             $resolvedOptions = $options->resolve($integratorConfig);

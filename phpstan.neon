@@ -5,8 +5,8 @@ parameters:
         - %currentWorkingDirectory%/vendor/pimcore/pimcore/stubs/dynamic-constants.php
     reportUnmatchedIgnoredErrors: false
     symfony:
-        container_xml_path: %currentWorkingDirectory%/var/cache/test/TestKernelTestDebugContainer.xml
-        constant_hassers: false
+        containerXmlPath: %currentWorkingDirectory%/var/cache/test/TestKernelTestDebugContainer.xml
+        constantHassers: false
     excludePaths:
         # as long we don't install the dependencies :(
         - src/MetaData/Extractor/ThirdParty/News/EntryMetaExtractor.php

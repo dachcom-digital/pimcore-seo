@@ -42,7 +42,7 @@ class LocaleProvider implements LocaleProviderInterface
     {
         $contentLanguages = $user->getContentLanguages();
 
-        if (!is_array($contentLanguages) || count($contentLanguages) === 0) {
+        if (count($contentLanguages) === 0) {
             return $locales;
         }
 

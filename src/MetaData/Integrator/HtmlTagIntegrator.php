@@ -32,7 +32,7 @@ class HtmlTagIntegrator implements IntegratorInterface
 
     public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null, bool $merge = false): ?array
     {
-        if (is_array($data) && count($data) === 0) {
+        if (count($data) === 0) {
             return null;
         }
 

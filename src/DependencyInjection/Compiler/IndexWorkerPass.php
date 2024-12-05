@@ -33,9 +33,11 @@ final class IndexWorkerPass implements CompilerPassInterface
     public function setDefinitionConfiguration(string $identifier, array $workerConfiguration, Definition $definition): void
     {
         $options = new OptionsResolver();
-        /** @var IndexWorkerInterface $class */
         $class = $definition->getClass();
-        $class::configureOptions($options);
+
+        if (is_string($class) && is_subclass_of($class, IndexWorkerInterface::class)) {
+            $class::configureOptions($options);
+        }
 
         try {
             $resolvedOptions = $options->resolve($workerConfiguration);

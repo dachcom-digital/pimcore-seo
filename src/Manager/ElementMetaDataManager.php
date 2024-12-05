@@ -289,7 +289,11 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
             return null;
         }
 
-        $hasTitleDescriptionIntegrator = array_search('title_description', array_column($enabledIntegrator, 'integrator_name'), true);
+        $hasTitleDescriptionIntegrator = array_search(
+            'title_description',
+            array_column($enabledIntegrator, 'integrator_name'),
+            true
+        );
 
         // no required integrators are active. skip this task...
         if ($hasTitleDescriptionIntegrator === false) {
@@ -304,7 +308,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         return [
             'description'                   => $document->getDescription(),
             'title'                         => $document->getTitle(),
-            'hasTitleDescriptionIntegrator' => $hasTitleDescriptionIntegrator !== false
+            'hasTitleDescriptionIntegrator' => true
         ];
     }
 

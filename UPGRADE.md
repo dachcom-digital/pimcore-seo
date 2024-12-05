@@ -2,6 +2,7 @@
 
 ## 3.2.0
 - [LICENSE] Dual-License with GPL and Dachcom Commercial License (DCL) added
+- [ENHANCEMENT] Google Worker: Use new namespaces
 
 ## 3.1.3
 - **[ENHANCEMENT]** Allow no auth_config for Google Index Worker [@dpfaffenbauer](https://github.com/dachcom-digital/pimcore-seo/pull/69)

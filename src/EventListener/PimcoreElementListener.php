@@ -73,10 +73,8 @@ class PimcoreElementListener implements EventSubscriberInterface
         /** @var Concrete $object */
         $object = $event->getObject();
 
-        $dispatchType = method_exists($object, 'isPublished')
-            ? $object->isPublished() === false
-                ? IndexWorkerInterface::TYPE_DELETE
-                : IndexWorkerInterface::TYPE_UPDATE
+        $dispatchType = $object->isPublished() === false
+            ? IndexWorkerInterface::TYPE_DELETE
             : IndexWorkerInterface::TYPE_UPDATE;
 
         $this->queueManager->addToQueue($dispatchType, $event->getObject());

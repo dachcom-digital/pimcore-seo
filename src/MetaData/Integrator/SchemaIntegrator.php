@@ -36,7 +36,7 @@ class SchemaIntegrator extends AbstractIntegrator implements IntegratorInterface
             }
 
             $schemaBlocks = $seoMetaData->getSchema();
-            if (is_array($schemaBlocks) && count($schemaBlocks) > 0) {
+            if (count($schemaBlocks) > 0) {
                 $hasDynamicallyAddedJsonLdData = true;
                 foreach ($schemaBlocks as $schemaBlock) {
                     if (isset($schemaBlock['@type'])) {
@@ -65,7 +65,7 @@ class SchemaIntegrator extends AbstractIntegrator implements IntegratorInterface
 
     public function validateBeforeBackend(string $elementType, int $elementId, array $data): array
     {
-        if (!is_array($data) || count($data) === 0) {
+        if (count($data) === 0) {
             return $data;
         }
 
@@ -101,7 +101,7 @@ class SchemaIntegrator extends AbstractIntegrator implements IntegratorInterface
 
     public function validateBeforePersist(string $elementType, int $elementId, array $data, ?array $previousData = null, bool $merge = false): ?array
     {
-        if (is_array($data) && count($data) === 0) {
+        if (count($data) === 0) {
             return null;
         }
 

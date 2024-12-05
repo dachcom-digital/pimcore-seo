@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace SeoBundle\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -63,7 +74,6 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         $data = $this->getElementData($elementType, $elementId, true);
 
         foreach ($data as $element) {
-
             if ($element->getReleaseType() === ElementMetaDataInterface::RELEASE_TYPE_DRAFT) {
                 $isDraft = true;
             }
@@ -87,7 +97,6 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         $data = $this->getElementData($elementType, $elementId);
 
         foreach ($data as $element) {
-
             $metaDataIntegrator = $this->metaDataIntegratorRegistry->get($element->getIntegrator());
             if (!$metaDataIntegrator instanceof XliffAwareIntegratorInterface) {
                 continue;
@@ -109,7 +118,6 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         $integratorValues = [];
 
         foreach ($rawData as $integrator => $integratorRawData) {
-
             if (!is_array($integratorRawData)) {
                 continue;
             }
@@ -136,7 +144,6 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         bool $merge = false,
         string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
     ): void {
-
         $elementMetaData = $this->determinateElementMetaEntity($elementType, $elementId, $integratorName, $releaseType);
 
         if (!$elementMetaData instanceof ElementMetaDataInterface) {
@@ -152,9 +159,7 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
 
         // remove empty meta data
         if ($sanitizedData === null) {
-
             if ($releaseType === ElementMetaDataInterface::RELEASE_TYPE_DRAFT) {
-
                 // if draft, we still persist an empty element
                 // to determinate reset when publish state is incoming
 
@@ -318,11 +323,9 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
         string $integratorName,
         string $releaseType = ElementMetaDataInterface::RELEASE_TYPE_PUBLIC
     ): ?ElementMetaDataInterface {
-
         $hasDraft = $this->elementMetaDataExistsWithReleaseType($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
 
         if ($releaseType === ElementMetaDataInterface::RELEASE_TYPE_PUBLIC && $hasDraft === true) {
-
             // delete draft
             $this->deleteElementData($elementType, $elementId, ElementMetaDataInterface::RELEASE_TYPE_DRAFT);
 
@@ -355,5 +358,4 @@ class ElementMetaDataManager implements ElementMetaDataManagerInterface
                 ->getQuery()
                 ->getSingleScalarResult() > 0;
     }
-
 }

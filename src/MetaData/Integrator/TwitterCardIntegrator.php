@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace SeoBundle\MetaData\Integrator;
 
 use Pimcore\Model\Asset;
@@ -71,7 +82,6 @@ class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInte
         $exportData = [];
 
         foreach ($transformedData as $fieldData) {
-
             $fieldName = $fieldData['name'];
             $propertyIndex = array_search($fieldName, array_column($this->configuration['properties'], 0), true);
 
@@ -133,7 +143,6 @@ class TwitterCardIntegrator extends AbstractIntegrator implements IntegratorInte
         }
 
         foreach ($data as $twitterItem) {
-
             if (empty($twitterItem['value']) || empty($twitterItem['name'])) {
                 continue;
             }

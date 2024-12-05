@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace SeoBundle\Helper;
 
 class ArrayHelper
@@ -10,7 +21,6 @@ class ArrayHelper
         string $rowIdentifier = 'name',
         bool $mergeWithPrevious = false
     ): ?array {
-
         if ($mergeWithPrevious === false) {
             return $data;
         }
@@ -18,11 +28,11 @@ class ArrayHelper
         $newData = $previousData;
 
         foreach ($data as $row) {
-
             $previousRowIndex = array_search($row[$rowIdentifier], array_column($previousData, $rowIdentifier), true);
 
             if ($previousRowIndex === false) {
                 $newData[] = $row;
+
                 continue;
             }
 
@@ -39,7 +49,6 @@ class ArrayHelper
         string $dataIdentifier = 'value',
         bool $mergeWithPrevious = false
     ): ?array {
-
         $cleanedRows = $this->cleanEmptyLocaleRows($data, $dataIdentifier);
 
         // nothing to merge
@@ -56,12 +65,12 @@ class ArrayHelper
         }
 
         foreach ($cleanedRows as $row) {
-
             $previousRowIndex = array_search($row[$rowIdentifier], array_column($previousData, $rowIdentifier), true);
 
             if ($previousRowIndex === false) {
                 $newData[$newDataIndex] = $row;
                 $newDataIndex++;
+
                 continue;
             }
 
@@ -74,6 +83,7 @@ class ArrayHelper
             if (!is_array($currentValue) || $this->isAssocArray($currentValue)) {
                 $newData[$dataIndex] = $row;
                 $newDataIndex++;
+
                 continue;
             }
 
@@ -112,24 +122,20 @@ class ArrayHelper
         $cleanedRebuildRow = array_values($cleanedRebuildRow);
 
         foreach ($values as $currentRow) {
-
             $locale = $currentRow['locale'];
             $value = $currentRow['value'];
 
             $index = array_search($locale, array_column($cleanedRebuildRow, 'locale'), true);
 
             if ($index !== false) {
-
                 if ($value === null) {
                     unset($cleanedRebuildRow[$index]);
                 } else {
                     $cleanedRebuildRow[$index] = $currentRow;
                 }
-
             } elseif ($value !== null) {
                 $cleanedRebuildRow[] = $currentRow;
             }
-
         }
 
         return array_values($cleanedRebuildRow);
@@ -139,7 +145,6 @@ class ArrayHelper
     {
         $cleanData = [];
         foreach ($field as $row) {
-
             if ($row[$dataIdentifier] === null) {
                 continue;
             }

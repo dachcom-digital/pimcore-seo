@@ -1,8 +1,20 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace SeoBundle\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SeoBundle\Exception\WorkerResponseInterceptException;
 use SeoBundle\Logger\LoggerInterface;
 use SeoBundle\Model\QueueEntry;
 use SeoBundle\Model\QueueEntryInterface;
@@ -10,7 +22,6 @@ use SeoBundle\Registry\IndexWorkerRegistryInterface;
 use SeoBundle\Registry\ResourceProcessorRegistryInterface;
 use SeoBundle\Repository\QueueEntryRepositoryInterface;
 use SeoBundle\Worker\WorkerResponseInterface;
-use SeoBundle\Exception\WorkerResponseInterceptException;
 
 class QueueManager implements QueueManagerInterface
 {

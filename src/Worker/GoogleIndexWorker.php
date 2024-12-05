@@ -182,10 +182,12 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $latestUpdateInfo = $notificationMetaData->getLatestUpdate();
         $latestRemoveInfo = $notificationMetaData->getLatestRemove();
 
+        /** @phpstan-ignore-next-line */
         if ($latestUpdateInfo instanceof UrlNotification) {
             $formattedMessageMeta[] = sprintf('Latest Update Info: %s %s', $latestUpdateInfo->getType(), $latestUpdateInfo->getNotifyTime());
         }
 
+        /** @phpstan-ignore-next-line */
         if ($latestRemoveInfo instanceof UrlNotification) {
             $formattedMessageMeta[] = sprintf('Latest Remove Info: %s %s', $latestRemoveInfo->getType(), $latestRemoveInfo->getNotifyTime());
         }

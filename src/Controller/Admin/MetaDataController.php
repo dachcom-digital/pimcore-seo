@@ -1,10 +1,21 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace SeoBundle\Controller\Admin;
 
+use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Bundle\AdminBundle\Controller\AdminAbstractController;
 use SeoBundle\Manager\ElementMetaDataManagerInterface;
 use SeoBundle\Model\ElementMetaDataInterface;
 use SeoBundle\Tool\LocaleProviderInterface;

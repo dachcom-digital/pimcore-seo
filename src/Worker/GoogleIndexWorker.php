@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * This source file is available under two different licenses:
+ *   - GNU General Public License version 3 (GPLv3)
+ *   - DACHCOM Commercial License (DCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) DACHCOM.DIGITAL AG (https://www.dachcom-digital.com)
+ * @license    GPLv3 and DCL
+ */
+
 namespace SeoBundle\Worker;
 
 use Carbon\Carbon;
@@ -165,7 +176,7 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $formattedStatus = (int) $response->getCode();
 
         foreach ($response->getErrors() as $error) {
-            /** @phpstan-ignore-next-line */
+            /* @phpstan-ignore-next-line */
             $formattedMessages[] = $error['message'];
         }
 
@@ -182,12 +193,12 @@ class GoogleIndexWorker implements IndexWorkerInterface
         $latestUpdateInfo = $notificationMetaData->getLatestUpdate();
         $latestRemoveInfo = $notificationMetaData->getLatestRemove();
 
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if ($latestUpdateInfo instanceof UrlNotification) {
             $formattedMessageMeta[] = sprintf('Latest Update Info: %s %s', $latestUpdateInfo->getType(), $latestUpdateInfo->getNotifyTime());
         }
 
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if ($latestRemoveInfo instanceof UrlNotification) {
             $formattedMessageMeta[] = sprintf('Latest Remove Info: %s %s', $latestRemoveInfo->getType(), $latestRemoveInfo->getNotifyTime());
         }

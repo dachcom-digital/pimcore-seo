@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.2.1
+- [BUGFIX] Check published state for objects
+
 ## 3.2.0
 - [LICENSE] Dual-License with GPL and Dachcom Commercial License (DCL) added
 - [ENHANCEMENT] Google Worker: Use new namespaces

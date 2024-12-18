@@ -81,8 +81,10 @@ class PimcoreElementListener implements EventSubscriberInterface
             return;
         }
 
-        /** @var Concrete $object */
         $object = $event->getObject();
+        if (!$object instanceof Concrete) {
+            return;
+        }
 
         $dispatchType = $object->isPublished() === false
             ? IndexWorkerInterface::TYPE_DELETE

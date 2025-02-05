@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## 3.2.2
+- [BUGFIX] Xliff Export: pass null values as empty string
+
 ## 3.2.1
 - [BUGFIX] Check published state for objects
 

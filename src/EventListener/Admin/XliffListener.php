@@ -59,7 +59,7 @@ class XliffListener implements EventSubscriberInterface
                 $attributeSet->addAttribute(
                     self::XLIFF_TYPE,
                     sprintf('%s#%s', $integrator, $property),
-                    $value,
+                    $value ?? '',
                     false,
                     []
                 );

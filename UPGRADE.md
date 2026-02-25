@@ -1,5 +1,8 @@
 # Upgrade Notes
 
+## Unreleased
+- **[ENHANCEMENT]** Add support for doctrine 3.x
+
 ## 3.2.2
 - [BUGFIX] Xliff Export: pass null values as empty string
 

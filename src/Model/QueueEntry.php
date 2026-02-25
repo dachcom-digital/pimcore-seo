@@ -13,15 +13,35 @@
 
 namespace SeoBundle\Model;
 
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\CustomIdGenerator;
+use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Mapping\GeneratedValue;
+use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\Table;
+
+#[Entity]
+#[Table(name: 'seo_queue_entry')]
 class QueueEntry implements QueueEntryInterface
 {
+    #[Id]
+    #[Column(name: 'uuid', type: 'uuid')]
+    #[GeneratedValue(strategy: 'CUSTOM')]
+    #[CustomIdGenerator(class: 'doctrine.uuid_generator')]
     protected string $uuid;
+    #[Column(name: '`type`', type: 'string', nullable: false)]
     protected string $type;
+    #[Column(name: 'data_type', type: 'string', nullable: false)]
     protected string $dataType;
+    #[Column(name: 'data_id', type: 'integer', nullable: false)]
     protected int $dataId;
+    #[Column(name: 'data_url', type: 'text', nullable: false)]
     protected string $dataUrl;
+    #[Column(name: 'worker', type: 'string', nullable: false)]
     protected string $worker;
+    #[Column(name: 'resource_processor', type: 'string', nullable: false)]
     protected string $resourceProcessor;
+    #[Column(name: 'creation_date', type: 'datetime', nullable: false)]
     protected \DateTime $creationDate;
 
     public function setUuid(string $uuid): void
